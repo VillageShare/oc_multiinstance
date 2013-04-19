@@ -1,0 +1,103 @@
+****CONFIGURE APACHE GROUP****
+www-data is a pseudo-user, but we need a real user for some of the syncing tasks.
+<user> should be whatever user "owns" the owncloud code.  This use should not have sudo access.
+
+sudo usermod -a -G www-data <user> # <user> should be owncloud
+sudo usermod -g www-data <user>
+
+Restart machine
+Use `id` command to verify gid is www-data
+
+Files that need to add group write permissions:
+cd <oc_directory>
+sudo chown 660 config/config.php 
+sudo chmod 770 config
+sudo chmod 770 apps
+
+cd apps/multiinstance
+sudo chmod -R 770 db_sync
+sudo chmod -R 770 db_sync_recv
+
+****APP CONFIG****
+#from public_html
+cd apps/multiinstance
+mv appinfo/app.sample.php appinfo/app.php
+
+Modify the lines that say setAppValue to have the correct value.  The comments should be helpful.
+
+
+You will need to create two subdirectories for multiinstance for the syncing:
+cd <path to multiinstance app>
+mkdir db_sync
+cd db_sync
+mkdir //if ucsb: foreach other location name; else: UCSB
+cd ..
+sudo chown -R www-data:www-data db_sync
+mkdir db_sync_recv
+cd db_sync_recv
+mkdir //for each location name
+cd ..
+sudo chown -R www-data:www-data db_sync_recv
+
+You will need to create the 'cronErrorLog' cron/error.txt file. E.g.:
+touch cron/error.txt
+sudo chown www-data:www-data cron/error.txt
+
+
+****SETUP SSH****
+
+The instances will need to run both the ssh client and the ssh server.
+Install ssh server:
+sudo apt-get install openssh-server
+
+Modify /etc/ssh/sshd_config  so the following are uncommented and contain these settings (unless you know what you are doing, e.g. you might need root login):
+PermitRootLogin no
+PubkeyAuthentication yes
+AuthorizedKeysFile	%h/.ssh/authorized_keys
+
+sudo service ssh restart
+
+
+Generate ssh rsa keys for the user who owns the owncloud code if they are not already created.  They should not have a passphrase (just press enter).
+Run the below command, with the 'UCSB sarah' changed to whatever comment you want, easiest to have it identify the machine and user.
+ssh-keygen -t rsa -C "UCSB sarah"
+For the passphrase, just press enter.
+
+
+Add your instance's www-data public key to the UCSB .ssh/authorized_keys file and add UCSB's public key to your instance's /home/<user>/.ssh/authorized_keys file the authorized_keys file).
+ssh-copy-id -i ~/.ssh/id_rsa.pub <other_machine>
+chmod 600 ~/.ssh/authorized_keys #otherwise it will still ask for passwords
+
+Test that this has worked with:
+ssh sarah@<UCSB_IP>
+Press enter if promped to accept the fingerprint
+If the ssh looks successful, verify the username and machine with `env` and `ifconfig`, use `exit` to logout
+
+
+
+
+****SETUP RSYNC****
+
+Move setup file 'rsyncd.conf' to /etc/rsyncd.conf
+
+Verify that (or modify it so that) /etc/default/rsync has 
+RSYNC_ENABLE=true
+
+Restart machine.  Verify rsync is running: 
+tail -f /var/log/rsyncd.log
+
+
+Add task to /etc/crontab:
+#Syncing Script for non-central server:
+5,15,25,35,45,55 * * * * sarah  php5 /home/sarah/public_html/apps/multiinstance/cron/sync.sh >> /home/sarah/public_html/apps/multiinstance/cron/error.txt 2>&1
+#Syncing Script for central server:
+0,10,20,30,40,50 * * * * sarah  php5 /home/sarah/public_html/apps/multiinstance/cron/sync.sh >> /home/sarah/public_html/apps/multiinstance/cron/error.txt 2>&1
+
+To verify that it is running at the appropriate time
+sudo grep CRON /var/log/syslog
+
+****SETUP LOCATIONS****
+Add locations to db
+mysql -u<user> -p <databasename> < setup/locations.sql
+Verify by visiting login page that locations are there.
+Future locations must be added manually

@@ -1,0 +1,4 @@
+cron/error.out
+appinfo/app.php
+db_sync/*
+db_sync_recv/*

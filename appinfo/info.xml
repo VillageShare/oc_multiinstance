@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<info>
+	<id>multiinstance</id>
+	<name>Multi Instance App</name>
+	<description>Sync between multiple instances of owncloud in a delay tolerant, low-bandwidth way.</description>
+	<version>1.0</version>
+	<licence>AGPL</licence>
+	<author>Sarah Jones</author>
+	<require>4</require>
+</info>
