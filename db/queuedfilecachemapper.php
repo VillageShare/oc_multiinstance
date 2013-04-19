@@ -26,18 +26,18 @@ use \OCA\AppFramework\Core\API;
 use \OCA\AppFramework\Db\Mapper;
 use \OCA\AppFramework\Db\DoesNotExistException;
 
+use \OCA\AppFramework\Db\QueuedFileCache;
 
 class QueuedFileCacheMapper extends Mapper {
 
 
-	private $tableName;
 
 	/**
 	 * @param API $api: Instance of the API abstraction layer
 	 */
 	public function __construct($api){
-		parent::__construct($api);
-		$this->tableName = '*PREFIX*multiinstance_queued_filecache';
+		parent::__construct($api, 'multiinstance_queued_filecache');
+
 	}
 
 	/**
@@ -46,7 +46,7 @@ class QueuedFileCacheMapper extends Mapper {
 	 * @return the item
 	 */
 	public function find($pathHash, $storage, $addedAt, $destinationLocation){
-		$sql = 'SELECT * FROM `' . $this->tableName . '` WHERE `path_hash` = ? AND `storage` = ? AND `added_at` = ? AND `destination_location` = ?';
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `path_hash` = ? AND `storage` = ? AND `added_at` = ? AND `destination_location` = ?';
 		$params = array($pathHash, $storage, $addedAt, $destinationLocation);
 
 		$result = array();
@@ -63,9 +63,9 @@ class QueuedFileCacheMapper extends Mapper {
 
 	}
 
-	public function exists($pathHash, $addedAt, $destinationLocation){
+	public function exists($pathHash, $storage, $addedAt, $destinationLocation){
 		try{
-			$this->find($pathHash, $addedAt, $destinationLocation);
+			$this->find($pathHash, $storage, $addedAt, $destinationLocation);
 		}
 		catch (DoesNotExistException $e){
 			return false;
@@ -81,7 +81,7 @@ class QueuedFileCacheMapper extends Mapper {
 	 * @return array containing all items
 	 */
 	public function findAll(){
-		$result = $this->findAllQuery($this->tableName);
+		$result = $this->findAllQuery($this->getTableName());
 
 		$entityList = array();
 		while($row = $result->fetchRow()){
@@ -102,37 +102,18 @@ class QueuedFileCacheMapper extends Mapper {
 		if ($this->exists($queuedFileCache->getPathHash(), $queuedFileCache->getStorage(), $queuedFileCache->getAddedAt(), $queuedFileCache->getDestinationLocation())) {
 			return false;  //Already exists, do nothing
 		}
-
-		$sql = 'INSERT INTO `'. $this->tableName . '` (`storage`, `path`, `path_hash`, `parent`, `name`,  `mimetype`, `mimepart`, `size`, `mtime`, `encrypted`, `etag`, `added_at`, `destination_location`'.
-				' VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-
-		$params = array(
-			$queuedFileCache->getStorage(),
-			$queuedFileCache->getPath(),
-			$queuedFileCache->getPathHash(),
-			$queuedFileCache->getParent(),
-			$queuedFileCache->getName(),
-			$queuedFileCache->getMimeType(),
-			$queuedFileCache->getMimePart(),
-			$queuedFileCache->getSize(),
-			$queuedFileCache->getMTime(),
-			$queuedFileCache->getEncrypted(),
-			$queuedFileCache->getEtag(),
-			$queuedFileCache->getAddedAt(),
-			$queuedFileCache->getDestinationLocation()
-		);
-
-		return $this->execute($sql, $params);
-
-	}
+		
+		return $this->insert($queuedFileCache);
+	} 
 
 
 	/**
 	 * Deletes an item
 	 * @param string $pathHash: the path_hash of the QueuedFileCache
 	 */
-	public function delete($queuedFileCache){
-		$sql = 'DELETE FROM `' . $this->tableName . '` WHERE `path_hash` = ? AND `storage` = ? AND `added_at` = ? AND `destination_location`';
+	public function delete(Entity $entity){
+		$queuedFileCache = $entity;
+		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `path_hash` = ? AND `storage` = ? AND `added_at` = ? AND `destination_location`';
 		$params = array(
 			$queuedFileCache->getPathHash(),
 			$queuedFileCache->getStorage(),

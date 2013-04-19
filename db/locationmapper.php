@@ -37,8 +37,8 @@ class LocationMapper extends Mapper {
 	 * @param API $api: Instance of the API abstraction layer
 	 */
 	public function __construct($api){
-		parent::__construct($api);
-		$this->tableName = '*PREFIX*multiinstance_locations';
+		parent::__construct($api, 'multiinstance_locations');
+		//$this->tableName = '*PREFIX*multiinstance_locations';
 	}
 
 
@@ -48,7 +48,8 @@ class LocationMapper extends Mapper {
 	 * @return array containing all items
 	 */
 	public function findAll(){
-		$result = $this->findAllQuery($this->tableName);
+		$sql = "SELECT * FROM {$this->getTableName()}";
+		$result = $this->execute($sql);
 
 		$entityList = array();
 		while($row = $result->fetchRow()){

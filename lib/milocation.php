@@ -140,8 +140,7 @@ class MILocation{
 	}
 
 
-	static public function writeFile($parameters, $storage, $queuedFileCacheMapper=null, $mockApi=null) {
-error_log(print_r($parameters, TRUE));
+	static public function writeFile($parameters, $storage, $mimetype, $queuedFileCacheMapper=null, $mockApi=null) {
 		if ($queuedFileCacheMapper !== null && $mockApi !==null) {
 			$qm = $queuedFileCacheMapper;
 			$api = $mockApi;
@@ -154,7 +153,7 @@ error_log(print_r($parameters, TRUE));
 
 		$centralServerName = $api->getAppValue('centralServer');
 		if ($centralServerName !== $api->getAppValue('location')) {
-			$queuedFileCache = new QueuedFileCache($storage, $parameters[5], $parameters[7], $parameters[8], $parameters[1], $parameters[0], $parameters[3], $parameters[2], $parameters[9], $parameters[4], $api->getTime(),  $centralServerName);
+			$queuedFileCache = new QueuedFileCache($storage, $parameters[6], $parameters[5], $parameters[7], $parameters[8], $mimetype, $parameters[0], $parameters[3], $parameters[2], $parameters[9], $parameters[4], $api->getTime(),  $centralServerName);
 			$qm->save($queuedFileCache);
 		}
 	}

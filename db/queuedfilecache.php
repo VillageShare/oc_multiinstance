@@ -23,54 +23,40 @@
 namespace OCA\MultiInstance\Db;
 
 
-class QueuedFileCache {
+use \OCA\AppFramework\Db\Entity;
 
-	private $storage;
-	private $path;
-	private $pathHash;
-	private $addedAt;
-	private $destinationLocation;
 
-	public function __construct($storage, $path, $pathHash, $parent, $name, $mimetype, $mimepart, $size, $mtime, $encrypted, $etag, $added_at, $destination_location){
-		$this->storage = $storage;
-		$this->path = $path;
-		$this->pathHash = $pathHash;
-		$this->parent = $parent;
-		$this->name = $name;
-		if (is_int($mimetype)) {
-			$cache = new \OC\Files\Cache\Cache($storage);
-			$this->mimetype = $cache->getMimetype($mimetype);
-		}
-		else {
-			$this->mimetype = $mimetype;
-		}
-		$this->mimepart = $mimepart;
-		$this->size = $size;
-		$this->mtime = $mtime;
-		$this->encrypted = $encrypted;
-		$this->etag = $etag;
-		$this->addedAt = $addedAt;
-		$this->destinationLocation = $destinationLocation;
+class QueuedFileCache extends Entity {
+
+	public $storage;
+	public $path;
+	public $pathHash;
+	public $parent;
+	public $name;
+	public $mimetype;
+	public $mimepart;
+	public $size;
+	public $mtime;
+	public $encrypted;
+	public $etag;
+	public $addedAt;
+	public $destinationLocation;
+
+	public function __construct($storage, $path, $pathHash, $parent, $name, $mimetype, $mimepart, $size, $mtime, $encrypted, $etag, $addedAt, $destinationLocation){
+		$this->setStorage($storage);
+		$this->setPath($path);
+		$this->setPathHash($pathHash);
+		$this->setParent($parent);
+		$this->setName($name);
+		$this->setMimetype($mimetype);
+		$this->setMimepart($mimepart);
+		$this->setSize($size);
+		$this->setMtime($mtime);
+		$this->setEncrypted($encrypted);
+		$this->setEtag($etag);
+		$this->setAddedAt($addedAt);
+		$this->setDestinationLocation($destinationLocation);
 
 	}
 
-	public function getStorage(){
-		return $this->storage;
-	}
-
-	public function getDisplayname(){
-		return $this->path;
-	}
-
-	public function getPassword(){
-		return $this->pathHash;
-	}
-
-	public function getAddedAt(){
-		return $this->addedAt;
-	}
-
-	public function getDestinationLocation() {
-		return $this->destinationLocation;
-	}
 }
