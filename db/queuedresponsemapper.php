@@ -34,19 +34,18 @@ class QueuedResponseMapper extends Mapper {
 
 
 
-	private $tableName;
+	private $getTableName();
 
 	/**
 	 * @param API $api: Instance of the API abstraction layer
 	 */
 	public function __construct($api){
-		parent::__construct($api);
-		$this->tableName = '*PREFIX*multiinstance_queued_responses';
+		parent::__construct($api, 'multiinstance_queued_responses');
 	}
 
 
 	public function find($requestId, $destinationLocation){
-		$sql = 'SELECT * FROM `' . $this->tableName . '` WHERE `request_id` = ? AND `destination_location` = ?';
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `request_id` = ? AND `destination_location` = ?';
 		$params = array($requestId, $destinationLocation);
 
 		$result = array();
@@ -84,7 +83,7 @@ class QueuedResponseMapper extends Mapper {
 			return false;
 		}
 		
-		$sql = 'INSERT INTO `'. $this->tableName . '` (request_id, destination_location, answer, added_at_micro_time)'.
+		$sql = 'INSERT INTO `'. $this->getTableName() . '` (request_id, destination_location, answer, added_at_micro_time)'.
 			' VALUES(?, ?, ?)';
 		$params = array($request->getRequestId(), $request->getDestinationLocation(), $request->getAnswer(), $this->api->microTime());
 		return $this->execute($sql, $params);
@@ -92,7 +91,7 @@ class QueuedResponseMapper extends Mapper {
 
 
 	public function deleteAllBeforeMicrotime($microTime) {
-		$sql = 'DELETE FROM `' . $this->tableName . '` WHERE `added_at_micro_time` <= ?';
+		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `added_at_micro_time` <= ?';
 		$params = array($microTime);
 
 		return $this->execute($sql, $params);

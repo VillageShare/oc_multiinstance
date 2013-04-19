@@ -32,18 +32,17 @@ class QueuedUserFacebookIdMapper extends Mapper {
 
 
 
-	private $tableName;
+	private $getTableName();
 
 	/**
 	 * @param API $api: Instance of the API abstraction layer
 	 */
 	public function __construct($api){
-		parent::__construct($api);
-		$this->tableName = '*PREFIX*multiinstance_queued_user_facebook_ids';
+		parent::__construct($api, 'multiinstance_queued_user_facebook_ids');
 	}
 
 	public function find($uid, $syncedAt, $destinationLocation){
-		$sql = 'SELECT * FROM `' . $this->tableName . '` WHERE `uid` = ? AND `friends_synced_at` = ? AND `destination_location` = ?';
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `uid` = ? AND `friends_synced_at` = ? AND `destination_location` = ?';
 		$params = array($uid, $syncedAt, $destinationLocation);
 		$result = array();
 		
@@ -86,7 +85,7 @@ class QueuedUserFacebookIdMapper extends Mapper {
 		if ($this->exists($userFacebookId->getUid(), $userFacebookId->getFriendsSyncedAt()), $userFacebookId()->getDestinationLocation()){
 			return false;
 		}
-		$sql = 'INSERT INTO `'. $this->tableName . '` (`uid`, `facebook_id`, `facebook_name`, `friends_synced_at`, `destination_location`)'.
+		$sql = 'INSERT INTO `'. $this->getTableName() . '` (`uid`, `facebook_id`, `facebook_name`, `friends_synced_at`, `destination_location`)'.
 				' VALUES(?, ?, ?, ?, ?)';
 
 		$params = array(
@@ -108,7 +107,7 @@ class QueuedUserFacebookIdMapper extends Mapper {
 	public function delete($userId, $syncedAt, $destinationLocation){
 		
 		//must check both ways to delete friend
-		$sql = 'DELETE FROM `' . $this->tableName . '` WHERE (`uid` = ? AND `friends_synced_at` = ? AND `destination_location` = ?)';
+		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE (`uid` = ? AND `friends_synced_at` = ? AND `destination_location` = ?)';
 		$params = array($uid, $syncedAt, $destinationLocation);
 		
 		return $this->execute($sql, $params);

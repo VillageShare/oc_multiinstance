@@ -34,14 +34,13 @@ class QueuedFriendshipMapper extends Mapper {
 
 
 
-	private $tableName;
+	private $getTableName();
 
 	/**
 	 * @param API $api: Instance of the API abstraction layer
 	 */
 	public function __construct($api){
-		parent::__construct($api);
-		$this->tableName = '*PREFIX*multiinstance_queued_friendships';
+		parent::__construct($api, 'multiinstance_queued_friendships');
 	}
 
 
@@ -56,7 +55,7 @@ class QueuedFriendshipMapper extends Mapper {
 	 */
 	public function find($userId1, $userId2, $updatedAt, $destinationLocation){
 		//$uids = $this->sortUids($userId1, $userId2);
-		$sql = 'SELECT * FROM `' . $this->tableName . '` WHERE `friend_uid1` = ? AND `friend_uid2` = ? AND `updated_at` = ? AND `destination_location` = ?';
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `friend_uid1` = ? AND `friend_uid2` = ? AND `updated_at` = ? AND `destination_location` = ?';
 		$params = array($userId1, $userId2, $updatedAt, $destinationLocation);
 
 		$result = array();
@@ -103,7 +102,7 @@ class QueuedFriendshipMapper extends Mapper {
 			throw new AlreadyExistsException("An QueuedFriendshp entry already exists for uid1 = {$friendship->getUid1()}, uid2 = {$friendship->getUid2()}, updated_at = {$friendship->getUpdatedAt()}, destination = {$friendship->getDestinationLocation()}");
 		}
 
-		$sql = 'INSERT INTO `'. $this->tableName . '` (status, updated_at, friend_uid1, friend_uid2, destination_location)'.
+		$sql = 'INSERT INTO `'. $this->getTableName() . '` (status, updated_at, friend_uid1, friend_uid2, destination_location)'.
 			' VALUES(?, ?, ?, ?, ?)';
 		$params = array($friendship->getStatus(), $friendship->getUpdatedAt(), $friendship->getUid1(), $friendship->getUid2(), $friendship->getDestinationLocation());
 		return $this->execute($sql, $params);

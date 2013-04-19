@@ -30,14 +30,13 @@ use \OCA\AppFramework\Db\DoesNotExistException;
 class UserUpdateMapper extends Mapper {
 
 
-	private $tableName;
+	private $getTableName();
 
 	/**
 	 * @param API $api: Instance of the API abstraction layer
 	 */
 	public function __construct($api){
-		parent::__construct($api);
-		$this->tableName = '*PREFIX*multiinstance_user_updates';
+		parent::__construct($api, 'multiinstance_user_updates');
 	}
 
 	/**
@@ -46,7 +45,7 @@ class UserUpdateMapper extends Mapper {
 	 * @return the item
 	 */
 	public function find($uid){
-		$sql = 'SELECT * FROM `' . $this->tableName . '` WHERE uid = ?';
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE uid = ?';
 		$params = array($uid);
 
 		$result = array();
@@ -81,7 +80,7 @@ class UserUpdateMapper extends Mapper {
 	 * @return array containing all items
 	 */
 	public function findAll(){
-		$result = $this->findAllQuery($this->tableName);
+		$result = $this->findAllQuery($this->getTableName());
 
 		$entityList = array();
 		while($row = $result->fetchRow()){
@@ -100,7 +99,7 @@ class UserUpdateMapper extends Mapper {
 	 */
 	public function save($userUpdate){
 
-		$sql = 'INSERT INTO `'. $this->tableName . '` (`uid`, `updated_at`)'.
+		$sql = 'INSERT INTO `'. $this->getTableName() . '` (`uid`, `updated_at`)'.
 				' VALUES(?, ?)';
 
 		$params = array(
@@ -112,7 +111,7 @@ class UserUpdateMapper extends Mapper {
 
 	}
        public function update($queuedUser){
-               $sql = 'UPDATE `'. $this->tableName . '` SET
+               $sql = 'UPDATE `'. $this->getTableName() . '` SET
                                `updated_at` = ?
                                WHERE `uid` = ?';
 
@@ -129,7 +128,7 @@ class UserUpdateMapper extends Mapper {
 	 * @param string $uid: the uid of the UserUpdate
 	 */
 	public function delete($userUpdate){
-		$sql = 'DELETE FROM `' . $this->tableName . '` WHERE `uid` = ?';
+		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `uid` = ?';
 		$params = array(
 			$userUpdate->getUid(),
 		);

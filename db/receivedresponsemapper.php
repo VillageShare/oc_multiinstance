@@ -34,18 +34,17 @@ class ReceivedResponseMapper extends Mapper {
 
 
 
-	private $tableName;
+	private $getTableName();
 
 	/**
 	 * @param API $api: Instance of the API abstraction layer
 	 */
 	public function __construct($api){
-		parent::__construct($api);
-		$this->tableName = '*PREFIX*multiinstance_received_responses';
+		parent::__construct($api, 'multiinstance_received_responses');
 	}
 
 	public function findAll() {
-		$result = $this->findAllQuery($this->tableName);
+		$result = $this->findAllQuery($this->getTableName());
 
 		$entityList = array();
 		while($row = $result->fetchRow()){
@@ -59,7 +58,7 @@ class ReceivedResponseMapper extends Mapper {
 
 
 	public function find($requestId, $destinationLocation){
-		$sql = 'SELECT * FROM `' . $this->tableName . '` WHERE `request_id` = ? AND `destination_location` = ?';
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `request_id` = ? AND `destination_location` = ?';
 		$params = array($requestId, $destinationLocation);
 
 		$result = array();
@@ -92,7 +91,7 @@ class ReceivedResponseMapper extends Mapper {
 
 
 	public function delete($requestId) {
-		$sql = 'DELETE FROM `' . $this->tableName . '` WHERE `request_id` = ?';
+		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `request_id` = ?';
 		$params = array($requestId);
 
 		return $this->execute($sql, $params);

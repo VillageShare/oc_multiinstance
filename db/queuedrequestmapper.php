@@ -34,14 +34,13 @@ class QueuedRequestMapper extends Mapper {
 
 
 
-	private $tableName;
+	private $getTableName();
 
 	/**
 	 * @param API $api: Instance of the API abstraction layer
 	 */
 	public function __construct($api){
-		parent::__construct($api);
-		$this->tableName = '*PREFIX*multiinstance_queued_requests';
+		parent::__construct($api, 'multiinstance_queued_requests');
 	}
 
 	/**
@@ -49,7 +48,7 @@ class QueuedRequestMapper extends Mapper {
 	 * e.g. Has a particular user already been fetched?
 	 */
 	public function exists($type, $destinationLocation, $field1) {
-		$sql = 'SELECT * FROM `'. $this->tableName . '` WHERE `request_type` = ? AND `destination_location` = ? AND `field1` = ?';
+		$sql = 'SELECT * FROM `'. $this->getTableName() . '` WHERE `request_type` = ? AND `destination_location` = ? AND `field1` = ?';
 		$params = array($type, $destinationLocation, $field1);
 
 		$result = $this->execute($sql, $params);
@@ -68,14 +67,14 @@ class QueuedRequestMapper extends Mapper {
 		if ($this->exists($request->getType(), $request->getDestinationLocation(), $request->getField1())) {
 			return true;
 		}
-		$sql = 'INSERT INTO `'. $this->tableName . '` (`request_type`, `sending_location`, `added_at`, `destination_location`, `field1`)'.
+		$sql = 'INSERT INTO `'. $this->getTableName() . '` (`request_type`, `sending_location`, `added_at`, `destination_location`, `field1`)'.
 			' VALUES(?, ?, ?, ?, ?)';
 		$params = array($request->getType(), $request->getSendingLocation(), $request->getAddedAt(), $request->getDestinationLocation(), $request->getField1());
 		return $this->execute($sql, $params);
 	}
 
 	public function delete($id) {
-		$sql = 'DELETE FROM `' . $this->tableName . '` WHERE `id` = ?';
+		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `id` = ?';
 		$params = array($id);
 
 		return $this->execute($sql, $params);

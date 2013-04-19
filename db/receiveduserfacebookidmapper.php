@@ -32,18 +32,17 @@ class ReceivedUserFacebookIdMapper extends Mapper {
 
 
 
-	private $tableName;
+	private $getTableName();
 
 	/**
 	 * @param API $api: Instance of the API abstraction layer
 	 */
 	public function __construct($api){
-		parent::__construct($api);
-		$this->tableName = '*PREFIX*multiinstance_queued_user_facebook_ids';
+		parent::__construct($api, 'multiinstance_queued_user_facebook_ids');
 	}
 
 	public function find($uid, $syncedAt, $destinationLocation){
-		$sql = 'SELECT * FROM `' . $this->tableName . '` WHERE `uid` = ? AND `friends_synced_at` = ? AND `destination_location` = ?';
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `uid` = ? AND `friends_synced_at` = ? AND `destination_location` = ?';
 		$params = array($uid, $syncedAt, $destinationLocation);
 		$result = array();
 		
@@ -63,7 +62,7 @@ class ReceivedUserFacebookIdMapper extends Mapper {
 	 * 
 	 */
 	public function delete($userId, $syncedAt, $destinationLocation){
-		$sql = 'DELETE FROM `' . $this->tableName . '` WHERE (`uid` = ? AND `friends_synced_at` = ? AND `destination_location`)';
+		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE (`uid` = ? AND `friends_synced_at` = ? AND `destination_location`)';
 		$params = array($uid, $syncedAt, $destinationLocation);
 
 		return $this->execute($sql, $params);

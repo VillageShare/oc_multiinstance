@@ -30,14 +30,13 @@ use \OCA\AppFramework\Db\DoesNotExistException;
 class QueuedUserMapper extends Mapper {
 
 
-	private $tableName;
+	private $getTableName();
 
 	/**
 	 * @param API $api: Instance of the API abstraction layer
 	 */
 	public function __construct($api){
-		parent::__construct($api);
-		$this->tableName = '*PREFIX*multiinstance_queued_users';
+		parent::__construct($api, 'multiinstance_queued_users');
 	}
 
 	/**
@@ -46,7 +45,7 @@ class QueuedUserMapper extends Mapper {
 	 * @return the item
 	 */
 	public function find($uid, $addedAt, $destinationLocation){
-		$sql = 'SELECT * FROM `' . $this->tableName . '` WHERE `uid` = ? AND `added_at` = ? AND `destination_location` = ?';
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `uid` = ? AND `added_at` = ? AND `destination_location` = ?';
 		$params = array($uid, $addedAt, $destinationLocation);
 
 		$result = array();
@@ -81,7 +80,7 @@ class QueuedUserMapper extends Mapper {
 	 * @return array containing all items
 	 */
 	public function findAll(){
-		$result = $this->findAllQuery($this->tableName);
+		$result = $this->findAllQuery($this->getTableName());
 
 		$entityList = array();
 		while($row = $result->fetchRow()){
@@ -103,7 +102,7 @@ class QueuedUserMapper extends Mapper {
 			return false;  //Already exists, do nothing
 		}
 
-		$sql = 'INSERT INTO `'. $this->tableName . '` (`uid`, `displayname`, `password`, `added_at`, `destination_location`)'.
+		$sql = 'INSERT INTO `'. $this->getTableName() . '` (`uid`, `displayname`, `password`, `added_at`, `destination_location`)'.
 				' VALUES(?, ?, ?, ?, ?)';
 
 		$params = array(
@@ -124,7 +123,7 @@ class QueuedUserMapper extends Mapper {
 	 * @param string $uid: the uid of the QueuedUser
 	 */
 	public function delete($queuedUser){
-		$sql = 'DELETE FROM `' . $this->tableName . '` WHERE `uid` = ?  AND `added_at` = ? AND `destination_location`';
+		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `uid` = ?  AND `added_at` = ? AND `destination_location`';
 		$params = array(
 			$queuedUser->getUid(),
 			$queuedUser->getAddedAt(),

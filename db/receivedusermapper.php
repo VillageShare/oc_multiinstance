@@ -30,14 +30,13 @@ use \OCA\AppFramework\Db\DoesNotExistException;
 class ReceivedUserMapper extends Mapper {
 
 
-	private $tableName;
+	private $getTableName();
 
 	/**
 	 * @param API $api: Instance of the API abstraction layer
 	 */
 	public function __construct($api){
-		parent::__construct($api);
-		$this->tableName = '*PREFIX*multiinstance_received_users';
+		parent::__construct($api, 'multiinstance_received_users');
 	}
 
 	/**
@@ -45,7 +44,7 @@ class ReceivedUserMapper extends Mapper {
 	 * @return array containing all items
 	 */
 	public function findAll(){
-		$result = $this->findAllQuery($this->tableName);
+		$result = $this->findAllQuery($this->getTableName());
 
 		$entityList = array();
 		while($row = $result->fetchRow()){
@@ -62,7 +61,7 @@ class ReceivedUserMapper extends Mapper {
 	 * @param string $uid: the uid of the ReceivedUser
 	 */
 	public function delete($receivedUser){
-		$sql = 'DELETE FROM `' . $this->tableName . '` WHERE `uid` = ? AND `added_at` = ? AND `destination_location` = ?';
+		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `uid` = ? AND `added_at` = ? AND `destination_location` = ?';
 		$params = array(
 			$receivedUser->getUid(),
 			$receivedUser->getAddedAt(),

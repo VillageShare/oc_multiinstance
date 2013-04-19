@@ -34,18 +34,17 @@ class ReceivedRequestMapper extends Mapper {
 
 
 
-	private $tableName;
+	private $getTableName();
 
 	/**
 	 * @param API $api: Instance of the API abstraction layer
 	 */
 	public function __construct($api){
-		parent::__construct($api);
-		$this->tableName = '*PREFIX*multiinstance_received_requests';
+		parent::__construct($api, 'multiinstance_received_requests');
 	}
 
 	public function findAll() {
-		$result = $this->findAllQuery($this->tableName);
+		$result = $this->findAllQuery($this->getTableName());
 
 		$entityList = array();
 		while($row = $result->fetchRow()){
@@ -57,7 +56,7 @@ class ReceivedRequestMapper extends Mapper {
 	}
 
 	public function delete($id) {
-		$sql = 'DELETE FROM `' . $this->tableName . '` WHERE `id` = ?';
+		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `id` = ?';
 		$params = array($id);
 
 		$return $this->execute($sql, $params);
