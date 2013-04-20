@@ -30,7 +30,6 @@ use \OCA\AppFramework\Db\DoesNotExistException;
 class LocationMapper extends Mapper {
 
 
-	private $tableName;
 
 
 	/**
@@ -38,7 +37,6 @@ class LocationMapper extends Mapper {
 	 */
 	public function __construct($api){
 		parent::__construct($api, 'multiinstance_locations');
-		//$this->tableName = '*PREFIX*multiinstance_locations';
 	}
 
 
@@ -63,7 +61,7 @@ class LocationMapper extends Mapper {
 
 	public function existsByLocation($location){
 
-		$sql = 'SELECT * FROM `' . $this->tableName . '` WHERE `location` = ?';
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `location` = ?';
 		$params = array($location);
 
 		$result = array();
@@ -80,7 +78,7 @@ class LocationMapper extends Mapper {
 	}
 
 	public function findIPByLocation($location){
-		$sql = "SELECT * FROM `{$this->tableName}` WHERE `location` = ?";
+		$sql = "SELECT * FROM `{$this->getTableName()}` WHERE `location` = ?";
 		$params = array($location);
 	
 		$result = array();

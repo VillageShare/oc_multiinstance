@@ -45,7 +45,7 @@ class MultiInstanceAPI extends API {
         }
 
 	public function createUser($uid, $password) {
-		return \OC_User::createUser($id, $password);
+		return \OC_User::createUser($uid, $password);
 
 	}
 
