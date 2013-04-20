@@ -31,6 +31,7 @@ class CronHelper {
 	private $api;
 	private $locationMapper;
 	private $cronTask;
+	private $updateReceived;
 
 	/**
 	 * @param API $this->api: an api wrapper instance
@@ -39,6 +40,7 @@ class CronHelper {
 		$this->api = $api;
 		$this->locationMapper = $locationMapper;
 		$this->cronTask = $cronTask;
+		$this->updateReceived = $updateReceived;
 	}
 
 	public function sync() {
