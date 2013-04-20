@@ -69,7 +69,7 @@ class UpdateReceived {
 					OC_User::setDisplayName($id, $receivedUser->getDisplayname());
 					
 				}
-				$this->receivedUserMapper->delete($id, $receivedTimestamp);
+				$this->receivedUserMapper->delete($receivedUser);
 			}
 			else {
 				$userUpdate = new UserUpdate($id, $receivedTimestamp);
