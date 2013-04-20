@@ -24,7 +24,7 @@
 namespace OCA\MultiInstance\Core;
 
 use OCA\MultiInstance\Db\UserUpdate;
-use \OCP\OC_User;
+use \OC_User;
 
 /* Methods for updating instance db rows based on received rows */
 class UpdateReceived {
