@@ -44,7 +44,7 @@ class CronTask {
 		'multiinstance_queued_users' => 'multiinstance_received_users',
 		'multiinstance_queued_friendships' => 'multiinstance_received_friendships',
 		'multiinstance_queued_user_facebook_ids' => 'multiinstance_received_user_facebook_ids', 
-		'multiinstance_queued_filecache' => 'multiinstance_received_filecache',
+		//'multiinstance_queued_filecache' => 'multiinstance_received_filecache',
 		'multiinstance_queued_requests' => 'multiinstance_received_requests'
 	);
 	
