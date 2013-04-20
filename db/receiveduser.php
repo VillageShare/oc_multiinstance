@@ -31,13 +31,17 @@ class ReceivedUser {
 	private $addedAt;
 	private $destinationLocaiton;
 
-	public function __construct($uid, $displayname, $password, $addedAt, $destinationLocation){
-		$this->uid = $uid;
-		$this->displayname = $displayname;
-		$this->password = $password;
-		$this->addedAt = $addedAt;
-		$this->destinationLocation = $destinationLocation;
-
+	public function __construct($uid, $displayname=null, $password=null, $addedAt=null, $destinationLocation=null){
+		if ($displayname) {
+			$this->uid = $uid;
+			$this->displayname = $displayname;
+			$this->password = $password;
+			$this->addedAt = $addedAt;
+			$this->destinationLocation = $destinationLocation;
+		}
+		else {
+			$this->fromRow($uid);
+		}
 	}
 
 	public function fromRow($row){
