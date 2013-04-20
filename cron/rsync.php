@@ -59,7 +59,7 @@ if ($centralServerName === $thisLocation) {
 		if ($locationName === $thisLocation) {
 			continue;
 		}
-		$microTime = $this->api->microTime();
+		$microTime = $api->microTime();
 		$cmd = "echo {$microTime} > {$dbSyncPath}{$locationName}/last_update.txt";
 		$this->api->exec(escapeshellcmd($cmd));
 
