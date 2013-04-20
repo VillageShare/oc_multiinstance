@@ -24,6 +24,7 @@
 namespace OCA\MultiInstance\Core;
 
 use OCA\MultiInstance\Db\UserUpdate;
+use \OCP\OC_User;
 
 /* Methods for updating instance db rows based on received rows */
 class UpdateReceived {
@@ -55,8 +56,8 @@ class UpdateReceived {
 			$id = $receivedUser->getUid();
 			$receivedTimestamp = $receivedUser->getAddedAt();
 
+			$this->api->beginTransaction();
 			if ($this->api->userExists($id)) {
-				$this->api->beginTransaction();
 
 				//TODO: All of this should be wrapped in a try block with a rollback...
 				$userUpdate = $this->userUpdateMapper->find($id);	
@@ -69,19 +70,16 @@ class UpdateReceived {
 					
 				}
 				$this->receivedUserMapper->delete($id, $receivedTimestamp);
-
-				$this->api->commit();
 			}
 			else {
 				$userUpdate = new UserUpdate($id, $receivedTimestamp);
 
-				$this->api->beginTransaction();
 				//TODO: createUser will cause the user to be sent back to UCSB, maybe add another parameter?
 				$this->api->createUser($id, $receivedUser->getPassword());
 				$this->userUpdateMapper->save($userUpdate);
 				$this->receivedUserMapper->delete($receivedUser);
-				$this->api->commit();
 			}
+			$this->api->commit();
 
 		}
 
