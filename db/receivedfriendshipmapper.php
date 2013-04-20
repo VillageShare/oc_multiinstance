@@ -29,6 +29,7 @@ use \OCA\AppFramework\Db\DoesNotExistException as DoesNotExistException;
 use \OCA\AppFramework\Db\MultipleObjectsReturnedException as MultipleObjectsReturnedException;
 use OCA\Friends\Db\AlreadyExistsException as AlreadyExistsException;
 
+use \OCA\MultiInstance\ReceivedFriendship;
 
 class ReceivedFriendshipMapper extends Mapper {
 
@@ -70,6 +71,19 @@ class ReceivedFriendshipMapper extends Mapper {
 		}
 		return new Friendship($row);
 	}	
+
+	public function findAll(){
+                $sql = "SELECT * FROM {$this->getTableName()}";
+                $result = $this->execute($sql);
+
+		$entityList = array();
+		while($row = $result->fetchRow()){
+			$entity = new ReceivedFriendship($row);
+			array_push($entityList, $entity);
+		}
+
+		return $entityList;
+	}
 
 	public function delete($userId1, $userId2, $destinationLocation) {
 		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE (`friend_uid1` = ? AND `friend_uid2` = ? AND `updated_at` = ? AND `destination_location` = ?)';
