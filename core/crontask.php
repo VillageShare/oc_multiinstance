@@ -49,7 +49,7 @@ class CronTask {
 	);
 	
 	private static $patterns = array(
-		'multiinstance_queued_users.sql' => '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+)\)$/',
+		'multiinstance_queued_users.sql' => '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+),[^,]*\)$/',
 		'multiinstance_queued_friendships.sql' =>'/^INSERT.*VALUES \((?<friend_uid1>[^,]+),(?<friend_uid2>[^,]+),(?<timestamp>[^,]+),\d\)$/',  
 		'multiinstance_queued_user_facebook_ids.sql' =>  '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+)\)$/' 
 	);
@@ -255,7 +255,7 @@ class CronTask {
 	 * Return the ack (delete query) for a row
 	 * @param $query string
 	 */
-	protected function toAckFormat($query, $filename) {
+	public function toAckFormat($query, $filename) {
 		$matches = array();
 		
 		if (array_key_exists($filename, self::$patterns) !== true) {

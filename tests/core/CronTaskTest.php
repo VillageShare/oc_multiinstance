@@ -79,11 +79,11 @@ class CronTaskTest extends \PHPUnit_Framework_TestCase {
 }
     public function testToAckFormat(){
 	
-	$insert = "INSERT  IGNORE INTO `oc_multiinstance_received_users` VALUES ('Matt@UCSB','kitty','matt',NULL)";
+	$insert = "INSERT  IGNORE INTO `oc_multiinstance_received_users` VALUES ('Matt@UCSB','kitty','matt',NULL, UCSB)";
 	$insertResult = $this->cronTask->toAckFormat($insert, 'multiinstance_queued_users.sql');
 	$this->assertEquals("DELETE IGNORE FROM \`oc_multiinstance_queued_users\` WHERE \`uid\` = 'Matt@UCSB' AND \`added_at\` = NULL;\n", $insertResult);
 
-	$insertDate = "INSERT  IGNORE INTO `oc_multiinstance_received_users` VALUES ('Maria@UCSB','','Maria','2013-03-07 23:07:00')";
+	$insertDate = "INSERT  IGNORE INTO `oc_multiinstance_received_users` VALUES ('Maria@UCSB','','Maria','2013-03-07 23:07:00', UCSB)";
 	$insertDateResult = $this->cronTask->toAckFormat($insertDate, 'multiinstance_queued_users.sql');
 	$this->assertEquals("DELETE IGNORE FROM \`oc_multiinstance_queued_users\` WHERE \`uid\` = 'Maria@UCSB' AND \`added_at\` = '2013-03-07 23:07:00';\n", $insertDateResult);
 
