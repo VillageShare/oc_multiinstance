@@ -35,8 +35,8 @@ class CronHelper {
 	/**
 	 * @param API $this->api: an api wrapper instance
 	 */
-	public function __construct($this->api, $locationMapper, $cronTask){
-		$this->api = $this->api;
+	public function __construct($api, $locationMapper, $cronTask){
+		$this->api = $api;
 		$this->locationMapper = $locationMapper;
 		$this->cronTask = $cronTask;
 	}
