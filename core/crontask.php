@@ -118,7 +118,15 @@ class CronTask {
 		$queuedTable = $this->dbtableprefix . "multiinstance_queued_responses";
 		$receivedTable = $this->dbtableprefix . "multiinstance_received_responses";
 
-		foreach ($this->locationMapper->findAll() as $location) {
+		if ($this->api->getAppValue('location') === $this->api->getAppValue('centralServer')) {
+			$locations = $this->locationMapper->findAll();
+		}
+		else {
+			$location = array( 'location' => $this->api->getAppValue('centralServer'));
+			$locations = array(new Location($location));
+		}
+
+		foreach ($locations as $location) {
 			if (strpos($location->getLocation(), ";") !== false) {
 				$this->api->log("Location {$location->getLocation()} has a semicolon in it.  This is not allowed.");
 				continue;
