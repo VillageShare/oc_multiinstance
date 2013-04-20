@@ -30,7 +30,7 @@ use \OCA\AppFramework\Db\DoesNotExistException;
 class ReceivedUserMapper extends Mapper {
 
 
-	private $getTableName();
+	
 
 	/**
 	 * @param API $api: Instance of the API abstraction layer

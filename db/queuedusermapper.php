@@ -30,7 +30,6 @@ use \OCA\AppFramework\Db\DoesNotExistException;
 class QueuedUserMapper extends Mapper {
 
 
-	private $getTableName();
 
 	/**
 	 * @param API $api: Instance of the API abstraction layer
