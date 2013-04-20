@@ -166,7 +166,7 @@ class CronTask {
 		foreach ($dirs as $dir){
 			$files = $this->api->glob($dir . "/a*");
 			//Only non-central server should process responses
-			if ($api->getSystemValue('centralServer') !== $api->getSystemValue('location')) {
+			if ($this->api->getSystemValue('centralServer') !== $api->getSystemValue('location')) {
 				$files2 = $this->api->glob($dir . "/r*");
 				$files = array_merge($files, $files2);
 			}
