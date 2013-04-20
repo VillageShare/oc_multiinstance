@@ -61,7 +61,7 @@ if ($centralServerName === $thisLocation) {
 		}
 		$microTime = $api->microTime();
 		$cmd = "echo {$microTime} > {$dbSyncPath}{$locationName}/last_update.txt";
-		$api->exec(escapeshellcmd($cmd));
+		$api->exec($cmd);
 
 		$cmd = "rsync --verbose --compress --rsh ssh \
 		      --recursive --times --perms --links --delete \
