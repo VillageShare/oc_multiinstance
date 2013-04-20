@@ -35,7 +35,7 @@ class CronHelper {
 	/**
 	 * @param API $this->api: an api wrapper instance
 	 */
-	public function __construct($api, $locationMapper, $cronTask){
+	public function __construct($api, $locationMapper, $cronTask, $updateReceived){
 		$this->api = $api;
 		$this->locationMapper = $locationMapper;
 		$this->cronTask = $cronTask;
@@ -101,9 +101,9 @@ class CronHelper {
 		$this->cronTask->insertReceived();
 
 		//Process
-		$this->cronTask->updateUsersWithReceivedUsers();
-		$this->cronTask->updateFriendshipsWithReceivedFriendships();
-		$this->cronTask->updateUserFacebookIdsWithReceivedUserFacebookIds();
+		$this->updateReceived->updateUsersWithReceivedUsers();
+		$this->updateReceived->updateFriendshipsWithReceivedFriendships();
+		$this->updateReceived->updateUserFacebookIdsWithReceivedUserFacebookIds();
 		$this->cronTask->readAcksAndResponses(); //This method checks to whether or not it should read responses (only non-central servers should process responses)
 
 		$this->requestsAndResponses();
