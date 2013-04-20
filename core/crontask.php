@@ -44,6 +44,7 @@ class CronTask {
 		'multiinstance_queued_users' => 'multiinstance_received_users',
 		'multiinstance_queued_friendships' => 'multiinstance_received_friendships',
 		'multiinstance_queued_user_facebook_ids' => 'multiinstance_received_user_facebook_ids', 
+		'multiinstance_queued_filecache' => 'multiinstance_received_filecache',
 		'multiinstance_queued_requests' => 'multiinstance_received_requests'
 	);
 	
@@ -287,6 +288,9 @@ class CronTask {
 					$formattedQuery = $this->deleteQueuedUserFacebookIdSql($matches['uid'], $matches['timestamp']) . ";\n";
 				}		
 				break;
+			case 'multiinstance_queued_filecache.sql':
+				throw new \Exception("not yet imlemented.");
+				break;
 			default:
 				throw new \Exception("No delete query function for {$filename}");
 
@@ -411,6 +415,10 @@ class CronTask {
 	
 	protected function deleteQueuedUserFacebookIdSql($uid, $syncedAt) {
 		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_user_facebook_ids\` WHERE \`uid\` = {$uid} AND \`friends_synced_at\` = {$syncedAt}";
+	}
+
+	protected function deleteQueuedFileCache() {
+		
 	}
 
 /* End methods for ack content */
