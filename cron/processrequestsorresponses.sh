@@ -24,7 +24,7 @@
 if ps -ef | grep -v grep | grep requestsorresponses.php ; then
         exit 0
 else
-	#Change this path to be the path to multiinstance/cron/requestsorresponses.php
-	php5 /home/sarah/public_html/apps/multiinstance/cron/requestsorresponses.php >> /home/sarah/public_html/apps/multiinstance/cron/error.txt &
+	#Change this path to be the path to multiinstance/cron/processrequestsorresponses.php
+	php5 /home/sarah/public_html/apps/multiinstance/cron/processrequestsorresponses.php >> /home/sarah/public_html/apps/multiinstance/cron/error.txt &
         exit 0
 fi
