@@ -146,7 +146,7 @@ class DIContainer extends BaseContainer {
 			
 		});
 		$this['CronHelper'] = $this->share(function($c){
-			return new CronHelper($c['API'], $c['LocationMapper'], $c['CronTask']);
+			return new CronHelper($c['API'], $c['LocationMapper'], $c['CronTask'], $c['UpdateReceived']);
 			
 		});
 		$this['UpdateReceived'] = $this->share(function($c){
