@@ -14,9 +14,6 @@ sudo chown 660 config/config.php
 sudo chmod 770 config
 sudo chmod 770 apps
 
-cd apps/multiinstance
-sudo chmod -R 770 db_sync
-sudo chmod -R 770 db_sync_recv
 
 ****APP CONFIG****
 #from public_html
@@ -38,10 +35,13 @@ cd db_sync_recv
 mkdir //for each location name
 cd ..
 sudo chown -R www-data:www-data db_sync_recv
+sudo chmod -R 770 db_sync
+sudo chmod -R 770 db_sync_recv
 
 You will need to create the 'cronErrorLog' cron/error.txt file. E.g.:
 touch cron/error.txt
 sudo chown www-data:www-data cron/error.txt
+sudo chmod 664 cron/error.txt
 
 
 ****SETUP SSH****

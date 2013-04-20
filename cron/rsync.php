@@ -62,7 +62,7 @@ if ($centralServerName === $thisLocation) {
 		$cmd = "rsync --verbose --compress --rsh ssh \
 		      --recursive --times --perms --links --delete \
 		      --exclude \"*~\" \
-		      db_sync/{$locationName}/ {$user}@{$server}:{$dbSyncRecvPath}/{$thisLocation} >>{$output} 2>&1";
+		      db_sync/{$locationName}/ {$user}@{$location->getIP()}:{$dbSyncRecvPath}/{$thisLocation} >>{$output} 2>&1";
 
 		#$safe_cmd = escapeshellcmd($cmd);
 		exec($cmd);
