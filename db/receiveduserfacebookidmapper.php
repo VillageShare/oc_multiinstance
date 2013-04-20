@@ -27,6 +27,7 @@ use \OCA\AppFramework\Core\API as API;
 use \OCA\AppFramework\Db\Mapper as Mapper;
 use \OCA\AppFramework\Db\DoesNotExistException as DoesNotExistException;
 
+use \OCA\MultiInstance\Db\ReceivedUserFacebookId;
 
 class ReceivedUserFacebookIdMapper extends Mapper {
 
@@ -39,6 +40,21 @@ class ReceivedUserFacebookIdMapper extends Mapper {
 	 */
 	public function __construct($api){
 		parent::__construct($api, 'multiinstance_queued_user_facebook_ids');
+	}
+
+
+
+	public function findAll(){
+                $sql = "SELECT * FROM {$this->getTableName()}";
+                $result = $this->execute($sql);
+
+		$entityList = array();
+		while($row = $result->fetchRow()){
+			$entity = new ReceivedUserFacebookId($row);
+			array_push($entityList, $entity);
+		}
+
+		return $entityList;
 	}
 
 	public function find($uid, $syncedAt, $destinationLocation){
