@@ -104,7 +104,7 @@ class CronHelper {
 		$cronTask->updateUsersWithReceivedUsers();
 		$cronTask->updateFriendshipsWithReceivedFriendships();
 		$cronTask->updateUserFacebookIdsWithReceivedUserFacebookIds();
-		$this-cronTask->readAcksAndResponses(); //This method checks to whether or not it should read responses (only non-central servers should process responses)
+		$this->cronTask->readAcksAndResponses(); //This method checks to whether or not it should read responses (only non-central servers should process responses)
 
 		$this->requestsAndResponses();
 
