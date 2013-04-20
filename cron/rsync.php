@@ -60,7 +60,7 @@ if ($centralServerName === $thisLocation) {
 			continue;
 		}
 		$microTime = $api->microTime();
-		$cmd = "echo {$microTime} > {$dbSyncPath}{$locationName}/last_update.txt";
+		$cmd = "echo {$microTime} > {$dbSyncPath}{$locationName}/last_updated.txt";
 		$api->exec($cmd);
 
 		$cmd = "rsync --verbose --compress --rsh ssh \
