@@ -98,6 +98,9 @@ class CronTask {
 					$this->api->log("Location {$location->getLocation()} has a semicolon in it.  This is not allowed.");
 					continue;
 				}
+				if ($location->getLocation() === $this->api->getAppValue('location')) {
+					continue; //never send to yourself
+				}
 				$file = "{$this->sendPathPrefix}{$location->getLocation()}/{$queuedTable}.sql";
 
 				$cmd = "mysqldump --add-locks --insert  --skip-comments --skip-extended-insert --no-create-info --no-create-db -u{$this->dbuser} -p{$this->dbpassword} {$this->dbname} {$qTable} --where=\"destination_location='{$location->getLocation()}'\" > {$file}";
