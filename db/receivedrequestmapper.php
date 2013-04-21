@@ -60,7 +60,7 @@ class ReceivedRequestMapper extends Mapper {
 		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `id` = ?';
 		$params = array($id);
 
-		$return $this->execute($sql, $params);
+		return $this->execute($sql, $params);
 		
 	}
 
