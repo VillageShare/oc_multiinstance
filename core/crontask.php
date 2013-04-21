@@ -133,6 +133,9 @@ class CronTask {
 				$this->api->log("Location {$location->getLocation()} has a semicolon in it.  This is not allowed.");
 				continue;
 			}
+			if ($location->getLocation() === $this->api->getAppValue('location')) {
+				continue; //never send to yourself
+			}
 			$file = "{$this->sendPathPrefix}{$location->getLocation()}/r{$this->api->microTime()}";
 			#TODO: add if this directory is writable
 
