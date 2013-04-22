@@ -98,7 +98,7 @@ class UpdateReceived {
 			$this->api->beginTransaction();
 			try {
 				$friendship = $this->friendshipMapper->find($receivedFriendship->getUid1(), $receivedFriendship->getUid2());
-				if ($receivedFriendship->getAddedAt() > $friendship->getUpdatedAt()) { //if newer than last update
+				if ($receivedFriendship->getUpdatedAt() > $friendship->getUpdatedAt()) { //if newer than last update
 					$friendship->setStatus($receivedFriendship->getStatus());
 					$friendship->setUpdatedAt($receivedFriendship->getUpdatedAt());
 					$this->friendshipMapper->update($friendship);
