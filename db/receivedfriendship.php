@@ -25,8 +25,8 @@ namespace OCA\MultiInstance\Db;
 
 class ReceivedFriendship extends Entity {
 
-	public $uid1;
-	public $uid2;
+	public $friendUid1;
+	public $friendUid2;
 	public $updatedAt;
 	public $status;
 	public $destinationLocation;
@@ -37,8 +37,8 @@ class ReceivedFriendship extends Entity {
 			$this->fromRow($uid1OrFromRow);
 		}
 		else {
-			$this->setUid1($uid1OrFromRow);
-			$this->setUid2($uid2);
+			$this->setFriendUid1($uid1OrFromRow);
+			$this->setFriendUid2($uid2);
 			$this->setUpdatedAt($updatedAt);
 			$this->setStatus($status);
 			$this->setDestinationLocation($destinationLocation);
