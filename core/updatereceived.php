@@ -35,17 +35,19 @@ class UpdateReceived {
 	private $userUpdateMapper;
 	private $receivedFriendshipMapper;
 	private $receivedUserFacebookIdMapper;
+	private $friendshipMapper;
 
 
 	/**
 	 * @param API $api: an api wrapper instance
 	 */
-	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $receivedUserFacebookIdMapper){
+	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $receivedUserFacebookIdMapper, $friendshipMapper){
 		$this->api = $api;
 		$this->receivedUserMapper = $receivedUserMapper;
 		$this->userUpdateMapper = $userUpdateMapper;
 		$this->receivedFriendshipMapper = $receivedFriendshipMapper;
 		$this->receivedUserFacebookIdMapper = $receivedUserFacebookIdMapper;
+		$this->friendshipMapper = $friendshipMapper;
 	}
 
 
