@@ -106,8 +106,8 @@ class UpdateReceived {
 			}
 			catch (DoesNotExistException $e) {
 				$friendship = new Friendship();
-				$friendship->setUid1($receivedFriendship->getFriendUid1());
-				$friendship->setUid2($receivedFriendship->getFriendUid2());
+				$friendship->setFriendUid1($receivedFriendship->getUid1());
+				$friendship->setFriendUid2($receivedFriendship->getUid2());
 				$friendship->setStatus($receivedFriendship->getStatus());
 				$friendship->setUpdatedAt($receivedFriendship->getUpdatedAt());
 				$this->friendshipMapper->insert($friendship);
