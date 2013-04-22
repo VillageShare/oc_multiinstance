@@ -110,7 +110,9 @@ class UserUpdateMapper extends Mapper {
 		return $this->execute($sql, $params);
 
 	}
-       public function update($queuedUser){
+
+       public function update(UserUpdate $queuedUser){
+		throw new \Exception("reimplement this");
                $sql = 'UPDATE `'. $this->getTableName() . '` SET
                                `updated_at` = ?
                                WHERE `uid` = ?';
