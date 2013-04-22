@@ -23,9 +23,11 @@
 
 namespace OCA\MultiInstance\Core;
 
-use OCA\MultiInstance\Db\UserUpdate;
 use \OCA\AppFramework\Db\DoesNotExistException;
+
+use OCA\MultiInstance\Db\UserUpdate;
 use \OC_User;
+use OCA\Friends\Db\Friendship;
 
 /* Methods for updating instance db rows based on received rows */
 class UpdateReceived {
