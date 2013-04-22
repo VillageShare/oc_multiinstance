@@ -29,7 +29,7 @@ use \OCA\AppFramework\Db\DoesNotExistException as DoesNotExistException;
 use \OCA\AppFramework\Db\MultipleObjectsReturnedException as MultipleObjectsReturnedException;
 use OCA\Friends\Db\AlreadyExistsException as AlreadyExistsException;
 
-use \OCA\MultiInstance\ReceivedFriendship;
+use \OCA\MultiInstance\Db\ReceivedFriendship;
 
 class ReceivedFriendshipMapper extends Mapper {
 
