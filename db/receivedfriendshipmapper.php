@@ -85,9 +85,9 @@ class ReceivedFriendshipMapper extends Mapper {
 		return $entityList;
 	}
 
-	public function delete($userId1, $userId2, $destinationLocation) {
+	public function delete(ReceivedFriendship $receivedFriendship) {
 		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE (`friend_uid1` = ? AND `friend_uid2` = ? AND `updated_at` = ? AND `destination_location` = ?)';
-		$params = array($userId1, $userId2, $syncedAt, $destinationLocation);
+		$params = array($receivedFriendship->getUid1(), $receivedFriendship->getUid2(), $receivedFriendship->getUpdatedAt(), $receivedFriendship->getDestinationLocation());
 
 		return $this->execute($sql, $params);
 	}

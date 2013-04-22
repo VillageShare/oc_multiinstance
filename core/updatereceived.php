@@ -24,6 +24,7 @@
 namespace OCA\MultiInstance\Core;
 
 use OCA\MultiInstance\Db\UserUpdate;
+use \OCA\AppFramework\Db\DoesNotExistException;
 use \OC_User;
 
 /* Methods for updating instance db rows based on received rows */
@@ -96,13 +97,20 @@ class UpdateReceived {
 			try {
 				$friendship = $this->friendshipMapper->find($receivedFriendship->getUid1(), $receivedFriendship->getUid2());
 				if ($receivedFriendship->getAddedAt() > $friendship->getUpdatedAt()) { //if newer than last update
-					$this->friendshipMapper->save($receivedFriendship);
+					$friendship->setStatus($receivedFriendship->getStatus());
+					$friendship->setUpdatedAt($receivedFriendship->getUpdatedAt());
+					$this->friendshipMapper->update($receivedFriendship);
 				}
 			}
 			catch (DoesNotExistException $e) {
-				$this->friendshipMapper->save($receivedFriendship);
+				$friendship = new Friendship();
+				$friendship->setUid1($receivedFriendship->getUid1());
+				$friendship->setUid2$receivedFriendship->getUid2());
+				$friendship->setStatus($receivedFriendship->getStatus());
+				$friendship->setUpdatedAt($receivedFriendship->getUpdatedAt());
+				$this->friendshipMapper->insert($receivedFriendship);
 			}
-			$this->receivedFriendshipMapper->delete($receivedFriendship->getUid1(), $receivedFriendship->getUid2(), $receivedFriendship->getAddedAt());
+			$this->receivedFriendshipMapper->delete($receivedFriendship);
 			$this->api->commit();
 		}
 	}
