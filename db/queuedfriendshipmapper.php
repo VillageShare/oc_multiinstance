@@ -96,17 +96,11 @@ class QueuedFriendshipMapper extends Mapper {
 	/**
 	 * Uid1 and Uid2 must be in the correct order
 	 */
-	public function save($friendship) {
-		error_log($friendship->getUid1());
+	public function save($queuedFriendship) {
 		if ($this->exists($friendship->getUid1(), $friendship->getUid2(), $friendship->getUpdatedAt(), $friendship->getDestinationLocation())){
-			throw new AlreadyExistsException("An QueuedFriendshp entry already exists for uid1 = {$friendship->getUid1()}, uid2 = {$friendship->getUid2()}, updated_at = {$friendship->getUpdatedAt()}, destination = {$friendship->getDestinationLocation()}");
+			return false;
 		}
-
-		$sql = 'INSERT INTO `'. $this->getTableName() . '` (status, updated_at, friend_uid1, friend_uid2, destination_location)'.
-			' VALUES(?, ?, ?, ?, ?)';
-		$params = array($friendship->getStatus(), $friendship->getUpdatedAt(), $friendship->getUid1(), $friendship->getUid2(), $friendship->getDestinationLocation());
-		return $this->execute($sql, $params);
-		
+		return $this->insert($queuedFriendship);
 	}
 
 }

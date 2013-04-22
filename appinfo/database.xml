@@ -217,6 +217,13 @@
 				<notnull>true</notnull>
 				<length>64</length>
 			</field>
+			<field>
+				<name>sending_location</name>
+				<type>text</type>
+				<default></default>
+				<notnull>true</notnull>
+				<length>64</length>
+			</field>
 			<index>
 				<name>requester_index</name>
 				<field>
@@ -280,6 +287,13 @@
 			</field>
 			<field>
 				<name>destination_location</name>
+				<type>text</type>
+				<default></default>
+				<notnull>true</notnull>
+				<length>64</length>
+			</field>
+			<field>
+				<name>sending_location</name>
 				<type>text</type>
 				<default></default>
 				<notnull>true</notnull>

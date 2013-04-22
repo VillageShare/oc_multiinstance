@@ -39,18 +39,21 @@ class UpdateReceived {
 	private $receivedFriendshipMapper;
 	private $receivedUserFacebookIdMapper;
 	private $friendshipMapper;
+	private $locationMapper;
 
 
 	/**
 	 * @param API $api: an api wrapper instance
 	 */
-	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $receivedUserFacebookIdMapper, $friendshipMapper){
+	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $locationMapper){
 		$this->api = $api;
 		$this->receivedUserMapper = $receivedUserMapper;
 		$this->userUpdateMapper = $userUpdateMapper;
 		$this->receivedFriendshipMapper = $receivedFriendshipMapper;
 		$this->receivedUserFacebookIdMapper = $receivedUserFacebookIdMapper;
 		$this->friendshipMapper = $friendshipMapper;
+		$this->queuedFriendshipMapper = $queuedFriendshipMapper;
+		$this->locationMapper = $locationMapper;
 	}
 
 
@@ -94,6 +97,20 @@ class UpdateReceived {
 		$receivedFriendships = $this->receivedFriendshipMapper->findAll();
 		
 		foreach ($receivedFriendships as $receivedFriendship) {
+
+			$location1 = $this->getUserLocation($receivedFriendship->getUid1());
+			$location2 = $this->getUserLocation($receivedFriendship->getUid2());
+			$centralServer = $this->api->getAppValue('centralServer');
+
+			if ($location1 !== $receivedFriendship->getSendingLocation() && $location1 !== $centralServer) {
+				$queuedFriendship = new QueuedFriendship($receivedFriendship->getUid1(), $receivedFriendship->getUid2(), $receivedFriendship->getUpdated(), $receivedFriendship->getStatus(), $location1);	
+				$queuedFriendshipMapper->save($queuedFriendship);
+			}
+			if ($location2 !== $receivedFriendship->getSendingLocation() && $location2 !== $centralServer) {
+				$queuedFriendship = new QueuedFriendship($receivedFriendship->getUid1(), $receivedFriendship->getUid2(), $receivedFriendship->getUpdated(), $receivedFriendship->getStatus(), $location2);	
+				$queuedFriendshipMapper->save($queuedFriendship);
+			}
+
 			//TODO: try block with rollback?
 			$this->api->beginTransaction();
 			try {
@@ -115,6 +132,23 @@ class UpdateReceived {
 			$this->receivedFriendshipMapper->delete($receivedFriendship);
 			$this->api->commit();
 		}
+	}
+
+	/**
+	 * Helper Function
+	 * TODO: find a better place to put this
+	 */
+	public function getUidLocation($uid) {
+		if (strpos($uid,'@')) {
+			$pattern = '/@(?P<location>[^@]+)$/';
+			$matches = array();
+			if (preg_match($pattern, $uid, $matches) === 1) { //must use === for this function (according to documentation)
+				if ($this->locationMapper->existsByLocation($matches['location'])) {
+					return $matches['location'];
+				}
+			}
+		}
+		return null;
 	}
 
 	public function updateUserFacebookIdsWithReceivedUserFacebookIds() {

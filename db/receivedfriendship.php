@@ -23,53 +23,26 @@
 namespace OCA\MultiInstance\Db;
 
 
-class ReceivedFriendship {
+class ReceivedFriendship extends Entity {
 
-	private $uid1;
-	private $uid2;
-	private $updatedAt;
-	private $status;
-	private $destinationLocation;
+	public $uid1;
+	public $uid2;
+	public $updatedAt;
+	public $status;
+	public $destinationLocation;
+	public $sendingLocation;
 
-	public function __construct($uid1OrFromRow, $uid2=null, $updatedAt=null, $status=null, $destionationLocation=null){
+	public function __construct($uid1OrFromRow, $uid2=null, $updatedAt=null, $status=null, $destinationLocation=null){
 		if($uid2 === null){
 			$this->fromRow($uid1OrFromRow);
 		}
 		else {
-			$this->uid1 = $uid1OrFromRow;
-			$this->uid2 = $uid2;
-			$this->updatedAt = $updatedAt;
-			$this->status = $status;
-			$this->destinationLocation = $destinationLocation;
+			$this->setUid1($uid1OrFromRow);
+			$this->setUid2($uid2);
+			$this->setUpdatedAt($updatedAt);
+			$this->setStatus($status);
+			$this->setDestinationLocation($destinationLocation);
+			$this->setSendingLocation($sendingLocation);
 		}
-	}
-
-	public function fromRow($row){
-		$this->uid1 = $row['friend_uid1'];
-		$this->uid2 = $row['friend_uid2'];
-		$this->updatedAt = $row['updated_at'];
-		$this->status = $row['status'];
-		$this->destinationLocation = $row['destination_location'];
-	}
-
-
-	public function getUid1(){
-		return $this->uid1;
-	}
-
-	public function getUid2(){
-		return $this->uid2;
-	}
-
-	public function getUpdatedAt(){
-		return $this->updatedAt;
-	}
-
-	public function getStatus(){
-		return $this->status;
-	}
-
-	public function getDestinationLocation() {
-		return $this->destinationLocation;
 	}
 }
