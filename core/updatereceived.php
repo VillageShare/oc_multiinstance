@@ -101,7 +101,7 @@ class UpdateReceived {
 				if ($receivedFriendship->getAddedAt() > $friendship->getUpdatedAt()) { //if newer than last update
 					$friendship->setStatus($receivedFriendship->getStatus());
 					$friendship->setUpdatedAt($receivedFriendship->getUpdatedAt());
-					$this->friendshipMapper->update($receivedFriendship);
+					$this->friendshipMapper->update($friendship);
 				}
 			}
 			catch (DoesNotExistException $e) {
@@ -110,7 +110,7 @@ class UpdateReceived {
 				$friendship->setUid2($receivedFriendship->getUid2());
 				$friendship->setStatus($receivedFriendship->getStatus());
 				$friendship->setUpdatedAt($receivedFriendship->getUpdatedAt());
-				$this->friendshipMapper->insert($receivedFriendship);
+				$this->friendshipMapper->insert($friendship);
 			}
 			$this->receivedFriendshipMapper->delete($receivedFriendship);
 			$this->api->commit();
