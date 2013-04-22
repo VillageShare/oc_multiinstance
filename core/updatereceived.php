@@ -98,23 +98,23 @@ class UpdateReceived {
 		
 		foreach ($receivedFriendships as $receivedFriendship) {
 
-			$location1 = $this->getUserLocation($receivedFriendship->getUid1());
-			$location2 = $this->getUserLocation($receivedFriendship->getUid2());
+			$location1 = $this->getUserLocation($receivedFriendship->getFriendUid1());
+			$location2 = $this->getUserLocation($receivedFriendship->getFriendUid2());
 			$centralServer = $this->api->getAppValue('centralServer');
 
 			if ($location1 !== $receivedFriendship->getSendingLocation() && $location1 !== $centralServer) {
-				$queuedFriendship = new QueuedFriendship($receivedFriendship->getUid1(), $receivedFriendship->getUid2(), $receivedFriendship->getUpdated(), $receivedFriendship->getStatus(), $location1);	
+				$queuedFriendship = new QueuedFriendship($receivedFriendship->getFriendUid1(), $receivedFriendship->getFriendUid2(), $receivedFriendship->getUpdated(), $receivedFriendship->getStatus(), $location1);	
 				$queuedFriendshipMapper->save($queuedFriendship);
 			}
 			if ($location2 !== $receivedFriendship->getSendingLocation() && $location2 !== $centralServer) {
-				$queuedFriendship = new QueuedFriendship($receivedFriendship->getUid1(), $receivedFriendship->getUid2(), $receivedFriendship->getUpdated(), $receivedFriendship->getStatus(), $location2);	
+				$queuedFriendship = new QueuedFriendship($receivedFriendship->getFriendUid1(), $receivedFriendship->getFriendUid2(), $receivedFriendship->getUpdated(), $receivedFriendship->getStatus(), $location2);	
 				$queuedFriendshipMapper->save($queuedFriendship);
 			}
 
 			//TODO: try block with rollback?
 			$this->api->beginTransaction();
 			try {
-				$friendship = $this->friendshipMapper->find($receivedFriendship->getUid1(), $receivedFriendship->getUid2());
+				$friendship = $this->friendshipMapper->find($receivedFriendship->getFriendUid1(), $receivedFriendship->getFriendUid2());
 				if ($receivedFriendship->getUpdatedAt() > $friendship->getUpdatedAt()) { //if newer than last update
 					$friendship->setStatus($receivedFriendship->getStatus());
 					$friendship->setUpdatedAt($receivedFriendship->getUpdatedAt());
@@ -123,8 +123,8 @@ class UpdateReceived {
 			}
 			catch (DoesNotExistException $e) {
 				$friendship = new Friendship();
-				$friendship->setFriendUid1($receivedFriendship->getUid1());
-				$friendship->setFriendUid2($receivedFriendship->getUid2());
+				$friendship->setFriendUid1($receivedFriendship->getFriendUid1());
+				$friendship->setFriendUid2($receivedFriendship->getFriendUid2());
 				$friendship->setStatus($receivedFriendship->getStatus());
 				$friendship->setUpdatedAt($receivedFriendship->getUpdatedAt());
 				$this->friendshipMapper->insert($friendship);
