@@ -52,7 +52,7 @@ class CronTask {
 	
 	private static $patterns = array(
 		'multiinstance_queued_users.sql' => '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+),[^,]*\)$/',
-		'multiinstance_queued_friendships.sql' =>'/^INSERT.*VALUES \((?<friend_uid1>[^,]+),(?<friend_uid2>[^,]+),(?<timestamp>[^,]+),\d\)$/',  
+		'multiinstance_queued_friendships.sql' =>'/^INSERT.*VALUES \((?<friend_uid1>[^,]+),(?<friend_uid2>[^,]+),\d,(?<timestamp>[^,]+),[^,]*\)$/',  
 		'multiinstance_queued_user_facebook_ids.sql' =>  '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+)\)$/' 
 	);
 
@@ -427,7 +427,7 @@ class CronTask {
 	} 
 
 	protected function deleteQueuedFriendshipSql($uid1, $uid2, $updatedAt) {
-		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_friendships\` WHERE \`friend_uid1\` = {$uid1}  AND \`friend_uid2\` = {$uid2} AND \`updated_at\` = {$updatedAt}";
+		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_friendships\` WHERE \`friend_uid1\` = {$uid1} AND \`friend_uid2\` = {$uid2} AND \`updated_at\` = {$updatedAt}";
 	}
 	
 	protected function deleteQueuedUserFacebookIdSql($uid, $syncedAt) {

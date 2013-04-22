@@ -94,6 +94,11 @@ class CronTaskTest extends \PHPUnit_Framework_TestCase {
 	$sqlNotInsert = "LOCK TABLES `oc_multiinstance_received_users` WRITE";
 	$sqlNotInsertResult =$this->cronTask->toAckFormat($sqlNotInsert, 'multiinstance_queued_users.sql');
 	$this->assertEquals("", $sqlNotInsertResult);
+
+	$insert = "INSERT  IGNORE INTO `oc_multiinstance_received_friendships` VALUES ('user15@UCSB','user13@Kalene',3,'2013-04-22 20:12:41', UCSB)";
+	$insertResult = $this->cronTask->toAckFormat($insert, 'multiinstance_queued_friendships.sql');
+	$this->assertEquals("DELETE IGNORE FROM \`oc_multiinstance_queued_friendships\` WHERE \`friend_uid1\` = 'user15@UCSB' AND \`friend_uid2\` = 'user13@Kalene' AND \`updated_at\` = '2013-04-22 20:12:41';\n", $insertResult);
+
     }
 
 
