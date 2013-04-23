@@ -86,7 +86,7 @@ class RequestResponse {
 					break;
 			}
 
-			$request = $this->receivedRequestMapper->delete($id);
+			$request = $this->receivedRequestMapper->delete($receivedRequest);
 		}
 	}
 
