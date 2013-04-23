@@ -97,7 +97,7 @@ class QueuedFriendshipMapper extends Mapper {
 	 * Uid1 and Uid2 must be in the correct order
 	 */
 	public function save($queuedFriendship) {
-		if ($this->exists($friendship->getUid1(), $friendship->getUid2(), $friendship->getUpdatedAt(), $friendship->getDestinationLocation())){
+		if ($this->exists($friendship->getFriendUid1(), $friendship->getFriendUid2(), $friendship->getUpdatedAt(), $friendship->getDestinationLocation())){
 			return false;
 		}
 		return $this->insert($queuedFriendship);
