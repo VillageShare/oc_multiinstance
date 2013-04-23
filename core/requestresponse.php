@@ -82,7 +82,7 @@ class RequestResponse {
 					
 					break;
 				default:
-					$this->api->log("Invalid request_type {$type} for request from {$location} added_at {$addedAt}, field1 = {$field1}");
+					$this->api->log("Invalid request_type {$type} for request from {$sendingLocation} added_at {$addedAt}, field1 = {$field1}");
 					break;
 			}
 
@@ -136,7 +136,7 @@ class RequestResponse {
 					
 					break;	
 				default:
-					$this->api->log("Invalid request_type {$type} for request id {$requestId} from {$location} added_at {$addedAt}, field1 = {$field1}");
+					$this->api->log("Invalid request_type {$type} for request id {$requestId} from {$receivedResponse->getDestinationLocation()} added_at {$addedAt}, field1 = {$field1}");
 					continue;
 					break;
 			}
