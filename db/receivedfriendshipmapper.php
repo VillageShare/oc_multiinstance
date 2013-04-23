@@ -87,7 +87,7 @@ class ReceivedFriendshipMapper extends Mapper {
 
 	public function delete(ReceivedFriendship $receivedFriendship) {
 		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE (`friend_uid1` = ? AND `friend_uid2` = ? AND `updated_at` = ? AND `destination_location` = ?)';
-		$params = array($receivedFriendship->getUid1(), $receivedFriendship->getUid2(), $receivedFriendship->getUpdatedAt(), $receivedFriendship->getDestinationLocation());
+		$params = array($receivedFriendship->getFriendUid1(), $receivedFriendship->getFriendUid2(), $receivedFriendship->getUpdatedAt(), $receivedFriendship->getDestinationLocation());
 
 		return $this->execute($sql, $params);
 	}
