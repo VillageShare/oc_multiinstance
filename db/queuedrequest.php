@@ -25,10 +25,6 @@ namespace OCA\MultiInstance\Db;
 
 class QueuedRequest {
 
-
-	//Request types
-	const USER_EXISTS = 1;
-	const FETCH_USER = 2;
 	
 	private $id;
 	private $type;
