@@ -25,7 +25,7 @@ namespace OCA\MultiInstance\Db;
 use \OCA\AppFramework\Core\API;
 use \OCA\AppFramework\Db\Mapper;
 use \OCA\AppFramework\Db\DoesNotExistException;
-
+use OCA\AppFramework\Db\Entity;
 
 class QueuedUserMapper extends Mapper {
 
@@ -121,7 +121,7 @@ class QueuedUserMapper extends Mapper {
 	 * Deletes an item
 	 * @param string $uid: the uid of the QueuedUser
 	 */
-	public function delete($queuedUser){
+	public function delete(Entity $queuedUser){
 		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `uid` = ?  AND `added_at` = ? AND `destination_location`';
 		$params = array(
 			$queuedUser->getUid(),

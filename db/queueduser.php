@@ -22,41 +22,27 @@
 
 namespace OCA\MultiInstance\Db;
 
+use OCA\AppFramework\Db\Entity;
 
-class QueuedUser {
+class QueuedUser extends Entity{
 
-	private $uid;
-	private $displayname;
-	private $password;
-	private $addedAt;
-	private $destinationLocation;
+	public $uid;
+	public $displayname;
+	public $password;
+	public $addedAt;
+	public $destinationLocation;
 
-	public function __construct($uid, $displayname, $password, $addedAt, $destinationLocation){
-		$this->uid = $uid;
-		$this->displayname = $displayname;
-		$this->password = $password;
-		$this->addedAt = $addedAt;
-		$this->destinationLocation = $destinationLocation;
+	public function __construct($uid, $displayname=null, $password=null, $addedAt=null, $destinationLocation=null){
+		if ($displayName) {
+			$this->setUid($uid);
+			$this->setDisplayname($displayname);
+			$this->setPassword($password);
+			$this->setAddedAt($addedAt);
+			$this->setDestinationLocation($destinationLocation);
+		}
+		else {
+			$this->fromRow($uid);
+		}
 
-	}
-
-	public function getUid(){
-		return $this->uid;
-	}
-
-	public function getDisplayname(){
-		return $this->displayname;
-	}
-
-	public function getPassword(){
-		return $this->password;
-	}
-
-	public function getAddedAt(){
-		return $this->addedAt;
-	}
-
-	public function getDestinationLocation() {
-		return $this->destinationLocation;
 	}
 }
