@@ -28,7 +28,7 @@ use \OCA\AppFramework\Db\Mapper as Mapper;
 use \OCA\AppFramework\Db\DoesNotExistException as DoesNotExistException;
 use \OCA\AppFramework\Db\MultipleObjectsReturnedException as MultipleObjectsReturnedException;
 use OCA\Friends\Db\AlreadyExistsException as AlreadyExistsException;
-
+use OCA\MultiInstance\Db\QueuedFriendship;
 
 class QueuedFriendshipMapper extends Mapper {
 
@@ -69,7 +69,7 @@ class QueuedFriendshipMapper extends Mapper {
 		} elseif($result->fetchRow() !== false) {
 			throw new MultipleObjectsReturnedException("Friendship with users  {$userId1} and {$userId2}  returned more than one result.");
 		}
-		return new Friendship($row);
+		return new QueuedFriendship($row);
 	}	
 
 
