@@ -28,6 +28,7 @@ use OCA\MultiInstance\DependencyInjection\DIContainer;
 use OCA\MultiInstance\Db\QueuedFriendship;
 use OCA\MultiInstance\Db\QueuedUserFacebookId;
 use OCA\MultiInstance\Db\QueuedRequest;
+use OCA\MultiInstance\Db\Request;
 use OCA\MultiInstance\Db\QueuedFileCache;
 
 /**
@@ -79,11 +80,11 @@ class MILocation{
 
 
 	static public function userExistsAtCentralServer($uid, $mockQueuedRequestMapper=null, $mockApi=null) {
-		self::pullUserFromCentralServer($uid, QueuedRequest::USER_EXISTS, $mockRequestUserMapper, $mockApi);	
+		self::pullUserFromCentralServer($uid, Request::USER_EXISTS, $mockRequestUserMapper, $mockApi);	
 	}
 
 	static public function fetchUserFromCentralServer($uid, $mockQueuedRequestMapper=null, $mockApi=null) {
-		self::pullUserFromCentralServer($uid, QueuedRequest::FETCH_USER, $mockQueuedRequestMapper, $mockApi);	
+		self::pullUserFromCentralServer($uid, Request::FETCH_USER, $mockQueuedRequestMapper, $mockApi);	
 	}
 
 	static protected function pullUserFromCentralServer($uid, $type, $mockQueuedRequestMapper=null, $mockApi=null) {
