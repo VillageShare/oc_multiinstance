@@ -25,6 +25,7 @@ namespace OCA\MultiInstance\Db;
 use \OCA\AppFramework\Core\API;
 use \OCA\AppFramework\Db\Mapper;
 use \OCA\AppFramework\Db\DoesNotExistException;
+use OCA\AppFramework\Db\Entity;
 
 
 class UserUpdateMapper extends Mapper {
@@ -111,7 +112,7 @@ class UserUpdateMapper extends Mapper {
 
 	}
 
-       public function update(UserUpdate $queuedUser){
+       public function update(Entity $queuedUser){
 		throw new \Exception("reimplement this");
                $sql = 'UPDATE `'. $this->getTableName() . '` SET
                                `updated_at` = ?
@@ -129,7 +130,7 @@ class UserUpdateMapper extends Mapper {
 	 * Deletes an item
 	 * @param string $uid: the uid of the UserUpdate
 	 */
-	public function delete($userUpdate){
+	public function delete(Entity $userUpdate){
 		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `uid` = ?';
 		$params = array(
 			$userUpdate->getUid(),
