@@ -26,6 +26,8 @@ use \OCA\AppFramework\Core\API;
 use \OCA\AppFramework\Db\Mapper;
 use \OCA\AppFramework\Db\DoesNotExistException;
 
+use OCA\MultiInstsance\Db\ReceivedUser;
+use \OCA\AppFramework\Db\Entity;
 
 class ReceivedUserMapper extends Mapper {
 
@@ -61,7 +63,7 @@ class ReceivedUserMapper extends Mapper {
 	 * Deletes an item
 	 * @param string $uid: the uid of the ReceivedUser
 	 */
-	public function delete($receivedUser){
+	public function delete(Entity $receivedUser){
 		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `uid` = ? AND `added_at` = ? AND `destination_location` = ?';
 		$params = array(
 			$receivedUser->getUid(),

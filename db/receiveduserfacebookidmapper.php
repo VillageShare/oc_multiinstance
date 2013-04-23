@@ -28,6 +28,7 @@ use \OCA\AppFramework\Db\Mapper as Mapper;
 use \OCA\AppFramework\Db\DoesNotExistException as DoesNotExistException;
 
 use \OCA\MultiInstance\Db\ReceivedUserFacebookId;
+use \OCA\AppFramework\Db\Entity;
 
 class ReceivedUserFacebookIdMapper extends Mapper {
 
@@ -77,9 +78,9 @@ class ReceivedUserFacebookIdMapper extends Mapper {
 	/**
 	 * 
 	 */
-	public function delete($userId, $syncedAt, $destinationLocation){
+	public function delete(Entity $userFacebookId){
 		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE (`uid` = ? AND `friends_synced_at` = ? AND `destination_location`)';
-		$params = array($uid, $syncedAt, $destinationLocation);
+		$params = array($userFacebookId->getUid(), $userFacebookId->getSyncedAt(), $userFacebookId->getDestinationLocation());
 
 		return $this->execute($sql, $params);
 	}

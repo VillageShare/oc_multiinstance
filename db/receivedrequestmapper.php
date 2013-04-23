@@ -29,6 +29,8 @@ use \OCA\AppFramework\Db\DoesNotExistException as DoesNotExistException;
 use \OCA\AppFramework\Db\MultipleObjectsReturnedException as MultipleObjectsReturnedException;
 use OCA\Friends\Db\AlreadyExistsException as AlreadyExistsException;
 
+use OCA\MultiInstance\Db\ReceivedRequest;
+use \OCA\AppFramework\Db\Entity;
 
 class ReceivedRequestMapper extends Mapper {
 
@@ -56,12 +58,8 @@ class ReceivedRequestMapper extends Mapper {
 		return $entityList;
 	}
 
-	public function delete($id) {
-		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `id` = ?';
-		$params = array($id);
-
-		return $this->execute($sql, $params);
-		
+	public function delete(Entity $receivedRequest) {
+		return parent:delete($receivedRequest); //This line is here for clarity that the delete is used
 	}
 
 }

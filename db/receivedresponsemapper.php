@@ -30,6 +30,10 @@ use \OCA\AppFramework\Db\MultipleObjectsReturnedException as MultipleObjectsRetu
 use OCA\Friends\Db\AlreadyExistsException as AlreadyExistsException;
 use OCA\MultiInstance\Db\QueuedResponse;
 
+
+use \OCA\AppFramework\Db\Entity;
+
+
 class ReceivedResponseMapper extends Mapper {
 
 
@@ -91,9 +95,9 @@ class ReceivedResponseMapper extends Mapper {
 
 
 
-	public function delete($requestId) {
+	public function delete(Entity $receivedResponse) {
 		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `request_id` = ?';
-		$params = array($requestId);
+		$params = array($receivedResponse->getRequestId());
 
 		return $this->execute($sql, $params);
 	}

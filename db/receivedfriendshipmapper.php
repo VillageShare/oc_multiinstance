@@ -30,6 +30,7 @@ use \OCA\AppFramework\Db\MultipleObjectsReturnedException as MultipleObjectsRetu
 use OCA\Friends\Db\AlreadyExistsException as AlreadyExistsException;
 
 use \OCA\MultiInstance\Db\ReceivedFriendship;
+use \OCA\AppFramework\Db\Entity;
 
 class ReceivedFriendshipMapper extends Mapper {
 
@@ -85,7 +86,7 @@ class ReceivedFriendshipMapper extends Mapper {
 		return $entityList;
 	}
 
-	public function delete(ReceivedFriendship $receivedFriendship) {
+	public function delete(Entity $receivedFriendship) {
 		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE (`friend_uid1` = ? AND `friend_uid2` = ? AND `updated_at` = ? AND `destination_location` = ?)';
 		$params = array($receivedFriendship->getFriendUid1(), $receivedFriendship->getFriendUid2(), $receivedFriendship->getUpdatedAt(), $receivedFriendship->getDestinationLocation());
 
