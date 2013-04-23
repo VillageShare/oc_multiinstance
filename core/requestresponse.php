@@ -100,8 +100,6 @@ class RequestResponse {
 		$receivedResponses = $this->receivedResponseMapper->findAll();
 		foreach ($receivedResponses as $receivedResponse) {
 			$requestId = $receivedResponse->getRequestId();
-
-			$queuedRequest = $this->queuedRequestMapper->find($requestId); 
 			$addedAt = $receivedResponse->getAddedAt();
 			$field1 = $receivedResponse->getField1();
 			$answer = $receivedResponse->getAnswer();
