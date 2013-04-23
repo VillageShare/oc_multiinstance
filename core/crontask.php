@@ -128,8 +128,9 @@ class CronTask {
 			$locations = $this->locationMapper->findAll();
 		}
 		else {
-			$location = array( 'location' => $this->api->getAppValue('centralServer'));
-			$locations = array(new Location($location));
+			$location = new Location();
+			$location->setLocation($this->api->getAppValue('centralServer')); 
+			$locations = array($location);
 		}
 
 		foreach ($locations as $location) {
