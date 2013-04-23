@@ -32,15 +32,17 @@ class CronHelper {
 	private $locationMapper;
 	private $cronTask;
 	private $updateReceived;
+	private $requestResponse;
 
 	/**
 	 * @param API $this->api: an api wrapper instance
 	 */
-	public function __construct($api, $locationMapper, $cronTask, $updateReceived){
+	public function __construct($api, $locationMapper, $cronTask, $updateReceived, $requestResponse){
 		$this->api = $api;
 		$this->locationMapper = $locationMapper;
 		$this->cronTask = $cronTask;
 		$this->updateReceived = $updateReceived;
+		$this->requestResponse = $requestResponse;
 	}
 
 	public function sync() {
@@ -96,10 +98,10 @@ class CronHelper {
 
 		//Only the central server should process requests
 		if ($this->api->getAppValue('centralServer') === $this->api->getAppValue('location')) {
-			$this->cronTask->processRequests();
+			$this->requestResponse->processRequests();
 		}
 		else { //only the non-central servers should process responses
-			$this->cronTask->processResponses();
+			$this->requestResponse->processResponses();
 		}
 	}
 
