@@ -82,11 +82,7 @@ class QueuedResponseMapper extends Mapper {
 			//It has already been processed, do nothing
 			return false;
 		}
-		
-		$sql = 'INSERT INTO `'. $this->getTableName() . '` (request_id, destination_location, answer, added_at_micro_time)'.
-			' VALUES(?, ?, ?)';
-		$params = array($response->getRequestId(), $response->getDestinationLocation(), $response->getAnswer(), $this->api->microTime());
-		return $this->execute($sql, $params);
+		return $this->insert($response);	
 	}
 
 

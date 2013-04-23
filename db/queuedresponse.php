@@ -22,42 +22,26 @@
 
 namespace OCA\MultiInstance\Db;
 
+use OCA\AppFramework\Db\Entity;
 
-class QueuedResponse {
+class QueuedResponse extends Entity {
 
 	
-	private $requestId;
-	private $destinationLocation;
-	private $answer;
+	public $requestId;
+	public $destinationLocation;
+	public $answer;
 
 	public function __construct($requestIdOrFromRow, $destinationLocation=null, $answer=null){
 		if($destinationLocation === null){
 			$this->fromRow($requestIdOrFromRow);
 		}
 		else {
-			$this->destinationLocation = $destinationLocation;
-			$this->requestId = $requestIdOrFromRow;
-			$this->answer = $answer;
+			$this->setDestinationLocation($destinationLocation);
+			$this->setRequestId($requestIdOrFromRow);
+			$this->setAnswer($answer);
 		}
 	}
 
-	public function fromRow($row){
-		$this->id = $row['request_id'];
-		$this->destinationLocation = $row['destination_location'];
-		$this->answer = $row['answer'];
-	}
-
-	public function getRequestId() {
-		return $this->requestId;
-	}
-
-	public function getDestinationLocation(){
-		return $this->destinationLocation;
-	}
-
-	public function getAnswer(){
-		return $this->answer;
-	}
 
 	
 }
