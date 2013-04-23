@@ -53,4 +53,7 @@ class Location {
 	public function getIP(){
 		return $this->ip;
 	}
+	public function setLocation($location) {
+		$this->location = $location;
+	}
 }
