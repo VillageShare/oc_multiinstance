@@ -115,8 +115,9 @@ class MILocation{
 			$api = $di['API'];
 		}
 		$centralServerName = $api->getAppValue('centralServer');
-		if ($centralServerName !== $api->getAppValue('location')) {
-			$queuedFriendship = new QueuedFriendship($friend_uid1, $friend_uid2, $updated_at, $status, $centralServerName);
+		$location = $api->getAppValue('location');
+		if ($centralServerName !== $location) {
+			$queuedFriendship = new QueuedFriendship($friend_uid1, $friend_uid2, $updated_at, $status, $centralServerName, $location);
 			$qfm->save($queuedFriendship);
 		}
 	}
