@@ -33,7 +33,7 @@ class QueuedFriendship extends Entity {
 	public $destinationLocation;
 	public $sendingLocation;
 
-	public function __construct($uid1OrFromRow, $uid2=null, $updatedAt=null, $status=null, $destinationLocation=null){
+	public function __construct($uid1OrFromRow, $uid2=null, $updatedAt=null, $status=null, $destinationLocation=null, $sendingLocation=null){
 		if($uid2 === null){
 			$this->fromRow($uid1OrFromRow);
 		}
