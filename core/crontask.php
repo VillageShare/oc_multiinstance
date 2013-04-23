@@ -34,6 +34,7 @@ class CronTask {
 	private $userUpdateMapper;
 	private $locationMapper;
 	private $receivedResponseMapper;
+	private $queuedResponseMapper;
 	private $receivedRequestMapper;
 
 	private $dbuser;
@@ -61,11 +62,12 @@ class CronTask {
 	/**
 	 * @param API $api: an api wrapper instance
 	 */
-	public function __construct($api, $userUpdateMapper, $locationMapper, $receivedResponseMapper, $receivedRequestMapper){
+	public function __construct($api, $userUpdateMapper, $locationMapper, $receivedResponseMapper, $receivedRequestMapper, $queuedResponseMapper){
 		$this->api = $api;
 		$this->userUpdateMapper = $userUpdateMapper;
 		$this->locationMapper = $locationMapper;
 		$this->receivedResponseMapper = $receivedResponseMapper;
+		$this->queuedResponseMapper = $queuedResponseMapper;
 		$this->receivedRequestMapper = $receivedRequestMapper;
 
 		$this->dbuser = $this->api->getSystemValue('dbuser'); 
