@@ -23,7 +23,7 @@
 namespace OCA\MultiInstance\Db;
 
 
-class ReceivedRequest {
+class ReceivedRequest extends Entity{
 
 	private $id;
 	private $type;
@@ -36,40 +36,13 @@ class ReceivedRequest {
 			$this->fromRow($typeOrFromRow);
 		}
 		else {
-			$this->id = $id;
-			$this->type = $typeOrFromRow;
-			$this->sendingLocation = $location;
-			$this->addedAt = $addedAt;
-			$this->field1 = $field1;
+			$this->setId($id);
+			$this->setType($typeOrFromRow);
+			$this->setSendingLocation($location);
+			$this->setAddedAt($addedAt);
+			$this->setField1($field1);
 		}
 	}
 
-	public function fromRow($row){
-		$this->id = $row['id'];
-		$this->type = $row['request_type'];
-		$this->sendingLocation = $row['sending_location'];
-		$this->addedAt = $row['added_at'];
-		$this->field1 = $row['field1'];
-	}
-
-	public function getId() {
-		return $this->id;
-	}
-
-	public function getType(){
-		return $this->type;
-	}
-
-	public function getSendingLocation(){
-		return $this->sendingLocation;
-	}
-
-	public function getAddedAt(){
-		return $this->addedAt;
-	}
-
-	public function getField1(){
-		return $this->field1;
-	}
 
 }
