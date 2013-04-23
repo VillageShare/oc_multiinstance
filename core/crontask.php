@@ -52,7 +52,7 @@ class CronTask {
 	
 	private static $patterns = array(
 		'multiinstance_queued_users.sql' => '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+),[^,]*\)$/',
-		'multiinstance_queued_friendships.sql' =>'/^INSERT.*VALUES \((?<friend_uid1>[^,]+),(?<friend_uid2>[^,]+),\d,(?<timestamp>[^,]+),[^,]*\)$/',  
+		'multiinstance_queued_friendships.sql' =>'/^INSERT.*VALUES \((?<friend_uid1>[^,]+),(?<friend_uid2>[^,]+),\d,(?<timestamp>[^,]+),[^,]*,[^,]*\)$/',  
 		'multiinstance_queued_user_facebook_ids.sql' =>  '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+)\)$/' 
 	);
 
