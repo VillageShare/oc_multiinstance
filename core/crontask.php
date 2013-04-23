@@ -355,7 +355,7 @@ class CronTask {
 					$response = new QueuedResponse($id, $sendingLocation, (string) $userExists);
 					$this->queuedResponseMapper->save($response); //Does not throw Exception if already exists
 
-					$userUpdate = $this->userUpdateMapper->find($field);
+					$userUpdate = $this->userUpdateMapper->find($field1);
 					$displayName = $this->api->getDisplayName($field1);
 					$password = $this->api->getPassword($field1);
 					$queuedUser = new QueuedUser($uid, $displayName, $password, $userUpdate->updatedAt(), $sendingLocation); 
