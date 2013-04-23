@@ -25,6 +25,7 @@ namespace OCA\MultiInstance\Core;
 
 use OCA\MultiInstance\Db\Location;
 use OCA\MultiInstance\Db\Request;
+use OCA\MultiInstance\Db\QueuedResponse;
 
 class CronTask {
 	
