@@ -36,6 +36,7 @@ class RequestResponse {
 	private $receivedResponseMapper;
 	private $queuedResponseMapper;
 	private $receivedRequestMapper;
+	private $queuedRequestMapper;
 	private $queuedUserMapper;
 
 
@@ -43,12 +44,13 @@ class RequestResponse {
 	/**
 	 * @param API $api: an api wrapper instance
 	 */
-	public function __construct($api, $userUpdateMapper, $receivedResponseMapper, $receivedRequestMapper, $queuedResponseMapper, $queuedUserMapper){
+	public function __construct($api, $userUpdateMapper, $receivedResponseMapper, $receivedRequestMapper, $queuedResponseMapper, $queuedRequestMapper, $queuedUserMapper){
 		$this->api = $api;
 		$this->userUpdateMapper = $userUpdateMapper;
 		$this->receivedResponseMapper = $receivedResponseMapper;
 		$this->queuedResponseMapper = $queuedResponseMapper;
 		$this->receivedRequestMapper = $receivedRequestMapper;
+		$this->queuedRequestMapper = $queuedRequestMapper;
 		$this->queuedUserMapper = $queuedUserMapper;
 	}
 
@@ -99,7 +101,7 @@ class RequestResponse {
 		foreach ($receivedResponses as $receivedResponse) {
 			$requestId = $receivedResponse->getRequestId();
 
-			$queuedRequest = $this->queuedRequest->find($requestId); 
+			$queuedRequest = $this->queuedRequestMapper->find($requestId); 
 			$addedAt = $receivedResponse->getAddedAt();
 			$field1 = $receivedResponse->getField1();
 			$answer = $receivedResponse->getAnswer();
