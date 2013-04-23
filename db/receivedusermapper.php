@@ -26,7 +26,7 @@ use \OCA\AppFramework\Core\API;
 use \OCA\AppFramework\Db\Mapper;
 use \OCA\AppFramework\Db\DoesNotExistException;
 
-use OCA\MultiInstsance\Db\ReceivedUser;
+use OCA\MultiInstance\Db\ReceivedUser;
 use \OCA\AppFramework\Db\Entity;
 
 class ReceivedUserMapper extends Mapper {
