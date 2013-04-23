@@ -102,13 +102,14 @@ class UpdateReceived {
 			$location1 = $this->getUidLocation($receivedFriendship->getFriendUid1());
 			$location2 = $this->getUidLocation($receivedFriendship->getFriendUid2());
 			$centralServer = $this->api->getAppValue('centralServer');
+			$thisLocation = $this->api->getAppValue('location');
 
 			if ($location1 !== $receivedFriendship->getSendingLocation() && $location1 !== $centralServer) {
-				$queuedFriendship = new QueuedFriendship($receivedFriendship->getFriendUid1(), $receivedFriendship->getFriendUid2(), $receivedFriendship->getUpdatedAt(), $receivedFriendship->getStatus(), $location1);	
+				$queuedFriendship = new QueuedFriendship($receivedFriendship->getFriendUid1(), $receivedFriendship->getFriendUid2(), $receivedFriendship->getUpdatedAt(), $receivedFriendship->getStatus(), $thisLocation, $location1);	
 				$this->queuedFriendshipMapper->save($queuedFriendship);
 			}
 			if ($location2 !== $receivedFriendship->getSendingLocation() && $location2 !== $centralServer) {
-				$queuedFriendship = new QueuedFriendship($receivedFriendship->getFriendUid1(), $receivedFriendship->getFriendUid2(), $receivedFriendship->getUpdatedAt(), $receivedFriendship->getStatus(), $location2);	
+				$queuedFriendship = new QueuedFriendship($receivedFriendship->getFriendUid1(), $receivedFriendship->getFriendUid2(), $receivedFriendship->getUpdatedAt(), $receivedFriendship->getStatus(), $thisLocation, $location2);	
 				$queuedFriendshipMapper->save($queuedFriendship);
 			}
 
