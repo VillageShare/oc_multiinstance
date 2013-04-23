@@ -33,7 +33,7 @@ class QueuedUser extends Entity{
 	public $destinationLocation;
 
 	public function __construct($uid, $displayname=null, $password=null, $addedAt=null, $destinationLocation=null){
-		if ($displayName) {
+		if ($displayname) {
 			$this->setUid($uid);
 			$this->setDisplayname($displayname);
 			$this->setPassword($password);
