@@ -76,6 +76,10 @@ class CronHelper {
 			}
 		}
 		else { //not-central server
+			$microTime = $this->api->microTime();
+			$cmd = "echo {$microTime} > {$dbSyncPath}{$centralServerName}/last_updated.txt";
+			$this->api->exec($cmd);
+
 			$cmd = "rsync --verbose --compress --rsh ssh \
 			      --recursive --times --perms --links --delete \
 			      --exclude \"*~\" \
