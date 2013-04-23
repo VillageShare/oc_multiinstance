@@ -59,7 +59,7 @@ class ReceivedRequestMapper extends Mapper {
 	}
 
 	public function delete(Entity $receivedRequest) {
-		return parent:delete($receivedRequest); //This line is here for clarity that the delete is used
+		return parent::delete($receivedRequest); //This line is here for clarity that the delete is used
 	}
 
 }
