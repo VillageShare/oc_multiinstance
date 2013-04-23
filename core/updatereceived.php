@@ -98,8 +98,8 @@ class UpdateReceived {
 		
 		foreach ($receivedFriendships as $receivedFriendship) {
 
-			$location1 = $this->getUserLocation($receivedFriendship->getFriendUid1());
-			$location2 = $this->getUserLocation($receivedFriendship->getFriendUid2());
+			$location1 = $this->getUidLocation($receivedFriendship->getFriendUid1());
+			$location2 = $this->getUidLocation($receivedFriendship->getFriendUid2());
 			$centralServer = $this->api->getAppValue('centralServer');
 
 			if ($location1 !== $receivedFriendship->getSendingLocation() && $location1 !== $centralServer) {
