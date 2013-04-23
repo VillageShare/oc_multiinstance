@@ -26,11 +26,11 @@ use OCA\AppFramework\Db\Entity;
 
 class ReceivedRequest extends Entity{
 
-	private $id;
-	private $type;
-	private $sendingLocation;
-	private $addedAt;
-	private $field1;
+	public $id;
+	public $type;
+	public $sendingLocation;
+	public $addedAt;
+	public $field1;
 
 	public function __construct($typeOrFromRow, $id=null, $sendingLocation=null, $addedAt=null, $field1=null){
 		if($id === null){
