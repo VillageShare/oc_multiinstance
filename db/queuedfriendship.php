@@ -22,6 +22,7 @@
 
 namespace OCA\MultiInstance\Db;
 
+use \OCA\AppFramework\Db\Entity;
 
 class QueuedFriendship extends Entity {
 
