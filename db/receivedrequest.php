@@ -27,18 +27,18 @@ use OCA\AppFramework\Db\Entity;
 class ReceivedRequest extends Entity{
 
 	public $id;
-	public $type;
+	public $requestType;
 	public $sendingLocation;
 	public $addedAt;
 	public $field1;
 
-	public function __construct($typeOrFromRow, $id=null, $sendingLocation=null, $addedAt=null, $field1=null){
+	public function __construct($requestTypeOrFromRow, $id=null, $sendingLocation=null, $addedAt=null, $field1=null){
 		if($id === null){
-			$this->fromRow($typeOrFromRow);
+			$this->fromRow($requestTypeOrFromRow);
 		}
 		else {
 			$this->setId($id);
-			$this->setType($typeOrFromRow);
+			$this->setRequestType($requestTypeOrFromRow);
 			$this->setSendingLocation($location);
 			$this->setAddedAt($addedAt);
 			$this->setField1($field1);
