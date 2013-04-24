@@ -142,7 +142,7 @@ class MILocation{
 	}
 
 
-	static public function writeFile($parameters, $storage, $mimetype, $queuedFileCacheMapper=null, $mockApi=null) {
+	static public function queueFile($parameters, $storage, $mimetype, $queuedFileCacheMapper=null, $mockApi=null) {
 		if ($queuedFileCacheMapper !== null && $mockApi !==null) {
 			$qm = $queuedFileCacheMapper;
 			$api = $mockApi;
@@ -155,8 +155,36 @@ class MILocation{
 
 		$centralServerName = $api->getAppValue('centralServer');
 		if ($centralServerName !== $api->getAppValue('location')) {
-			$queuedFileCache = new QueuedFileCache($storage, $parameters[6], $parameters[5], $parameters[7], $parameters[8], $mimetype, $parameters[0], $parameters[3], $parameters[2], $parameters[9], $parameters[4], $api->getTime(),  $centralServerName);
-			$qm->save($queuedFileCache);
+			$newStorage = MILocation::removePathFromStorage($storage);
+			if ($newStorage) {
+				$queuedFileCache = new QueuedFileCache($newStorage, $parameters[6], $parameters[5], $parameters[7], $parameters[8], $mimetype, $parameters[0], $parameters[3], $parameters[2], $parameters[9], $parameters[4], $api->getTime(),  $centralServerName);
+				$qm->save($queuedFileCache);
+			}
+			else {
+				$api->log("Unable to send file with path {$parameters[6]} and storage {$storage} to central server due to bad storage format");
+			}
+		}
+	}
+
+	/**
+	 * @brief Helper function for queueFile
+	 * @param $storage string
+	 */
+	static public function removePathFromStorage($storage, $mockAPI=null) {
+		$result = strrpos($storage, '/data/');
+		if ($result) {
+			return substr($storage, $result + 1);
+		}
+		else {
+			if ($mockAPI) {
+				$api = $mockAPI;
+			}
+			else {
+				$di = new DIContainer();
+				$api = $di['API'];
+			}
+			$api->log("Storage without '/data/' in it.  Implementation depends on that.  storage = {$storage}");
+			return false;
 		}
 	}
 }

@@ -36,7 +36,7 @@ class MILocationTest extends \PHPUnit_Framework_TestCase {
     private $row;
 
     protected function setUp(){
-        $this->api = $this->getMock('OCA\MultiInstance\Core\MultiInstanceAPI', array('prepareQuery', 'getAppValue'), array('multiinstance'));
+        $this->api = $this->getMock('OCA\MultiInstance\Core\MultiInstanceAPI', array('prepareQuery', 'getAppValue', 'log'), array('multiinstance'));
 
     }
 
@@ -126,6 +126,24 @@ class MILocationTest extends \PHPUnit_Framework_TestCase {
 			->with($queuedUserFacebookId)
 			->will($this->returnValue(true));
 		$this->assertEquals(true, MILocation::createQueuedUserFacebookId("user1", "12345", "User", "timestamp", $queuedUserFacebookIdMapper));
+		
+	}
+
+	public function testRemovePathFromStorage() {
+		$storage = 'local::/home/sjones/public_html/dev/owncloud/data/admin@Macha/';
+		$result = MILocation::removePathFromStorage($storage);
+		$this->assertEquals('data/admin@Macha/', $result);
+
+		$storage2 = 'local::/home/sjones/public_html/dev/data/owncloud/data/admin@Macha/';
+		$result2 = MILocation::removePathFromStorage($storage2);
+		$this->assertEquals('data/admin@Macha/', $result2);
+
+		$this->api->expects($this->once())
+			->method('log');
+
+		$storage3 = 'local::/home/sjones/public_html/dev/owncloud/admin@Macha/';
+		$result3 = MILocation::removePathFromStorage($storage3, $this->api);
+		$this->assertEquals(null, $result3);
 		
 	}
 }
