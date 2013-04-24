@@ -142,7 +142,7 @@ class MILocation{
 	}
 
 
-	static public function queueFile($parameters, $storage, $mimetype, $queuedFileCacheMapper=null, $mockApi=null) {
+	static public function queueFile($parameters, $storage, $mimetype, $permissions, $queuedFileCacheMapper=null, $mockApi=null) {
 		if ($queuedFileCacheMapper !== null && $mockApi !==null) {
 			$qm = $queuedFileCacheMapper;
 			$api = $mockApi;
@@ -157,7 +157,7 @@ class MILocation{
 		if ($centralServerName !== $api->getAppValue('location')) {
 			$newStorage = MILocation::removePathFromStorage($storage);
 			if ($newStorage) {
-				$queuedFileCache = new QueuedFileCache($newStorage, $parameters[6], $parameters[5], $parameters[7], $parameters[8], $mimetype, $parameters[0], $parameters[3], $parameters[2], $parameters[9], $parameters[4], $api->getTime(),  $centralServerName);
+				$queuedFileCache = new QueuedFileCache($newStorage, $parameters[6], $parameters[5], $parameters[7], $parameters[8], $mimetype, $parameters[0], $parameters[3], $parameters[2], $parameters[9], $parameters[4], $permissions, $api->getTime(),  $centralServerName);
 				$qm->save($queuedFileCache);
 			}
 			else {
