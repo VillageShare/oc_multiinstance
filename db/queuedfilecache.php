@@ -31,7 +31,8 @@ class QueuedFileCache extends Entity {
 	public $storage;
 	public $path;
 	public $pathHash;
-	public $parent;
+	public $parentStorage;
+	public $parentPath;
 	public $name;
 	public $mimetype;
 	public $mimepart;
@@ -43,11 +44,12 @@ class QueuedFileCache extends Entity {
 	public $addedAt;
 	public $destinationLocation;
 
-	public function __construct($storage, $path, $pathHash, $parent, $name, $mimetype, $mimepart, $size, $mtime, $encrypted, $etag, $permissions, $addedAt, $destinationLocation){
+	public function __construct($storage, $path, $pathHash, $parentStorage, $parentPath, $name, $mimetype, $mimepart, $size, $mtime, $encrypted, $etag, $permissions, $addedAt, $destinationLocation){
 		$this->setStorage($storage);
 		$this->setPath($path);
 		$this->setPathHash($pathHash);
-		$this->setParent($parent);
+		$this->setParentStorage($parentStorage);
+		$this->setParentPath($parentPath);
 		$this->setName($name);
 		$this->setMimetype($mimetype);
 		$this->setMimepart($mimepart);

@@ -680,11 +680,18 @@
                         </field>
 
                         <field>
-                                <name>parent</name>
-                                <type>integer</type>
+                                <name>parent_storage</name>
+                                <type>text</type>
                                 <default></default>
                                 <notnull>true</notnull>
-                                <length>4</length>
+                                <length>64</length>
+                        </field>
+                        <field>
+                                <name>parent_path</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>512</length>
                         </field>
 
                         <field>
@@ -774,18 +781,6 @@
                                         <sorting>ascending</sorting>
                                 </field>
 			</index>
-
-                        <index>
-                                <name>fs_parent_name_hash</name>
-                                <field>
-                                        <name>parent</name>
-                                        <sorting>ascending</sorting>
-                                </field>
-                                <field>
-                                        <name>name</name>
-                                        <sorting>ascending</sorting>
-                                </field>
-                        </index>
 
 
                 </declaration>

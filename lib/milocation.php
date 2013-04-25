@@ -142,7 +142,7 @@ class MILocation{
 	}
 
 
-	static public function queueFile($parameters, $storage, $mimetype, $permissions, $queuedFileCacheMapper=null, $mockApi=null) {
+	static public function queueFile($parameters, $storage, $mimetype, $permissions, $parentStorage, $parentPath, $queuedFileCacheMapper=null, $mockApi=null) {
 		if ($queuedFileCacheMapper !== null && $mockApi !==null) {
 			$qm = $queuedFileCacheMapper;
 			$api = $mockApi;
@@ -156,12 +156,13 @@ class MILocation{
 		$centralServerName = $api->getAppValue('centralServer');
 		if ($centralServerName !== $api->getAppValue('location')) {
 			$newStorage = MILocation::removePathFromStorage($storage);
-			if ($newStorage) {
-				$queuedFileCache = new QueuedFileCache($newStorage, $parameters[6], $parameters[5], $parameters[7], $parameters[8], $mimetype, $parameters[0], $parameters[3], $parameters[2], $parameters[9], $parameters[4], $permissions, $api->getTime(),  $centralServerName);
+			$newParentStorage = MILocation::removePathFromStorage($parentStorage);
+			if ($newStorage && $newParentStorage) {
+				$queuedFileCache = new QueuedFileCache($newStorage, $parameters[6], $parameters[5], $newParentStorage, $parentPath, $parameters[8], $mimetype, $parameters[0], $parameters[3], $parameters[2], $parameters[9], $parameters[4], $permissions, $api->getTime(),  $centralServerName);
 				$qm->save($queuedFileCache);
 			}
 			else {
-				$api->log("Unable to send file with path {$parameters[6]} and storage {$storage} to central server due to bad storage format");
+				$api->log("Unable to send file with path {$parameters[6]} and storage {$storage}  and parent with path {$parentPath} and storage {$parentStorage} to central server due to bad storage format");
 			}
 		}
 	}
