@@ -124,9 +124,9 @@ class RequestResponse {
 						continue;
 					}
 					if ($answer === "0") {
-						$friendshipRequests = $this->friendshipMapper->findAllByUser($field1);
-						foreach ($friendshipRequests as $friendshipRequest) {
-							$this->friendshipMapper->delete($friendshipRequest-getUid1(), $friendshipRequest->getUid2());
+						$friendships = $this->friendshipMapper->findAllByUser($field1);
+						foreach ($friendships as $friendship) {
+							$this->friendshipMapper->delete($friendship->getFriendUid1(), $friendship->getFriendUid2());
 						}
 					}
 					$this->api->beginTransaction();
