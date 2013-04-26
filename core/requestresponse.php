@@ -73,7 +73,7 @@ class RequestResponse {
 					$userExists = $this->api->userExists($field1);	
 
 					$this->api->beginTransaction();
-					$response = new QueuedResponse($id, $sendingLocation, (string) $userExists);
+					$response = new QueuedResponse($id, $sendingLocation, (string) $userExists, $this->api->microTime());
 					$this->queuedResponseMapper->save($response); //Does not throw Exception if already exists
 
 					if ($userExists) {

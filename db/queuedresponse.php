@@ -30,8 +30,9 @@ class QueuedResponse extends Entity {
 	public $requestId;
 	public $destinationLocation;
 	public $answer;
+	public $addedAtMicroTime;
 
-	public function __construct($requestIdOrFromRow, $destinationLocation=null, $answer=null){
+	public function __construct($requestIdOrFromRow, $destinationLocation=null, $answer=null, $addedAtMicroTime=null){
 		if($destinationLocation === null){
 			$this->fromRow($requestIdOrFromRow);
 		}
@@ -39,6 +40,7 @@ class QueuedResponse extends Entity {
 			$this->setDestinationLocation($destinationLocation);
 			$this->setRequestId($requestIdOrFromRow);
 			$this->setAnswer($answer);
+			$this->setAddedAtMicroTime($addedAtMicroTime);
 		}
 	}
 
