@@ -25,8 +25,8 @@ namespace OCA\MultiInstance\Db;
 
 class UserUpdate {
 
-	private $uid;
-	private $updatedAt;
+	public $uid;
+	public $updatedAt;
 
 	public function __construct($uidOrRow, $updatedAt=null){
 		if ($updatedAt !== null) {
