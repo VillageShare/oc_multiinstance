@@ -158,6 +158,12 @@
 
 		<declaration>	
 			<field>
+				<name>id</name>
+				<type>integer</type>
+				<notnull>true</notnull>
+				<autoincrement>1</autoincrement>
+			</field>
+			<field>
 				<name>uid</name>
 				<type>text</type>
 				<default></default>

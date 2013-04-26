@@ -26,6 +26,7 @@ use OCA\AppFramework\Db\Entity;
 
 class UserUpdate extends Entity{
 
+	public $id;
 	public $uid;
 	public $updatedAt;
 
