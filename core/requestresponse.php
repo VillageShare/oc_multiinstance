@@ -103,6 +103,7 @@ class RequestResponse {
 			$addedAt = $receivedResponse->getAddedAt();
 			$field1 = $receivedResponse->getField1();
 			$answer = $receivedResponse->getAnswer();
+			$type = $receivedResponse->getRequestType();
 
 			switch ($type) {
 				case Request::USER_EXISTS:
