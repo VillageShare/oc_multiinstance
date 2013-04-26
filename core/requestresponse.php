@@ -113,8 +113,8 @@ class RequestResponse {
 				$field1 = $queuedRequest->getField1();
 			}
 			else {
-				$type = null; //will go into default in case statement
-				$field1 = null;
+				//request no longer exists, so just delete response
+				$this->receivedResponseMapper->delete($receivedResponse);
 			}
 			
 			switch ($type) {
