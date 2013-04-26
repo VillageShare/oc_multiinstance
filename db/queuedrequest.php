@@ -22,60 +22,27 @@
 
 namespace OCA\MultiInstance\Db;
 
+use OCA\AppFramework\Db\Entity;
 
 class QueuedRequest {
 
 	
-	private $id;
-	private $requestType;
-	private $sendingLocation;
-	private $addedAt;
-	private $field1;
+	public $id;
+	public $requestType;
+	public $sendingLocation;
+	public $addedAt;
+	public $field1;
 
 	public function __construct($requestTypeOrFromRow, $sendingLocation=null, $addedAt=null, $destinationLocation=null, $field1=null){
 		if($sendingLocation === null){
 			$this->fromRow($requestTypeOrFromRow);
 		}
 		else {
-			$this->requestType = $requestTypeOrFromRow;
-			$this->sendingLocation = $sendingLocation;
-			$this->destinationLocation = $destinationLocation;
-			$this->addedAt = $addedAt;
-			$this->field1 = $field1;
+			$this->getRequestType($requestTypeOrFromRow);
+			$this->getSendingLocation($sendingLocation);
+			$this->getDestinationLocation($destinationLocation);
+			$this->getAddedAt($addedAt);
+			$this->getField1($field1);
 		}
 	}
-
-	public function fromRow($row){
-		$this->id = $row['id'];
-		$this->requestType = $row['request_type'];
-		$this->sendingLocation = $row['sending_location'];
-		$this->destinationLocation = $row['destination_location'];
-		$this->addedAt = $row['added_at'];
-		$this->field1 = $row['field1'];
-	}
-
-	public function getId() {
-		return $this->id;
-	}
-
-	public function getRequestType(){
-		return $this->requestType;
-	}
-
-	public function getSendingLocation(){
-		return $this->sendingLocation;
-	}
-
-	public function getAddedAt(){
-		return $this->addedAt;
-	}
-
-	public function getField1(){
-		return $this->field1;
-	}
-
-	public function getDestinationLocation(){
-		return $this->destinationLocation;
-	}
-	
 }

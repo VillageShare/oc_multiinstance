@@ -62,7 +62,7 @@ class RequestResponse {
 		foreach ($receivedRequests as $receivedRequest) {
 			$id = $receivedRequest->getId();
 			$sendingLocation = $receivedRequest->getSendingLocation();
-			$type = $receivedRequest->getType();
+			$type = $receivedRequest->getRequestType();
 			$addedAt = $receivedRequest->getAddedAt();
 			$field1 = $receivedRequest->getField1();
 			

@@ -178,5 +178,45 @@ class UpdateReceived {
 		}
 	}
 
+	public function updateFilecacheFromReceivedFilecaches() {
+		$receivedFilecaches = $this->receivedFilecacheMapper->findAll();
+
+		foreach ($receivedFilecaches as $receivedFilecache) {
+			$this->api->beginTransaction();
+
+			$storage = null;
+			try {
+				//$storage = $this->api->findStorage
+			}
+			catch (DoesNotExistException $e) {
+				//$storage = new Storage($path . $receivedFilecache->getStorage)
+			}
+			$mimetype = null;
+			//search for mimetype, if doesn't exist add mimetype
+
+			$filecache = null;
+			try {
+				//$filecache = $this->api->findFilecahce(storage, path)
+			}
+			catch (DoesNotExistException $e) {
+				//$filecache = new Filecache(...)
+			}
+			//compare mtime?	
+			//if newer
+				//save
+			$permissionsi = null;
+			try {
+				//$permissions = $this->api->findPermissions(fileid, user)
+			}
+			catch (DoesNotExistException $e) {
+				//$permissions = new Permissiosn(fileid, user, permission)
+			}
+			//set permissions
+			//save permissions
+
+			$this->api->commit();
+		}
+	}
+
 
 }

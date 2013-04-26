@@ -162,7 +162,6 @@ class CronTask {
 			$locationName = $this->api->baseName($dir);	
 			foreach (self::$tables as $queuedTable => $receivedTable) {
 				$full_file =  "{$dir}/{$queuedTable}.sql";
-error_log($full_file);
 				if(!$this->api->fileExists($full_file)) {
 					continue;
 				}
