@@ -24,7 +24,7 @@ namespace OCA\MultiInstance\Db;
 
 use OCA\AppFramework\Db\Entity;
 
-class QueuedRequest {
+class QueuedRequest extends Entity{
 
 	
 	public $id;
