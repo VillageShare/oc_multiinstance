@@ -25,6 +25,7 @@ namespace OCA\MultiInstance\Db;
 use \OCA\AppFramework\Core\API;
 use \OCA\AppFramework\Db\Mapper;
 use \OCA\AppFramework\Db\DoesNotExistException;
+use \OCA\AppFramework\Db\MultipleObjectsReturnedException;
 
 use \OCA\AppFramework\Db\QueuedFileCache;
 
