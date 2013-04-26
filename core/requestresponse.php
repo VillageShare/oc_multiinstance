@@ -124,7 +124,7 @@ class RequestResponse {
 						continue;
 					}
 					if ($answer === "0") {
-						$friendshipRequests = $this->friendshipMapper->findAllRecipientFriendshipRequestsByUser($field1);
+						$friendshipRequests = $this->friendshipMapper->findAllByUser($field1);
 						foreach ($friendshipRequests as $friendshipRequest) {
 							$this->friendshipMapper->delete($friendshipRequest-getUid1(), $friendshipRequest->getUid2());
 						}
