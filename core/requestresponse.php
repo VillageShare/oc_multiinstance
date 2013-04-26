@@ -103,11 +103,16 @@ class RequestResponse {
 		$receivedResponses = $this->receivedResponseMapper->findAll();
 		foreach ($receivedResponses as $receivedResponse) {
 			$requestId = $receivedResponse->getRequestId();
-			$addedAt = $receivedResponse->getAddedAt();
-			$field1 = $receivedResponse->getField1();
 			$answer = $receivedResponse->getAnswer();
-			$type = $receivedResponse->getRequestType();
-
+		
+			$queuedRequest = $this->queuedRequestMapper->find($requestId);
+			if ($queuedRequest) {
+				$type = $queuedRequest->getRequestType();
+			}
+			else {
+				$type = null; //will go into default in case statement
+			}
+			
 			switch ($type) {
 				case Request::USER_EXISTS:
 					if ($answer !== "1" AND $answer !== "0") {

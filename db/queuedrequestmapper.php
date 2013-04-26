@@ -46,6 +46,26 @@ class QueuedRequestMapper extends Mapper {
 	}
 
 	/**
+	 * @param $id: request id
+	 * Don't need destination location because should all go to central server
+	 * Does not throw exception because request should be unique (autoincrementing id)
+	 */
+	public function find($id){
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `id` = ?';
+		$params = array($id);
+
+		$result = array();
+		
+		$result = $this->execute($sql, $params);
+		$row = $result->fetchRow();
+
+		if ($row === false) {
+			return false;
+		}
+		return new QueuedRequest($row);
+
+	}
+	/**
 	 * @brief: Checks to see if this request has already been made
 	 * e.g. Has a particular user already been fetched?
 	 */
