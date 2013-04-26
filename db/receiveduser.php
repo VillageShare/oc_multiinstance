@@ -22,54 +22,27 @@
 
 namespace OCA\MultiInstance\Db;
 
+use OCA\AppFramework\Db\Entity;
 
-class ReceivedUser {
+class ReceivedUser extends Entity {
 
-	private $uid;
-	private $displayname;
-	private $password;
-	private $addedAt;
-	private $destinationLocaiton;
+	public $uid;
+	public $displayname;
+	public $password;
+	public $addedAt;
+	public $destinationLocaiton;
 
 	public function __construct($uid, $displayname=null, $password=null, $addedAt=null, $destinationLocation=null){
 		if ($displayname) {
-			$this->uid = $uid;
-			$this->displayname = $displayname;
-			$this->password = $password;
-			$this->addedAt = $addedAt;
-			$this->destinationLocation = $destinationLocation;
+			$this->setUid($uid);
+			$this->setDisplayname($displayname);
+			$this->setPassword($password);
+			$this->setAddedAt($addedAt);
+			$this->setDestinationLocation($destinationLocation);
 		}
 		else {
 			$this->fromRow($uid);
 		}
 	}
 
-	public function fromRow($row){
-		$this->uid = $row['uid'];
-		$this->displayname = $row['displayname'];
-		$this->password = $row['password'];
-		$this->addedAt = $row['added_at'];
-		$this->destinationLocation = $row['destination_location'];
-	}
-
-
-	public function getUid(){
-		return $this->uid;
-	}
-
-	public function getDisplayname(){
-		return $this->displayname;
-	}
-
-	public function getPassword(){
-		return $this->password;
-	}
-
-	public function getAddedAt(){
-		return $this->addedAt;
-	}
-
-	public function getDestinationLocation(){
-		return $this->destinationLocation;
-	}
 }
