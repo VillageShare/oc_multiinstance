@@ -110,9 +110,11 @@ class RequestResponse {
 			$queuedRequest = $this->queuedRequestMapper->find($requestId);
 			if ($queuedRequest) {
 				$type = $queuedRequest->getRequestType();
+				$field1 = $queuedRequest->getField1();
 			}
 			else {
 				$type = null; //will go into default in case statement
+				$field1 = null;
 			}
 			
 			switch ($type) {
