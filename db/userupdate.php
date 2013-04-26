@@ -30,28 +30,11 @@ class UserUpdate {
 
 	public function __construct($uidOrRow, $updatedAt=null){
 		if ($updatedAt !== null) {
-			$this->uid = $uidOrRow;
-			$this->updatedAt = $updatedAt;
+			$this->setUid($uidOrRow);
+			$this->setUpdatedAt($updatedAt);
 		}
 		else{
 			$this->fromRow($uidOrRow);
 		}
-	}
-	public function fromRow($row){
-		$this->uid = $row['uid'];
-		$this->updatedAt = $row['updated_at'];
-	}
-
-	public function getUid(){
-		return $this->uid;
-	}
-
-	public function getUpdatedAt(){
-		return $this->updatedAt;
-	}
-
-
-	public function setUpdatedAt($datetime){
-		$this->updatedAt = $datetime;
 	}
 }

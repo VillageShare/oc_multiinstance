@@ -93,38 +93,6 @@ class UserUpdateMapper extends Mapper {
 	}
 
 
-	/**
-	 * Saves an item into the database
-	 * @param Item $userUpdate: the item to be saved
-	 * @return the item with the filled in id
-	 */
-	public function save($userUpdate){
-
-		$sql = 'INSERT INTO `'. $this->getTableName() . '` (`uid`, `updated_at`)'.
-				' VALUES(?, ?)';
-
-		$params = array(
-			$userUpdate->getUid(),
-			$userUpdate->getUpdatedAt()
-		);
-
-		return $this->execute($sql, $params);
-
-	}
-
-       public function update(Entity $queuedUser){
-		throw new \Exception("reimplement this");
-               $sql = 'UPDATE `'. $this->getTableName() . '` SET
-                               `updated_at` = ?
-                               WHERE `uid` = ?';
-
-               $params = array(
-                       $queuedUser->getUpdatedAt(),
-                       $queuedUser->getUid()
-               );
-
-               $this->execute($sql, $params);
-       }
 
 	/**
 	 * Deletes an item

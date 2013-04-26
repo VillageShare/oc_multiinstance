@@ -45,7 +45,7 @@ class Hooks{
 			$userUpdate = new UserUpdate($uid, $date, $centralServerName);
 			$c['API']->beginTransaction();
 			$c['QueuedUserMapper']->save($queuedUser);
-			$c['UserUpdateMapper']->save($userUpdate);
+			$c['UserUpdateMapper']->insert($userUpdate);
 			$c['API']->commit();
 		}
 	}
