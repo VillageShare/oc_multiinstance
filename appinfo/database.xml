@@ -601,12 +601,6 @@
 				<notnull>true</notnull>
 				<length>64</length>
 			</field>
-                        <field>
-                                <name>added_at_micro_time</name>
-                                <type>float</type>
-                                <default></default>
-                                <notnull>false</notnull>
-                        </field>
 			<index>
 				<name>request_id_index</name>
 				<field>
@@ -638,12 +632,6 @@
 				<notnull>true</notnull>
 				<length>64</length>
 			</field>
-                        <field>
-                                <name>added_at_micro_time</name>
-                                <type>float</type>
-                                <default></default>
-                                <notnull>false</notnull>
-                        </field>
 			<index>
 				<name>request_id_index</name>
 				<field>
