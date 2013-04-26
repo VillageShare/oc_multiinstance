@@ -80,7 +80,7 @@ class MILocation{
 
 
 	static public function userExistsAtCentralServer($uid, $mockQueuedRequestMapper=null, $mockApi=null) {
-		self::pullUserFromCentralServer($uid, Request::USER_EXISTS, $mockRequestUserMapper, $mockApi);	
+		self::pullUserFromCentralServer($uid, Request::USER_EXISTS, $mockQueuedRequestUserMapper, $mockApi);	
 	}
 
 	static public function fetchUserFromCentralServer($uid, $mockQueuedRequestMapper=null, $mockApi=null) {
