@@ -114,44 +114,6 @@ class CronTask {
 	}
 
 	/**
-	 * Dumps all Responses for each location into their folder of the db_sync
-	 * directory.  Responses are accumulated and dumped because in order to
-	 * reduce how often sync is necessary.
-	 */
-	public function dumpResponses() {
-		$queuedTable = $this->dbtableprefix . "multiinstance_queued_responses";
-		$receivedTable = $this->dbtableprefix . "multiinstance_received_responses";
-
-		if ($this->api->getAppValue('location') === $this->api->getAppValue('centralServer')) {
-			$locations = $this->locationMapper->findAll();
-		}
-		else {
-			$location = new Location();
-			$location->setLocation($this->api->getAppValue('centralServer')); 
-			$locations = array($location);
-		}
-
-		foreach ($locations as $location) {
-			if (strpos($location->getLocation(), ";") !== false) {
-				$this->api->log("Location {$location->getLocation()} has a semicolon in it.  This is not allowed.");
-				continue;
-			}
-			if ($location->getLocation() === $this->api->getAppValue('location')) {
-				continue; //never send to yourself
-			}
-			$file = "{$this->sendPathPrefix}{$location->getLocation()}/r{$this->api->microTime()}";
-			#TODO: add if this directory is writable
-
-			$cmd = "mysqldump --add-locks --insert --skip-comments --no-create-info --no-create-db -u{$this->dbuser} -p{$this->dbpassword} {$this->dbname} {$queuedTable} --where=\"destination_location='{$location->getLocation()}'\" > {$file}";
-			$this->api->exec($cmd);
-			$replace = "sed -i 's/{$queuedTable}/{$receivedTable}/g' {$file}";
-			$this->api->exec(escapeshellcmd($replace));
-			$eof = "sed -i '1i-- done;' {$file}";
-			$this->api->exec($eof);
-		}
-	}
-
-	/**
 	 * Executes the dumped Queued<object> scripts to put the received rows
 	 * into Received<object>.
 	 */
