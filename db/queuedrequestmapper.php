@@ -66,13 +66,10 @@ class QueuedRequestMapper extends Mapper {
 	 * @returns the result of saving, or if it is already in the db, true.
 	 */
 	public function save($request) {
-		if ($this->exists($request->getType(), $request->getDestinationLocation(), $request->getField1())) {
+		if ($this->exists($request->getRequestType(), $request->getDestinationLocation(), $request->getField1())) {
 			return true;
 		}
-		$sql = 'INSERT INTO `'. $this->getTableName() . '` (`request_type`, `sending_location`, `added_at`, `destination_location`, `field1`)'.
-			' VALUES(?, ?, ?, ?, ?)';
-		$params = array($request->getType(), $request->getSendingLocation(), $request->getAddedAt(), $request->getDestinationLocation(), $request->getField1());
-		return $this->execute($sql, $params);
+		return $this->insert($request);
 	}
 
 	public function delete(Entity $queuedRequest) {
