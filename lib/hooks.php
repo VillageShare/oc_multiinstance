@@ -45,7 +45,7 @@ class Hooks{
 			$userUpdate = new UserUpdate($uid, $date, $centralServerName);
 			$c['API']->beginTransaction();
 			$c['QueuedUserMapper']->save($queuedUser);
-			$c['UserUpdateMapper']->save($userUpdate);
+			$c['UserUpdateMapper']->insert($userUpdate);
 			$c['API']->commit();
 		}
 	}
@@ -59,11 +59,12 @@ class Hooks{
 			$password = $parameters['password'];
 			$date = $c['API']->getTime();
 			$queuedUser = new QueuedUser($uid, $displayname, $password, $date, $centralServerName);
-			$userUpdate = new UserUpdate($uid, $date, $centralServerName);
+			$userUpdate = $c['UserUpdateMapper']->find($uid);
+			$userUpdate->setUpdatedAt($date);
 
 			$c['API']->beginTransaction();
 			$c['QueuedUserMapper']->save($queuedUser);
-			$c['UserUpdateMapper']->save($userUpdate);
+			$c['UserUpdateMapper']->update($userUpdate);
 			$c['API']->commit();
 		}	
 	}
