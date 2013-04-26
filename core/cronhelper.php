@@ -117,7 +117,7 @@ class CronHelper {
 		$this->requestsAndResponses();
 
 		//Dump
-		$this->requestResponse->dumpResponses();
+		$this->cronTask->dumpResponses();
 		$this->cronTask->dumpQueued();
 
 		//Sync
