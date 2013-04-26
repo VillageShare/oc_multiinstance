@@ -92,6 +92,14 @@ class UserUpdateMapper extends Mapper {
 		return $entityList;
 	}
 
+	public function save(Entity $userUpdate) {
+		if ($this->exists($userUpdate->getUid())){
+			return $this->update($userUpdate);
+		}
+		else {
+			return $this->insert($userUpdate);
+		}
+	}
 
 
 	/**
