@@ -35,38 +35,36 @@ class Hooks{
 	static public function createUser($parameters) {
 		$c = new DIContainer();
 		$centralServerName = $c['API']->getAppValue('centralServer');
+		$date = $c['API']->getTime();
+		$uid = $parameters['uid'];
+
 		if ( $centralServerName !== $c['API']->getAppValue('location')) {
-			$uid = $parameters['uid'];
 			$displayname = '';
 			$password = $parameters['password'];
 			
-			$date = $c['API']->getTime();
 			$queuedUser = new QueuedUser($uid, $displayname, $password, $date, $centralServerName);
-			$userUpdate = new UserUpdate($uid, $date, $centralServerName);
-			$c['API']->beginTransaction();
 			$c['QueuedUserMapper']->save($queuedUser);
-			$c['UserUpdateMapper']->insert($userUpdate);
-			$c['API']->commit();
 		}
+		$userUpdate = new UserUpdate($uid, $date, $centralServerName);
+		$c['UserUpdateMapper']->insert($userUpdate);
 	}
 
 	static public function updateUser($parameters) {
 		$c = new DIContainer();
 		$centralServerName = $c['API']->getAppValue('centralServer');
+		$date = $c['API']->getTime();
+		$uid = $parameters['uid'];
+
 		if ($centralServerName !== $c['API']->getAppValue('location')) {
-			$uid = $parameters['uid'];
 			$displayname = '';
 			$password = $parameters['password'];
-			$date = $c['API']->getTime();
-			$queuedUser = new QueuedUser($uid, $displayname, $password, $date, $centralServerName);
-			$userUpdate = $c['UserUpdateMapper']->find($uid);
-			$userUpdate->setUpdatedAt($date);
 
-			$c['API']->beginTransaction();
+			$queuedUser = new QueuedUser($uid, $displayname, $password, $date, $centralServerName);
 			$c['QueuedUserMapper']->save($queuedUser);
-			$c['UserUpdateMapper']->update($userUpdate);
-			$c['API']->commit();
 		}	
+		$userUpdate = $c['UserUpdateMapper']->find($uid);
+		$userUpdate->setUpdatedAt($date);
+		$c['UserUpdateMapper']->update($userUpdate);
 	}
 
 
