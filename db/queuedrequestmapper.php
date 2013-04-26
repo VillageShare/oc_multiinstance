@@ -72,9 +72,14 @@ class QueuedRequestMapper extends Mapper {
 		return $this->insert($request);
 	}
 
-	public function delete(Entity $queuedRequest) {
+
+	/**
+	 * @param QueuedResponse $receivedResponse
+	 * Based off the request id, but have a received response object
+	 */ 
+	public function delete(Entity $receivedResponse) {
 		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `id` = ?';
-		$params = array($queuedRequest->getId());
+		$params = array($receivedResponse->getRequestId());
 
 		return $this->execute($sql, $params);
 	}

@@ -110,11 +110,11 @@ class RequestResponse {
 
 			switch ($type) {
 				case Request::USER_EXISTS:
-					if ($answer !== "true" AND $answer !== "false") {
+					if ($answer !== "1" AND $answer !== "0") {
 						$this->api->log("ReceivedResponse for Request USER_EXISTS, request_id = {$receivedResponse->getId()} had invalid response = {$answer}"); 
 						continue;
 					}
-					if ($answer === "false") {
+					if ($answer === "0") {
 						$friendshipRequests = $this->friendshipMapper->findAllRecipientFriendshipRequestsByUser($field1);
 						foreach ($friendshipRequests as $friendshipRequest) {
 							$this->friendshipMapper->delete($friendshipRequest-getUid1(), $friendshipRequest->getUid2());
@@ -122,12 +122,12 @@ class RequestResponse {
 					}
 					$this->api->beginTransaction();
 					//Don't need destination for delete since they should all be this instance
-					$this->receivedResponseMapper->delete($requestId);
- 					$this->queuedRequestMapper->delete($requestId);
+					$this->receivedResponseMapper->delete($receivedResponse);
+ 					$this->queuedRequestMapper->delete($receivedResponse);
 					$this->api->commit();
 					break;
 				case Request::FETCH_USER: 
-					if ($answer !== "true" AND $answer !== "false") {
+					if ($answer !== "1" AND $answer !== "0") {
 						$this->api->log("ReceivedResponse for Request FETCH_USER, request_id = {$receivedResponse->getId()} had invalid response = {$answer}"); 
 						continue;
 					}
