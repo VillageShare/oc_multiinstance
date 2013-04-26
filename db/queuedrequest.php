@@ -30,6 +30,7 @@ class QueuedRequest extends Entity{
 	public $id;
 	public $requestType;
 	public $sendingLocation;
+	public $destinationLocation;
 	public $addedAt;
 	public $field1;
 
