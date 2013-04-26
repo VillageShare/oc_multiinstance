@@ -786,5 +786,141 @@
                 </declaration>
 
         </table>
+	<table>
+                <name>*dbprefix*multiinstance_received_filecache</name>
+
+                <declaration>
+
+                        <field>
+                                <name>storage</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>64</length>
+                        </field>
+
+                        <field>
+                                <name>path</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>512</length>
+                        </field>
+
+                        <field>
+                                <name>path_hash</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>32</length>
+                        </field>
+
+                        <field>
+                                <name>parent_storage</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>64</length>
+                        </field>
+                        <field>
+                                <name>parent_path</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>512</length>
+                        </field>
+
+                        <field>
+                                <name>name</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>250</length>
+                        </field>
+                        <field>
+                                <name>mimetype</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>255</length>
+                        </field>           
+
+                        <field>
+                                <name>mimepart</name>
+                                <type>integer</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>4</length>
+                        </field>
+
+                        <field>
+                                <name>size</name>
+                                <type>integer</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>8</length>
+                        </field>
+
+                        <field>
+                                <name>mtime</name>
+                                <type>integer</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>4</length>
+                        </field>
+
+                        <field>
+                                <name>encrypted</name>
+                                <type>integer</type>
+                                <default>0</default>
+                                <notnull>true</notnull>
+                                <length>4</length>
+                        </field>
+
+                        <field>
+                                <name>etag</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>40</length>
+                        </field>
+			<field>
+				<name>permissions</name>
+				<type>integer</type>
+				<default>0</default>
+				<notnull>true</notnull>
+				<length>4</length>
+			</field>
+                        <field>
+                                <name>added_at</name>
+                                <type>timestamp</type>
+                                <default></default>
+                                <notnull>false</notnull>
+                        </field>
+                        <field>
+                                <name>destination_location</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>64</length>
+                        </field>
+
+                        <index>
+                                <name>fs_storage_path_hash</name>
+                                <unique>true</unique>
+                                <field>
+                                        <name>storage</name>
+                                        <sorting>ascending</sorting>
+                                </field>
+                                <field>
+                                        <name>path_hash</name>
+                                        <sorting>ascending</sorting>
+                                </field>
+			</index>
+
+
+                </declaration>
+
+        </table>
 
 </database>

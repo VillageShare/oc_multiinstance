@@ -46,14 +46,15 @@ class CronTask {
 		'multiinstance_queued_users' => 'multiinstance_received_users',
 		'multiinstance_queued_friendships' => 'multiinstance_received_friendships',
 		'multiinstance_queued_user_facebook_ids' => 'multiinstance_received_user_facebook_ids', 
-		//'multiinstance_queued_filecache' => 'multiinstance_received_filecache',
+		'multiinstance_queued_filecache' => 'multiinstance_received_filecache',
 		'multiinstance_queued_requests' => 'multiinstance_received_requests'
 	);
 	
 	private static $patterns = array(
 		'multiinstance_queued_users.sql' => '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+),[^,]*\)$/',
 		'multiinstance_queued_friendships.sql' =>'/^INSERT.*VALUES \((?<friend_uid1>[^,]+),(?<friend_uid2>[^,]+),\d,(?<timestamp>[^,]+),[^,]*,[^,]*\)$/',  
-		'multiinstance_queued_user_facebook_ids.sql' =>  '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+)\)$/' 
+		'multiinstance_queued_user_facebook_ids.sql' =>  '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+)\)$/', 
+		'multiinstance_queued_filecache.sql' => '/^INSERT.*VALUES \((?<storage>[^,]+),(?<path>[^,]+),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(?<timestamp>[^,]+),[^,]*,[^,]*,[^,]*,[^,]*\)$/'
 	);
 
 	/**
@@ -161,6 +162,7 @@ class CronTask {
 			$locationName = $this->api->baseName($dir);	
 			foreach (self::$tables as $queuedTable => $receivedTable) {
 				$full_file =  "{$dir}/{$queuedTable}.sql";
+error_log($full_file);
 				if(!$this->api->fileExists($full_file)) {
 					continue;
 				}
@@ -305,7 +307,12 @@ class CronTask {
 				}		
 				break;
 			case 'multiinstance_queued_filecache.sql':
-				throw new \Exception("not yet imlemented.");
+				if (sizeof($matches) <3) {
+					$formattedQuery = "";
+				}
+				else {
+					$formattedQuery = $this->deleteQueuedFilecache($matches['storage'], $matches['path'], $matches['timestamp']) . ";\n";
+				}
 				break;
 			default:
 				throw new \Exception("No delete query function for {$filename}");
@@ -341,7 +348,8 @@ class CronTask {
 		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_user_facebook_ids\` WHERE \`uid\` = {$uid} AND \`friends_synced_at\` = {$syncedAt}";
 	}
 
-	protected function deleteQueuedFileCache() {
+	protected function deleteQueuedFilecache($storage, $path, $addedAt) {
+		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_filecache\` WHERE \`storage\` = {$storage} AND \`path\` = {$path} AND \`added_at\` = {$addedAt}";
 		
 	}
 

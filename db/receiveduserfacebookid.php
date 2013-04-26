@@ -22,54 +22,26 @@
 
 namespace OCA\MultiInstance\Db;
 
+use OCA\AppFramework\Db\Entity;
 
-class ReceivedUserFacebookId {
+class ReceivedUserFacebookId extends Entity {
 
-	private $uid;
-	private $facebookId;
-	private $facebookName;
-	private $friendsSyncedAt;
-	private $destinationLocation;
+	public $uid;
+	public $facebookId;
+	public $facebookName;
+	public $friendsSyncedAt;
+	public $destinationLocation;
 
 	public function __construct($uidFromRow, $facebookId=null, $facebookName=null, $syncedAt=null, $destinationLocation=null){
 		if($facebookId === null){
 			$this->fromRow($uidFromRow);
 		}
 		else {
-			$this->uid = $uidFromRow;
-			$this->facebookId = $facebookId;
-			$this->facebookName = $facebookName;
-			$this->friendsSyncedAt = $syncedAt;
-			$this->destinationLocation = $destinationLocation;
+			$this->setUid($uidFromRow);
+			$this->setFacebookId($facebookId);
+			$this->setFacebookName($facebookName);
+			$this->setFriendsSyncedAt($syncedAt);
+			$this->setDestinationLocation($destinationLocation);
 		}
-	}
-
-	public function fromRow($row){
-		$this->uid = $row['uid'];
-		$this->facebookId = $row['facebook_id'];
-		$this->facebookName = $row['facebook_name'];
-		$this->friendsSyncedAt = $row['friends_synced_at'];
-		$this->destinationLocation = $row['destination_location'];
-	}
-
-
-	public function getUid(){
-		return $this->uid;
-	}
-
-	public function getFacebookId(){
-		return $this->facebookId;
-	}
-
-	public function getFacebookName(){
-		return $this->facebookName;
-	}
-		
-	public function getFriendsSyncedAt(){
-		return $this->friendsSyncedAt;
-	}
-
-	public function getDestinationLocation() {
-		return $this->destinationLocation;
 	}
 }

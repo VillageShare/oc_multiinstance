@@ -38,6 +38,7 @@ class UpdateReceived {
 	private $receivedUserMapper;
 	private $userUpdateMapper;
 	private $receivedFriendshipMapper;
+	private $userFacebookIdMapper;
 	private $receivedUserFacebookIdMapper;
 	private $friendshipMapper;
 	private $locationMapper;
@@ -46,11 +47,12 @@ class UpdateReceived {
 	/**
 	 * @param API $api: an api wrapper instance
 	 */
-	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $locationMapper){
+	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $locationMapper){
 		$this->api = $api;
 		$this->receivedUserMapper = $receivedUserMapper;
 		$this->userUpdateMapper = $userUpdateMapper;
 		$this->receivedFriendshipMapper = $receivedFriendshipMapper;
+		$this->userFacebookIdMapper = $userFacebookIdMapper;
 		$this->receivedUserFacebookIdMapper = $receivedUserFacebookIdMapper;
 		$this->friendshipMapper = $friendshipMapper;
 		$this->queuedFriendshipMapper = $queuedFriendshipMapper;
@@ -164,14 +166,14 @@ class UpdateReceived {
 			try {
 				$userFacebookId = $this->userFacebookIdMapper->find($receivedUserFacebookId->getUid());
 				//TODO: check if I need to convert to datetimes?
-				if ($receivedUserFacebookId->getAddedAt() > $friendship->getUpdatedAt()) {
+				if ($receivedUserFacebookId->getFriendsSyncedAt() > $userFacebookId->getFriendsSyncedAt()) {
 					$this->userFacebookIdMapper->save($receivedUserFacebookId);
 				}
 			}
 			catch (DoesNotExistException $e) {
 					$this->userFacebookIdMapper->save($receivedUserFacebookId);
 			}
-			$this->receivedUserFacebookIdMapper->delete($receivedUserFacebookId->getUid(), $receivedUserFacebookId->getAddedAt());
+			$this->receivedUserFacebookIdMapper->delete($receivedUserFacebookId);
 			$this->api->commit();
 		}
 	}

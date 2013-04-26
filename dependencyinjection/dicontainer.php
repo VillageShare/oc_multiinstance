@@ -35,6 +35,7 @@ use OCA\Friends\Db\FriendshipMapper;
 
 use OCA\MultiInstance\Db\QueuedFriendshipMapper;
 use OCA\MultiInstance\Db\ReceivedFriendshipMapper;
+use OCA\Friends\Db\UserFacebookIdMapper;
 use OCA\MultiInstance\Db\QueuedUserFacebookIdMapper;
 use OCA\MultiInstance\Db\ReceivedUserFacebookIdMapper;
 
@@ -121,6 +122,9 @@ class DIContainer extends BaseContainer {
 		$this['ReceivedFriendshipMapper'] = $this->share(function($c){
 			return new ReceivedFriendshipMapper($c['API']);
 		});
+		$this['UserFacebookIdMapper'] = $this->share(function($c){
+			return new UserFacebookIdMapper($c['API']);
+		});
 		$this['QueuedUserFacebookIdMapper'] = $this->share(Function($c){
 			return new QueuedUserFacebookIdMapper($c['API']);
 		});
@@ -157,7 +161,7 @@ class DIContainer extends BaseContainer {
 			
 		});
 		$this['UpdateReceived'] = $this->share(function($c){
-			return new UpdateReceived($c['API'], $c['ReceivedUserMapper'], $c['UserUpdateMapper'], $c['ReceivedFriendshipMapper'], $c['ReceivedUserFacebookIdMapper'], $c['FriendshipMapper'], $c['QueuedFriendshipMapper'], $c['LocationMapper']);
+			return new UpdateReceived($c['API'], $c['ReceivedUserMapper'], $c['UserUpdateMapper'], $c['ReceivedFriendshipMapper'], $c['UserFacebookIdMapper'], $c['ReceivedUserFacebookIdMapper'], $c['FriendshipMapper'], $c['QueuedFriendshipMapper'], $c['LocationMapper']);
 			
 		});
 		$this['RequestResponse'] = $this->share(function($c){

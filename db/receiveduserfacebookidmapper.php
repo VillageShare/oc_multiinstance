@@ -40,7 +40,7 @@ class ReceivedUserFacebookIdMapper extends Mapper {
 	 * @param API $api: Instance of the API abstraction layer
 	 */
 	public function __construct($api){
-		parent::__construct($api, 'multiinstance_queued_user_facebook_ids');
+		parent::__construct($api, 'multiinstance_received_user_facebook_ids');
 	}
 
 
@@ -79,8 +79,8 @@ class ReceivedUserFacebookIdMapper extends Mapper {
 	 * 
 	 */
 	public function delete(Entity $userFacebookId){
-		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE (`uid` = ? AND `friends_synced_at` = ? AND `destination_location`)';
-		$params = array($userFacebookId->getUid(), $userFacebookId->getSyncedAt(), $userFacebookId->getDestinationLocation());
+		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE (`uid` = ? AND `friends_synced_at` = ? AND `destination_location` = ?)';
+		$params = array($userFacebookId->getUid(), $userFacebookId->getFriendsSyncedAt(), $userFacebookId->getDestinationLocation());
 
 		return $this->execute($sql, $params);
 	}
