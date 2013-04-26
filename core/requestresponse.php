@@ -52,6 +52,13 @@ class RequestResponse {
 		$this->receivedRequestMapper = $receivedRequestMapper;
 		$this->queuedRequestMapper = $queuedRequestMapper;
 		$this->queuedUserMapper = $queuedUserMapper;
+
+		$this->dbuser = $this->api->getSystemValue('dbuser'); 
+		$this->dbpassword = $this->api->getSystemValue('dbpassword'); 
+		$this->dbname = $this->api->getSystemValue('dbname'); 
+		$this->dbtableprefix = $this->api->getSystemValue('dbtableprefix');
+		$this->recvPathPrefix = $this->api->getAppValue('dbSyncRecvPath'); 
+		$this->sendPathPrefix = $this->api->getAppValue('dbSyncPath');
 	}
 
 
