@@ -22,8 +22,9 @@
 
 namespace OCA\MultiInstance\Db;
 
+use OCA\AppFramework\Db\Entity;
 
-class UserUpdate {
+class UserUpdate extends Entity{
 
 	public $uid;
 	public $updatedAt;
