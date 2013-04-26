@@ -38,11 +38,11 @@ class QueuedRequest extends Entity{
 			$this->fromRow($requestTypeOrFromRow);
 		}
 		else {
-			$this->getRequestType($requestTypeOrFromRow);
-			$this->getSendingLocation($sendingLocation);
-			$this->getDestinationLocation($destinationLocation);
-			$this->getAddedAt($addedAt);
-			$this->getField1($field1);
+			$this->setRequestType($requestTypeOrFromRow);
+			$this->setSendingLocation($sendingLocation);
+			$this->setDestinationLocation($destinationLocation);
+			$this->setAddedAt($addedAt);
+			$this->setField1($field1);
 		}
 	}
 }
