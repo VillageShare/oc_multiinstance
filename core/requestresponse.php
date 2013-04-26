@@ -115,6 +115,7 @@ class RequestResponse {
 			else {
 				//request no longer exists, so just delete response
 				$this->receivedResponseMapper->delete($receivedResponse);
+				continue;
 			}
 			
 			switch ($type) {
