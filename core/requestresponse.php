@@ -70,7 +70,7 @@ class RequestResponse {
 			switch ($type) {
 				case Request::USER_EXISTS: //Want same behavior for these two queries
 				case Request::FETCH_USER: //for login for a user that doesn't exist in the db
-					$userExists = $this->api->userExists($field1);	
+					$userExists = $this->api->userExists($field1) ? '1' : '0';	
 
 					$this->api->beginTransaction();
 					$response = new QueuedResponse($id, $sendingLocation, (string) $userExists, $this->api->microTime());
