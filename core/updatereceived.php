@@ -64,30 +64,30 @@ class UpdateReceived {
 		$receivedUsers = $this->receivedUserMapper->findAll();		
 
 		foreach ($receivedUsers as $receivedUser){
-			$id = $receivedUser->getUid();
+			$uid = $receivedUser->getUid();
 			$receivedTimestamp = $receivedUser->getAddedAt();
 
 			$this->api->beginTransaction();
-			if ($this->api->userExists($id)) {
+			if ($this->api->userExists($uid)) {
 
 				//TODO: All of this should be wrapped in a try block with a rollback...
-				$userUpdate = $this->userUpdateMapper->find($id);	
+				$userUpdate = $this->userUpdateMapper->find($uid);	
 				//if this is new
 				if ($receivedTimestamp > $userUpdate->getUpdatedAt()) {
 					$userUpdate->setUpdatedAt($receivedTimestamp);	
 					$this->userUpdateMapper->update($userUpdate);
-					OC_User::setPassword($id, $receivedUser->getPassword());
-					OC_User::setDisplayName($id, $receivedUser->getDisplayname());
+					OC_User::setPassword($uid, $receivedUser->getPassword());
+					OC_User::setDisplayName($uid, $receivedUser->getDisplayname());
 					
 				}
 				$this->receivedUserMapper->delete($receivedUser);
 			}
 			else {
-				$userUpdate = new UserUpdate($id, $receivedTimestamp);
+				$userUpdate = new UserUpdate($uid, $receivedTimestamp);
 
 				//TODO: createUser will cause the user to be sent back to UCSB, maybe add another parameter?
-				$this->api->createUser($id, $receivedUser->getPassword());
-				$this->userUpdateMapper->save($userUpdate);
+				$this->api->createUser($uid, $receivedUser->getPassword());
+				$this->userUpdateMapper->insert($userUpdate);
 				$this->receivedUserMapper->delete($receivedUser);
 			}
 			$this->api->commit();
