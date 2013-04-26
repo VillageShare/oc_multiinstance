@@ -157,7 +157,7 @@ class DIContainer extends BaseContainer {
 			
 		});
 		$this['CronTask'] = $this->share(function($c){
-			return new CronTask($c['API'], $c['LocationMapper']);
+			return new CronTask($c['API'], $c['LocationMapper'], $c['QueuedResponseMapper']);
 			
 		});
 		$this['UpdateReceived'] = $this->share(function($c){
