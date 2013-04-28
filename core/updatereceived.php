@@ -202,7 +202,7 @@ class UpdateReceived {
 					'encrypted' => $receivedFilecache->getEncrypted(),
 					'size' => $receivedFilecache->getSize(),
 					'mtime' => $receivedFilecache->getMtime(),
-					'etag' => $receivedFilecache->getEtag()
+					'etag' => $receivedFilecache->getEtag(),
 					'mimetype' => $mimetypeId;
 					
 				);
