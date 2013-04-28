@@ -203,7 +203,7 @@ class UpdateReceived {
 					'size' => $receivedFilecache->getSize(),
 					'mtime' => $receivedFilecache->getMtime(),
 					'etag' => $receivedFilecache->getEtag(),
-					'mimetype' => $mimetypeId;
+					'mimetype' => $mimetypeId
 					
 				);
 				$cache->put($receivedFilecache->getPath(), $data);
