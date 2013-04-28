@@ -133,7 +133,7 @@ class UpdateReceived {
 
 					$this->api->beginTransaction();
 					$this->queuedFriendshipMapper->save($queuedFriendship);
-					$this->queuedUserMaper->save($queuedUser);
+					$this->queuedUserMapper->save($queuedUser);
 					$this->api->commit();
 				}
 			}
