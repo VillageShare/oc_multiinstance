@@ -78,6 +78,26 @@ class MILocation{
 		return false;
 	}
 
+	static public function getUidLocation($uid, $mockLocationMapper=null) {
+		if (strpos($uid,'@')) {
+			$pattern = '/@(?P<location>[^@]+)$/';
+			$matches = array();
+			if (preg_match($pattern, $uid, $matches) === 1) { //must use === for this function (according to documentation)
+				if ($mockLocationMapper) {
+					$locationMapper = $mockLocationMapper;
+				}
+				else {
+					$di = new DIContainer();
+					$locationMapper = $di['LocationMapper'];
+				}
+				
+				if ($locationMapper->existsByLocation($matches['location'])) {
+					return $matches['location'];
+				}
+			}
+		}
+		return null;
+	}
 
 	static public function userExistsAtCentralServer($uid, $mockQueuedRequestMapper=null, $mockApi=null) {
 		self::pullUserFromCentralServer($uid, Request::USER_EXISTS, $mockQueuedRequestMapper, $mockApi);	
@@ -117,9 +137,21 @@ class MILocation{
 		}
 		$centralServerName = $api->getAppValue('centralServer');
 		$location = $api->getAppValue('location');
-		if ($centralServerName !== $location) {
+		if ($centralServerName !== $location) { //Non central server always pushes to central server
 			$queuedFriendship = new QueuedFriendship($friend_uid1, $friend_uid2, $updated_at, $status, $centralServerName, $location);
 			$qfm->save($queuedFriendship);
+		}
+		else if (!MILocation::uidContainsThisLocation($friend_uid1)){ //At central server, push to non-central server
+			$location1 = MILocation::getUidLocation($friend_uid1);
+			$queuedFriendship = new QueuedFriendship($friend_uid1, $friend_uid2, $updated_at, $status, $location1, $location);
+			$qfm->save($queuedFriendship);
+			
+		}
+		else if (!MILocation::uidContainsThisLocation($friend_uid2)){ //At central server, push to non-central server
+			$location2 = MILocation::getUidLocation($friend_uid2);
+			$queuedFriendship = new QueuedFriendship($friend_uid1, $friend_uid2, $updated_at, $status, $location2, $location);
+			$qfm->save($queuedFriendship);
+
 		}
 	}
 

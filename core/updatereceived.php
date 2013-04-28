@@ -31,6 +31,7 @@ use OCA\Friends\Db\Friendship;
 use OCA\MultiInstance\Db\QueuedFriendship;
 use OCA\MultiInstance\Db\QueuedUser;
 
+use OCA\MultiInstance\Lib\MILocation;
 use \OC\Files\Cache\Cache;
 
 /* Methods for updating instance db rows based on received rows */
@@ -107,8 +108,8 @@ class UpdateReceived {
 		
 		foreach ($receivedFriendships as $receivedFriendship) {
 
-			$location1 = $this->getUidLocation($receivedFriendship->getFriendUid1());
-			$location2 = $this->getUidLocation($receivedFriendship->getFriendUid2());
+			$location1 = MILocation::getUidLocation($receivedFriendship->getFriendUid1());
+			$location2 = MILocation::getUidLocation($receivedFriendship->getFriendUid2());
 			$centralServer = $this->api->getAppValue('centralServer');
 			$thisLocation = $this->api->getAppValue('location');
 			
@@ -161,22 +162,6 @@ class UpdateReceived {
 		}
 	}
 
-	/**
-	 * Helper Function
-	 * TODO: find a better place to put this
-	 */
-	public function getUidLocation($uid) {
-		if (strpos($uid,'@')) {
-			$pattern = '/@(?P<location>[^@]+)$/';
-			$matches = array();
-			if (preg_match($pattern, $uid, $matches) === 1) { //must use === for this function (according to documentation)
-				if ($this->locationMapper->existsByLocation($matches['location'])) {
-					return $matches['location'];
-				}
-			}
-		}
-		return null;
-	}
 
 	public function updateUserFacebookIdsWithReceivedUserFacebookIds() {
 		$receivedUserFacebookIds = $this->receivedUserFacebookIdMapper->findAll();
