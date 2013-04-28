@@ -234,7 +234,7 @@ class UpdateReceived {
 			$fileid = $cache->getId($receivedPermission->getPath());
 
 			$this->beginTransaction();
-			$permission = $permissions->get($fileid, $receivedPermission->getUser();
+			$permission = $permissions->get($fileid, $receivedPermission->getUser());
 			$permissionUpdate = $this->permissionUpdateMapper->find($fileid, $receivedPermission->getUser());
 
 			if ($permission) {
