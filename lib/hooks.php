@@ -36,7 +36,7 @@ class Hooks{
 	static public function createUser($parameters) {
 		$c = new DIContainer();
 		$centralServerName = $c['API']->getAppValue('centralServer');
-		$thisLocaiton = $c['API']->getAppValue('location');
+		$thisLocation = $c['API']->getAppValue('location');
 		$date = $c['API']->getTime();
 		$uid = $parameters['uid'];
 
