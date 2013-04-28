@@ -29,6 +29,7 @@ use OCA\MultiInstance\Db\UserUpdate;
 use \OC_User;
 use OCA\Friends\Db\Friendship;
 use OCA\MultiInstance\Db\QueuedFriendship;
+use OCA\MultiInstance\Db\QueuedUser;
 
 use \OC\Files\Cache\Cache;
 
@@ -43,13 +44,15 @@ class UpdateReceived {
 	private $userFacebookIdMapper;
 	private $receivedUserFacebookIdMapper;
 	private $friendshipMapper;
+	private $queuedFriendshipMapper;
+	private $queuedUserMapper;
 	private $locationMapper;
 
 
 	/**
 	 * @param API $api: an api wrapper instance
 	 */
-	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $locationMapper){
+	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $queuedUserMapper, $locationMapper){
 		$this->api = $api;
 		$this->receivedUserMapper = $receivedUserMapper;
 		$this->userUpdateMapper = $userUpdateMapper;
@@ -58,6 +61,7 @@ class UpdateReceived {
 		$this->receivedUserFacebookIdMapper = $receivedUserFacebookIdMapper;
 		$this->friendshipMapper = $friendshipMapper;
 		$this->queuedFriendshipMapper = $queuedFriendshipMapper;
+		$this->queuedUserMapper = $queuedUserMapper;
 		$this->locationMapper = $locationMapper;
 	}
 
