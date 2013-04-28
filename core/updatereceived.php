@@ -30,6 +30,8 @@ use \OC_User;
 use OCA\Friends\Db\Friendship;
 use OCA\MultiInstance\Db\QueuedFriendship;
 
+use \OC\Files\Cache\Cache;
+
 /* Methods for updating instance db rows based on received rows */
 class UpdateReceived {
 	
@@ -76,8 +78,8 @@ class UpdateReceived {
 				if ($receivedTimestamp > $userUpdate->getUpdatedAt()) {
 					$userUpdate->setUpdatedAt($receivedTimestamp);	
 					$this->userUpdateMapper->update($userUpdate);
-					OC_User::setPassword($uid, $receivedUser->getPassword());
-					OC_User::setDisplayName($uid, $receivedUser->getDisplayname());
+					$this->api->setPassword($uid, $receivedUser->getPassword());
+					//OC_User::setDisplayName($uid, $receivedUser->getDisplayname()); //display name has no hook at this time
 					
 				}
 				$this->receivedUserMapper->delete($receivedUser);
@@ -86,7 +88,8 @@ class UpdateReceived {
 				$userUpdate = new UserUpdate($uid, $receivedTimestamp);
 
 				//TODO: createUser will cause the user to be sent back to UCSB, maybe add another parameter?
-				$this->api->createUser($uid, $receivedUser->getPassword());
+				$this->api->createUser($uid, '');  //create user with dummy password
+				$this->api->setPassword($uid, $receivedUser->getPassword());
 				$this->userUpdateMapper->insert($userUpdate);
 				$this->receivedUserMapper->delete($receivedUser);
 			}
@@ -178,43 +181,85 @@ class UpdateReceived {
 		}
 	}
 
+	//TODO delete addedat
 	public function updateFilecacheFromReceivedFilecaches() {
 		$receivedFilecaches = $this->receivedFilecacheMapper->findAll();
+		$dataPath = $this->api->getSystemValue('datadirectory');
 
 		foreach ($receivedFilecaches as $receivedFilecache) {
 			$this->api->beginTransaction();
 
-			$storage = null;
-			try {
-				//$storage = $this->api->findStorage
-			}
-			catch (DoesNotExistException $e) {
-				//$storage = new Storage($path . $receivedFilecache->getStorage)
-			}
-			$mimetype = null;
-			//search for mimetype, if doesn't exist add mimetype
+			$storagePath = "local::" . $dataPath . $receivedFilecache->getStorage();
+			$cache = new Cache($storagePath);
+			$storageNumericId = $cache->getNumericStorageId();
+	
+			$mimetypeId = $cache->getMimetypeId($receivedFilecache->getMimetype());
 
-			$filecache = null;
-			try {
-				//$filecache = $this->api->findFilecahce(storage, path)
-			}
-			catch (DoesNotExistException $e) {
-				//$filecache = new Filecache(...)
-			}
-			//compare mtime?	
-			//if newer
-				//save
-			$permissionsi = null;
-			try {
-				//$permissions = $this->api->findPermissions(fileid, user)
-			}
-			catch (DoesNotExistException $e) {
-				//$permissions = new Permissiosn(fileid, user, permission)
-			}
-			//set permissions
-			//save permissions
+			$filecache = $cache->get($receivedFilecache->getPath());
 
-			$this->api->commit();
+			if (empty($filecache)) {  //if new file
+				$data = array(  //the rest are derived
+					'encrypted' => $receivedFilecache->getEncrypted(),
+					'size' => $receivedFilecache->getSize(),
+					'mtime' => $receivedFilecache->getMtime(),
+					'etag' => $receivedFilecache->getEtag()
+					'mimetype' => $mimetypeId;
+					
+				);
+				$cache->put($receivedFilecache->getPath(), $data);
+			}
+			else if ($receivedFilecache->getMtime() > $filecache['mtime']) { //if updated file
+				$fileid = $cache->getId($receivedFilecache->getPath()); 
+				//TODO figure out what this needs to be
+				$data = array( 
+				);
+				$cache->update($fileid, $data);
+			}
+			$this->commit();
+
+
+		}
+	}
+
+	//TODO create everything for this
+	public function updatePermissionsFromReceivedPermissions() {
+		$receivedPermissions = $this->receivedPermissionMapper->findAll();
+
+		foreach ($receivedPermissions as $receivedPermission) {
+			$dataPath = $this->api->getSystemValue('datadirectory');
+			$storagePath = "local::" . $dataPath . $receivedPermission->getStorage();
+
+			$permissions = new Permissions($storagePath);
+			$cache = new Cache($storagePath);
+			$fileid = $cache->getId($receivedPermission->getPath());
+
+			$this->beginTransaction();
+			$permission = $permissions->get($fileid, $receivedPermission->getUser();
+			$permissionUpdate = $this->permissionUpdateMapper->find($fileid, $receivedPermission->getUser());
+
+			if ($permission) {
+				$permissionUpdate = $this->permissionUpdateMapper->find($fileid, $receivedPermission->getUser());
+				if ($receivedPermission->getUpdatedAt() > $permissionUpdate->updatedAt()) {
+					$permissions->set($fileid, $receivedPermission->getUser(), $receivedPermission->getPermissions());
+					$permissionUpdate->setUpdatedAt($receivedPermission->getUpdated());
+					$this->permissionUpdateMapper->update($permissionUpdate);
+				}
+				//else old data
+			}
+			else {
+				$permissions->set($fileid, $receivedPermission->getUser(), $receivedPermission->getPermissions());
+				if ($permissionUpdate) {  //permissions could have been previously deleted
+					$permissionUpdate->setUpdatedAt($receivedPermission->getUpdated());
+					$this->permissionUpdateMapper->update($permissionUpdate);
+				}	
+				else {
+					$permissionUpdate = new PermissionUpdate($fileid, $receivedPermission->getUser(), $receivedPermission->getUpdatedAt());
+					$this->permissionUpdateMapper->insert($permissionUpdate);
+				}
+				
+			}
+			$this->commit();
+			$this->receivedPermissionMapper->delete($receivedPermission);  //going to have to be a status on the update, but actually delete the permission
 		}
 	}
 

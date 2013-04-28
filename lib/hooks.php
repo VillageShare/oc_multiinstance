@@ -40,7 +40,7 @@ class Hooks{
 
 		if ( $centralServerName !== $c['API']->getAppValue('location')) {
 			$displayname = '';
-			$password = $parameters['password'];
+			$password = $c['API']->getPassword($uid);  //Queue hashed password
 			
 			$queuedUser = new QueuedUser($uid, $displayname, $password, $date, $centralServerName);
 			$c['QueuedUserMapper']->save($queuedUser);
@@ -57,7 +57,7 @@ class Hooks{
 
 		if ($centralServerName !== $c['API']->getAppValue('location')) {
 			$displayname = '';
-			$password = $parameters['password'];
+			$password = $c['API']->getPassword($uid); //Queue hashed password
 
 			$queuedUser = new QueuedUser($uid, $displayname, $password, $date, $centralServerName);
 			$c['QueuedUserMapper']->save($queuedUser);
