@@ -125,15 +125,19 @@ class MILocation{
 		}
 	}
 
-	static public function createQueuedFriendship($friend_uid1, $friend_uid2, $updated_at, $status, $queuedFriendshipMapper=null, $mockApi=null) {
-		if ($queuedFriendshipMapper !== null && $mockApi !== null) {
+	static public function createQueuedFriendship($friend_uid1, $friend_uid2, $updated_at, $status, $queuedFriendshipMapper=null, $mockApi=null, $mockUserUpdateMapper=null, $mockQueuedUserMapper=null) {
+		if ($queuedFriendshipMapper !== null && $mockApi !== null && $mockUserUpdateMapper !== null && $mockQueueduserMapper !== null) {
 			$qfm = $queuedFriendshipMapper;
 			$api = $mockApi;
+			$userUpdateMapper = $mockUserUpdateMapper;
+			$queuedUserMapper = $mockQueuedUserMapper;
 		}
 		else {
 			$di = new DIContainer();
 			$qfm = $di['QueuedFriendshipMapper'];
 			$api = $di['API'];
+			$userUpdateMapper = $di['UserUpdateMapper'];
+			$queuedUserMapper = $di['QueuedUserMapper'];
 		}
 		$centralServerName = $api->getAppValue('centralServer');
 		$location = $api->getAppValue('location');
@@ -143,15 +147,24 @@ class MILocation{
 		}
 		else if (!MILocation::uidContainsThisLocation($friend_uid1)){ //At central server, push to non-central server
 			$location1 = MILocation::getUidLocation($friend_uid1);
+			$userUpdate2 = $userUpdateMapper->find($friend_uid2);
+			$queuedUser = new QueuedUser($friend_uid2, $this->api->getDisplayName($friend_uid2), $this->api->getPassword($friend_uid2), $userUpdate2->getUpdatedAt(), $location1);
 			$queuedFriendship = new QueuedFriendship($friend_uid1, $friend_uid2, $updated_at, $status, $location1, $location);
+			$api->beginTransaction();
+			$queuedUserMapper->save($queuedUser);
 			$qfm->save($queuedFriendship);
+			$api->commit();
 			
 		}
 		else if (!MILocation::uidContainsThisLocation($friend_uid2)){ //At central server, push to non-central server
 			$location2 = MILocation::getUidLocation($friend_uid2);
+			$userUpdate1 = $userUpdateMapper->find($friend_uid1);
+			$queuedUser = new QueuedUser($friend_uid1, $this->api->getDisplayName($friend_uid1), $this->api->getPassword($friend_uid1), $userUpdate1->getUpdatedAt(), $location2);
 			$queuedFriendship = new QueuedFriendship($friend_uid1, $friend_uid2, $updated_at, $status, $location2, $location);
+			$api->beginTransaction();
+			$queuedUserMapper->save($queuedUser);
 			$qfm->save($queuedFriendship);
-
+			$api->commit();
 		}
 	}
 
