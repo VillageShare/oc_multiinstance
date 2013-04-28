@@ -115,7 +115,7 @@ class UpdateReceived {
 			//If a user from another instance is involved, push info to that instance
 			if ($receivedFriendship->getSendingLocation() !== $centralServer) {
 				if ($location1 !== $receivedFriendship->getSendingLocation() && $location1 !== $centralServer) {
-					$uid = $receivedFriendship->getFriendUid1();
+					$uid = $receivedFriendship->getFriendUid2();
 					$userUpdate = $this->userUpdateMapper->find($uid);
 					$queuedUser = new QueuedUser($uid, $this->api->getDisplayName($uid), $this->api->getPassword($uid), $userUpdate->getUpdatedAt(), $location1); 
 					$queuedFriendship = new QueuedFriendship($receivedFriendship->getFriendUid1(), $receivedFriendship->getFriendUid2(), $receivedFriendship->getUpdatedAt(), $receivedFriendship->getStatus(), $location1, $thisLocation);	
@@ -126,7 +126,7 @@ class UpdateReceived {
 					$this->api->commit();
 				}
 				if ($location2 !== $receivedFriendship->getSendingLocation() && $location2 !== $centralServer) {
-					$uid = $receivedFriendship->getFriendUid2();
+					$uid = $receivedFriendship->getFriendUid1();
 					$userUpdate = $this->userUpdateMapper->find($uid);
 					$queuedUser = new QueuedUser($uid, $this->api->getDisplayName($uid), $this->api->getPassword($uid), $userUpdate->getUpdatedAt(), $location2); 
 					$queuedFriendship = new QueuedFriendship($receivedFriendship->getFriendUid1(), $receivedFriendship->getFriendUid2(), $receivedFriendship->getUpdatedAt(), $receivedFriendship->getStatus(), $location2, $thisLocation);	
