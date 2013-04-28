@@ -25,6 +25,7 @@ namespace OCA\MultiInstance\Lib;
 use OCA\MultiInstance\Db\QueuedUser;
 use OCA\MultiInstance\Db\UserUpdate;
 use OCA\MultiInstance\DependencyInjection\DIContainer;
+use OCA\MultiInstance\Lib\MILocation;
 
 /**
  * This class contains all hooks.
@@ -35,10 +36,12 @@ class Hooks{
 	static public function createUser($parameters) {
 		$c = new DIContainer();
 		$centralServerName = $c['API']->getAppValue('centralServer');
+		$thisLocaiton = $c['API']->getAppValue('location');
 		$date = $c['API']->getTime();
 		$uid = $parameters['uid'];
 
-		if ( $centralServerName !== $c['API']->getAppValue('location')) {
+		//Only push if you are a noncentral server and you created this user
+		if ( $centralServerName !== $thisLocation && MILocation::uidContainsThisLocation($uid)) {
 			$displayname = '';
 			$password = $c['API']->getPassword($uid);  //Queue hashed password
 			
