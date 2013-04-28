@@ -115,7 +115,7 @@ class UpdateReceived {
 				}
 				if ($location2 !== $receivedFriendship->getSendingLocation() && $location2 !== $centralServer) {
 					$queuedFriendship = new QueuedFriendship($receivedFriendship->getFriendUid1(), $receivedFriendship->getFriendUid2(), $receivedFriendship->getUpdatedAt(), $receivedFriendship->getStatus(), $location2, $thisLocation);	
-					$queuedFriendshipMapper->save($queuedFriendship);
+					$this->queuedFriendshipMapper->save($queuedFriendship);
 				}
 			}
 
