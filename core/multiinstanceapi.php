@@ -56,7 +56,7 @@ class MultiInstanceAPI extends API {
 	public function getPassword($uid) {
 		$sql = "SELECT `password` FROM `*PREFIX*users` WHERE `uid` = ?";
 		$params = array($uid);
-		$this->prepareQuery($sql);
+		$query = $this->prepareQuery($sql);
                 $result = $query->execute($params);
                 $row = $result->fetchRow();
 		return $row['password'];
@@ -65,7 +65,7 @@ class MultiInstanceAPI extends API {
 	public function setPassword($uid, $passwordHash) {
 		$sql = "UPDATE `*PREFIX*users` SET `password` = ? WHERE `uid` = ?";
 		$params = array($passwordHash, $uid);
-		$this->prepareQuery($sql);
+		$query = $this->prepareQuery($sql);
                 return $query->execute($params);
 	}
 
