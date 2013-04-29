@@ -30,7 +30,8 @@ use OCA\MultiInstance\Db\QueuedUserFacebookId;
 use OCA\MultiInstance\Db\QueuedRequest;
 use OCA\MultiInstance\Db\Request;
 use OCA\MultiInstance\Db\QueuedFileCache;
-
+use OCA\MultiInstance\Db\QueuedUser;
+use OCA\MultiInstance\Db\UserUpdate;
 /**
  * This is a static library methods for MultiInstance app.
  */
