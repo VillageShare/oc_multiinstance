@@ -103,13 +103,13 @@ class UpdateReceived {
 
 	}
 
-	public function updateFriendshipsWithReceivedFriendships() {
+	public function updateFriendshipsWithReceivedFriendships($mockLocationMapper=null) {
 		$receivedFriendships = $this->receivedFriendshipMapper->findAll();
 		
 		foreach ($receivedFriendships as $receivedFriendship) {
 
-			$location1 = MILocation::getUidLocation($receivedFriendship->getFriendUid1());
-			$location2 = MILocation::getUidLocation($receivedFriendship->getFriendUid2());
+			$location1 = MILocation::getUidLocation($receivedFriendship->getFriendUid1(), $mockLocationMapper);
+			$location2 = MILocation::getUidLocation($receivedFriendship->getFriendUid2(), $mockLocationMapper);
 			$centralServer = $this->api->getAppValue('centralServer');
 			$thisLocation = $this->api->getAppValue('location');
 			
