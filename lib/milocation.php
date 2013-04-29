@@ -149,7 +149,7 @@ class MILocation{
 		else if (!MILocation::uidContainsThisLocation($friend_uid1)){ //At central server, push to non-central server
 			$location1 = MILocation::getUidLocation($friend_uid1);
 			$userUpdate2 = $userUpdateMapper->find($friend_uid2);
-			$queuedUser = new QueuedUser($friend_uid2, $this->api->getDisplayName($friend_uid2), $this->api->getPassword($friend_uid2), $userUpdate2->getUpdatedAt(), $location1);
+			$queuedUser = new QueuedUser($friend_uid2, $api->getDisplayName($friend_uid2), $api->getPassword($friend_uid2), $userUpdate2->getUpdatedAt(), $location1);
 			$queuedFriendship = new QueuedFriendship($friend_uid1, $friend_uid2, $updated_at, $status, $location1, $location);
 			$api->beginTransaction();
 			$queuedUserMapper->save($queuedUser);
@@ -160,7 +160,7 @@ class MILocation{
 		else if (!MILocation::uidContainsThisLocation($friend_uid2)){ //At central server, push to non-central server
 			$location2 = MILocation::getUidLocation($friend_uid2);
 			$userUpdate1 = $userUpdateMapper->find($friend_uid1);
-			$queuedUser = new QueuedUser($friend_uid1, $this->api->getDisplayName($friend_uid1), $this->api->getPassword($friend_uid1), $userUpdate1->getUpdatedAt(), $location2);
+			$queuedUser = new QueuedUser($friend_uid1, $api->getDisplayName($friend_uid1), $api->getPassword($friend_uid1), $userUpdate1->getUpdatedAt(), $location2);
 			$queuedFriendship = new QueuedFriendship($friend_uid1, $friend_uid2, $updated_at, $status, $location2, $location);
 			$api->beginTransaction();
 			$queuedUserMapper->save($queuedUser);
