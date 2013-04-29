@@ -144,8 +144,8 @@ class RequestResponse {
 
 					$this->api->beginTransaction();
 					//Don't need destination for delete since they should all be this instance
-					$this->receivedResponseMapper->delete($requestId);
- 					$this->queuedRequestMapper->delete($requestId);
+					$this->receivedResponseMapper->delete($receivedResponse);
+ 					$this->queuedRequestMapper->delete($receivedResponse);
 					$this->api->commit();
 					
 					break;	
