@@ -218,7 +218,7 @@ class UpdateReceived {
 				);
 				$cache->update($fileid, $data);
 			}
-			$this->commit();
+			$this->api->commit();
 
 
 		}
@@ -236,7 +236,7 @@ class UpdateReceived {
 			$cache = new Cache($storagePath);
 			$fileid = $cache->getId($receivedPermission->getPath());
 
-			$this->beginTransaction();
+			$this->api->beginTransaction();
 			$permission = $permissions->get($fileid, $receivedPermission->getUser());
 			$permissionUpdate = $this->permissionUpdateMapper->find($fileid, $receivedPermission->getUser());
 
@@ -261,7 +261,7 @@ class UpdateReceived {
 				}
 				
 			}
-			$this->commit();
+			$this->api->commit();
 			$this->receivedPermissionMapper->delete($receivedPermission);  //going to have to be a status on the update, but actually delete the permission
 		}
 	}
