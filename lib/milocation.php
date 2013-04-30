@@ -22,6 +22,8 @@
 
 namespace OCA\MultiInstance\Lib;
 
+use OCA\AppFramework\Db\DoesNotExistException;
+
 use OCA\MultiInstance\Core\MultiInstanceAPI;
 use OCA\MultiInstance\Db\LocationMapper;
 use OCA\MultiInstance\DependencyInjection\DIContainer;
@@ -32,6 +34,8 @@ use OCA\MultiInstance\Db\Request;
 use OCA\MultiInstance\Db\QueuedFileCache;
 use OCA\MultiInstance\Db\QueuedUser;
 use OCA\MultiInstance\Db\UserUpdate;
+use OCA\MultiInstance\Db\QueuedPermission;
+use OCA\MultiInstance\Db\PermissionUpdate;
 /**
  * This is a static library methods for MultiInstance app.
  */
@@ -188,14 +192,14 @@ class MILocation{
 	}
 
 
-	static public function queueFile($parameters, $storage, $mimetype, $permissions, $parentStorage, $parentPath, $queuedFileCacheMapper=null, $mockApi=null) {
-		if ($queuedFileCacheMapper !== null && $mockApi !==null) {
-			$qm = $queuedFileCacheMapper;
+	static public function queueFile($parameters, $storage, $mimetype, $permissions, $parentStorage, $parentPath, $mockQueuedFilecacheMapper=null, $mockApi=null) {
+		if ($mockQueuedFilecacheMapper !== null && $mockApi !==null) {
+			$queuedFilecacheMapper = $mockQueuedFilecacheMapper;
 			$api = $mockApi;
 		}
 		else {
 			$di = new DIContainer();
-			$qm = $di['QueuedFileCacheMapper'];
+			$queuedFilecacheMapper = $di['QueuedFileCacheMapper'];
 			$api = $di['API'];
 		}
 
@@ -205,12 +209,63 @@ class MILocation{
 			$newParentStorage = MILocation::removePathFromStorage($parentStorage);
 			if ($newStorage && $newParentStorage) {
 				$queuedFileCache = new QueuedFileCache($newStorage, $parameters[6], $parameters[5], $newParentStorage, $parentPath, $parameters[8], $mimetype, $parameters[0], $parameters[3], $parameters[2], $parameters[9], $parameters[4], $permissions, $api->getTime(),  $centralServerName);
-				$qm->save($queuedFileCache);
+				$queuedFilecacheMapper->save($queuedFileCache);
 			}
 			else {
 				$api->log("Unable to send file with path {$parameters[6]} and storage {$storage}  and parent with path {$parentPath} and storage {$parentStorage} to central server due to bad storage format");
 			}
 		}
+	}
+
+	static public function queuePermissionUpdate($fileid, $user, $permissions, $mockApi=null, $mockQueuedPermissionMapper=null, $mockPermissionUpdateMapper=null) {
+		MILocation::queuePermission($fileid, $user, $permissions, PermissionUpdate::VALID);
+	}
+
+	static public function queuePermissionDelete($fileid, $user, $mockApi=null, $mockQueuedPermissionMapper=null) {
+		MILocation::queuePermission($fileid, $user, $permissions, PermissionUpdate::DELETED);
+	}
+
+	static public function queuePermission($fileid, $user, $permissions, $state, $mockApi=null, $mockQueuedPermissionMapper=null, $mockPermissionUpdateMapper=null) {
+		if ($mockQueuedPermissionMapper !== null && $mockApi !== null) {
+			$queuedPermissionMapper = $mockQueuedPermissionMapper;
+			$permissionUpdateMapper = $mockPermissionUpdateMapper;
+			$api = $mockApi;
+		}
+		else {
+			$di = new DIContainer();
+			$queuedPermissionMapper = $di['QueuedPermissionMapper'];
+			$permissionUpdateMapper = $di['PermissionUpdateMapper'];
+			$api = $di['API'];
+		}
+		
+		$centralServerName = $api->getAppValue('centralServer');
+		if ($centralServerName !== $api->getAppValue('location')) {
+			$time =  $api->getTime();
+			$queuedPermission = new QueuedPermission($fileid, $user, $permissions, $time, $state, $centralServerName);
+			try {
+				$permissionUpdate = $permissionUpdateMapper->find($fileid, $user);
+				$permissionUpdate->setUpdatedAt($time);
+				$permissionUpdate->setStatus(PermissionUpdate::VALID);
+				$permissionUpdateMapper->update($permissionUpdate);
+			}
+			catch (DoesNotExistException $e) {
+				$permissionUpdate = new PermissionUpdate($fileid, $user, $time, $state);
+				$permissionUpdateMapper->insert($permissionUpdate);
+			}
+			$queuedPermissionMapper->save($queuedPermission);
+		}
+		
+	}
+
+
+	/**
+	 * Helper function
+	 */
+	static public function moveFileForSyncing($api) {
+
+		$fullLocalPath = $api->getSystemValue('datadirectory').$parameters[6];
+		$rsyncPath = $api->getAppValue('dbSyncPath') . $centralServerName . '/';
+		//cp datapath + path  db_sync/$centralServerName/
 	}
 
 	/**

@@ -26,37 +26,22 @@ namespace OCA\MultiInstance\Db;
 use \OCA\AppFramework\Db\Entity;
 
 
-class QueuedFileCache extends Entity {
+class QueuedPermission extends Entity {
 
-	public $storage;
-	public $path;
-	public $pathHash;
-	public $parentStorage;
-	public $parentPath;
-	public $name;
-	public $mimetype;
-	public $mimepart;
-	public $size;
-	public $mtime;
-	public $encrypted;
-	public $etag;
+	public $fileid;
+	public $user;
+	public $permissions;
+	public $addedAt;
+	public $state;
 	public $destinationLocation;
 
-	public function __construct($storage, $path, $pathHash, $parentStorage, $parentPath, $name, $mimetype, $mimepart, $size, $mtime, $encrypted, $etag, $destinationLocation){
-		$this->setStorage($storage);
-		$this->setPath($path);
-		$this->setPathHash($pathHash);
-		$this->setParentStorage($parentStorage);
-		$this->setParentPath($parentPath);
-		$this->setName($name);
-		$this->setMimetype($mimetype);
-		$this->setMimepart($mimepart);
-		$this->setSize($size);
-		$this->setMtime($mtime);
-		$this->setEncrypted($encrypted);
-		$this->setEtag($etag);
+	public function __construct($fileid, $user, $permissions, $addedAt, $state, $destinationLocation){
+		$this->setFileid($fileid);
+		$this->setUser($user);
 		$this->setPermissions($permissions);
-
+		$this->setAddedAt($addedAt);
+		$this->setState($state);
+		$this->setDestinationLocation($destinationLocation);
 	}
 
 }

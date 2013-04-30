@@ -26,23 +26,21 @@ namespace OCA\MultiInstance\Db;
 use \OCA\AppFramework\Db\Entity;
 
 
-class ReceivedFileCache extends Entity {
+class PermissionUpdate extends Entity {
 
-	public $storage;
-	public $path;
-	public $pathHash;
-	public $parent;
-	public $name;
-	public $mimetype;
-	public $mimepart;
-	public $size;
-	public $mtime;
-	public $encrypted;
-	public $etag;
-	public $destinationLocation;
+	public $fileid;
+	public $user;
+	public $updatedAt;
+	public $state;
 
-	public function __construct(){
+	const VALID = 1;
+	const DELETED = 0;
 
+	public function __construct($fileid, $user, $updatedAt, $state){
+		$this->setFileid($fileid);
+		$this->setUser($user);
+		$this->setUpdatedAt($updatedAt);
+		$this->setState($state);
 	}
 
 }

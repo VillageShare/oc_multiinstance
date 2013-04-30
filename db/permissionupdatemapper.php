@@ -28,9 +28,9 @@ use \OCA\AppFramework\Db\Entity;
 use \OCA\AppFramework\Db\DoesNotExistException;
 use \OCA\AppFramework\Db\MultipleObjectsReturnedException;
 
-use \OCA\MultiInstance\Db\QueuedFileCache;
+use \OCA\MultiInstance\Db\PermissionUpdate;
 
-class QueuedFileCacheMapper extends Mapper {
+class PermissionUpdateMapper extends Mapper {
 
 
 
@@ -38,7 +38,7 @@ class QueuedFileCacheMapper extends Mapper {
 	 * @param API $api: Instance of the API abstraction layer
 	 */
 	public function __construct($api){
-		parent::__construct($api, 'multiinstance_queued_filecache');
+		parent::__construct($api, 'multiinstance_permission_updates');
 
 	}
 
@@ -47,9 +47,9 @@ class QueuedFileCacheMapper extends Mapper {
 	 * @throws DoesNotExistException: if the item does not exist
 	 * @return the item
 	 */
-	public function find($pathHash, $storage, $addedAt, $destinationLocation){
-		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `path_hash` = ? AND `storage` = ? AND `added_at` = ? AND `destination_location` = ?';
-		$params = array($pathHash, $storage, $addedAt, $destinationLocation);
+	public function find($fileid, $user){
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `fileid` = ? AND `user` = ?';
+		$params = array($fileid, $user);
 
 		$result = array();
 		
@@ -57,17 +57,17 @@ class QueuedFileCacheMapper extends Mapper {
 		$row = $result->fetchRow();
 
 		if ($row === false) {
-			throw new DoesNotExistException("QueuedFileCache with path_hash {$pathHash} storage {$storage} and addedAt = {$addedAt} and destinationLocation {$destinationLocation} does not exist!");
+			throw new DoesNotExistException("PermissionUpdate with fileid {$fileid} user {$user} does not exist!");
 		} elseif($result->fetchRow() !== false) {
-			throw new MultipleObjectsReturnedException("QueuedFileCache with path_hash {$pathHash} storage {$storage} and addedAt = {$addedAt} and destinationLocation {$destinationLocation} returned more than one result.");
+			throw new MultipleObjectsReturnedException("PermissionUpdate with fileid {$fileid} user {$user}  returned more than one result.");
 		}
-		return new QueuedFileCache($row);
+		return new PermissionUpdate($row);
 
 	}
 
-	public function exists($pathHash, $storage, $addedAt, $destinationLocation){
+	public function exists($fileid, $user){
 		try{
-			$this->find($pathHash, $storage, $addedAt, $destinationLocation);
+			$this->find($fileid, $user);
 		}
 		catch (DoesNotExistException $e){
 			return false;
@@ -87,7 +87,7 @@ class QueuedFileCacheMapper extends Mapper {
 
 		$entityList = array();
 		while($row = $result->fetchRow()){
-			$entity = new QueuedFileCache($row);
+			$entity = new PermissionUpdate($row);
 			array_push($entityList, $entity);
 		}
 
@@ -96,31 +96,15 @@ class QueuedFileCacheMapper extends Mapper {
 
 
 	/**
-	 * Saves an item into the database
-	 * @param Item $queuedFileCache: the item to be saved
-	 * @return the item with the filled in id
-	 */
-	public function save($queuedFileCache){
-		if ($this->exists($queuedFileCache->getPathHash(), $queuedFileCache->getStorage(), $queuedFileCache->getAddedAt(), $queuedFileCache->getDestinationLocation())) {
-			return false;  //Already exists, do nothing
-		}
-		
-		return $this->insert($queuedFileCache);
-	} 
-
-
-	/**
 	 * Deletes an item
-	 * @param string $pathHash: the path_hash of the QueuedFileCache
+	 * @param string $fileid: the path_hash of the PermissionUpdate
 	 */
 	public function delete(Entity $entity){
-		$queuedFileCache = $entity;
-		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `path_hash` = ? AND `storage` = ? AND `added_at` = ? AND `destination_location`';
+		$permissionUpdate = $entity;
+		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `fileid` = ? AND `user` = ?';
 		$params = array(
-			$queuedFileCache->getPathHash(),
-			$queuedFileCache->getStorage(),
-			$queuedFileCache->getAddedAt(),
-			$queuedFileCache->getDestinationLocation()
+			$permissionUpdate->getFileid(),
+			$permissionUpdate->getUser(),
 		);
 		
 		return $this->execute($sql, $params);

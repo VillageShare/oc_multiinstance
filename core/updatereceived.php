@@ -215,6 +215,11 @@ class UpdateReceived {
 				$fileid = $cache->getId($receivedFilecache->getPath()); 
 				//TODO figure out what this needs to be
 				$data = array( 
+					'encrypted' => $receivedFilecache->getEncrypted(),
+					'size' => $receivedFilecache->getSize(),
+					'mtime' => $receivedFilecache->getMtime(),
+					'etag' => $receivedFilecache->getEtag(),
+					'mimetype' => $mimetypeId
 				);
 				$cache->update($fileid, $data);
 			}
