@@ -241,7 +241,6 @@ class MILocation{
 		$centralServerName = $api->getAppValue('centralServer');
 		if ($centralServerName !== $api->getAppValue('location')) {
 			$time =  $api->getTime();
-			$queuedPermission = new QueuedPermission($fileid, $user, $permissions, $time, $state, $centralServerName);
 			try {
 				$permissionUpdate = $permissionUpdateMapper->find($fileid, $user);
 				$permissionUpdate->setUpdatedAt($time);
@@ -252,6 +251,12 @@ class MILocation{
 				$permissionUpdate = new PermissionUpdate($fileid, $user, $time, $state);
 				$permissionUpdateMapper->insert($permissionUpdate);
 			}
+			list($storage, $path) = \OC\Files\Cache\Cache::getById($fileid);
+			if (!$path) {
+				$api->log("Cannot get storage and path for fileid ] {$fileid}.  Not queuing file permissions.");
+				return;
+			}
+			$queuedPermission = new QueuedPermission($path, $user, $permissions, $time, $state, $centralServerName);
 			$queuedPermissionMapper->save($queuedPermission);
 		}
 		

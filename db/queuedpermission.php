@@ -28,15 +28,15 @@ use \OCA\AppFramework\Db\Entity;
 
 class QueuedPermission extends Entity {
 
-	public $fileid;
+	public $path;
 	public $user;
 	public $permissions;
 	public $addedAt;
 	public $state;
 	public $destinationLocation;
 
-	public function __construct($fileid, $user, $permissions, $addedAt, $state, $destinationLocation){
-		$this->setFileid($fileid);
+	public function __construct($path, $user, $permissions, $addedAt, $state, $destinationLocation){
+		$this->setPath($path);
 		$this->setUser($user);
 		$this->setPermissions($permissions);
 		$this->setAddedAt($addedAt);

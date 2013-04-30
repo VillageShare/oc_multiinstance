@@ -47,9 +47,9 @@ class QueuedPermissionMapper extends Mapper {
 	 * @throws DoesNotExistException: if the item does not exist
 	 * @return the item
 	 */
-	public function find($fileid, $user, $addedAt, $destinationLocation){
-		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `fileid` = ? AND `user` = ? AND `added_at` = ? AND `destination_location` = ?';
-		$params = array($fileid, $user, $addedAt, $destinationLocation);
+	public function find($path, $user, $addedAt, $destinationLocation){
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `path` = ? AND `user` = ? AND `added_at` = ? AND `destination_location` = ?';
+		$params = array($path, $user, $addedAt, $destinationLocation);
 
 		$result = array();
 		
@@ -57,17 +57,17 @@ class QueuedPermissionMapper extends Mapper {
 		$row = $result->fetchRow();
 
 		if ($row === false) {
-			throw new DoesNotExistException("QueuedPermission with fileid {$fileid} user {$user} and addedAt = {$addedAt} and destinationLocation {$destinationLocation} does not exist!");
+			throw new DoesNotExistException("QueuedPermission with path {$path} user {$user} and addedAt = {$addedAt} and destinationLocation {$destinationLocation} does not exist!");
 		} elseif($result->fetchRow() !== false) {
-			throw new MultipleObjectsReturnedException("QueuedPermission with fileid {$fileid} user {$user} and addedAt = {$addedAt} and destinationLocation {$destinationLocation} returned more than one result.");
+			throw new MultipleObjectsReturnedException("QueuedPermission with path {$path} user {$user} and addedAt = {$addedAt} and destinationLocation {$destinationLocation} returned more than one result.");
 		}
 		return new QueuedPermission($row);
 
 	}
 
-	public function exists($fileid, $user, $addedAt, $destinationLocation){
+	public function exists($path, $user, $addedAt, $destinationLocation){
 		try{
-			$this->find($fileid, $user, $addedAt, $destinationLocation);
+			$this->find($path, $user, $addedAt, $destinationLocation);
 		}
 		catch (DoesNotExistException $e){
 			return false;
@@ -101,7 +101,7 @@ class QueuedPermissionMapper extends Mapper {
 	 * @return the item with the filled in id
 	 */
 	public function save($queuedPermission){
-		if ($this->exists($queuedPermission->getFileid(), $queuedPermission->getUser(), $queuedPermission->getAddedAt(), $queuedPermission->getDestinationLocation())) {
+		if ($this->exists($queuedPermission->getPath(), $queuedPermission->getUser(), $queuedPermission->getAddedAt(), $queuedPermission->getDestinationLocation())) {
 			return false;  //Already exists, do nothing
 		}
 		
@@ -111,13 +111,13 @@ class QueuedPermissionMapper extends Mapper {
 
 	/**
 	 * Deletes an item
-	 * @param string $fileid: the path_hash of the QueuedPermission
+	 * @param string $path: the path_hash of the QueuedPermission
 	 */
 	public function delete(Entity $entity){
 		$queuedPermission = $entity;
-		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `fileid` = ? AND `user` = ? AND `added_at` = ? AND `destination_location`';
+		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `path` = ? AND `user` = ? AND `added_at` = ? AND `destination_location`';
 		$params = array(
-			$queuedPermission->getFileid(),
+			$queuedPermission->getPath(),
 			$queuedPermission->getUser(),
 			$queuedPermission->getAddedAt(),
 			$queuedPermission->getDestinationLocation()
