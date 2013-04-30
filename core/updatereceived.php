@@ -184,7 +184,6 @@ class UpdateReceived {
 		}
 	}
 
-	//TODO delete addedat
 	public function updateFilecacheFromReceivedFilecaches() {
 		$receivedFilecaches = $this->receivedFilecacheMapper->findAll();
 		$dataPath = $this->api->getSystemValue('datadirectory');
@@ -192,7 +191,8 @@ class UpdateReceived {
 		foreach ($receivedFilecaches as $receivedFilecache) {
 			$this->api->beginTransaction();
 
-			$storagePath = "local::" . $dataPath . $receivedFilecache->getStorage();
+			$fullPath = $dataPath . $receivedFilecache->getStorage();
+			$storagePath = "local::". $fullPath;
 			$cache = new Cache($storagePath);
 			$storageNumericId = $cache->getNumericStorageId();
 	
@@ -201,6 +201,7 @@ class UpdateReceived {
 			$filecache = $cache->get($receivedFilecache->getPath());
 
 			if (empty($filecache)) {  //if new file
+				//cp 
 				$data = array(  //the rest are derived
 					'encrypted' => $receivedFilecache->getEncrypted(),
 					'size' => $receivedFilecache->getSize(),
@@ -213,6 +214,7 @@ class UpdateReceived {
 			}
 			else if ($receivedFilecache->getMtime() > $filecache['mtime']) { //if updated file
 				$fileid = $cache->getId($receivedFilecache->getPath()); 
+				//cp
 				//TODO figure out what this needs to be
 				$data = array( 
 					'encrypted' => $receivedFilecache->getEncrypted(),
@@ -235,7 +237,7 @@ class UpdateReceived {
 
 		foreach ($receivedPermissions as $receivedPermission) {
 			$dataPath = $this->api->getSystemValue('datadirectory');
-			$storagePath = "local::" . $dataPath . $receivedPermission->getStorage();
+			$storagePath = "local::" . $dataPath . $receivedPermission->getUser() . '/';
 
 			$permissions = new Permissions($storagePath);
 			$cache = new Cache($storagePath);

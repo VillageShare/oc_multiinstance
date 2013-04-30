@@ -1021,6 +1021,73 @@
 
                 </declaration>
         </table>
+	<table>
+                <name>*dbprefix*multiinstance_received_permissions</name>
+
+                <declaration>
+                        <field>
+                                <name>path</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>512</length>
+                        </field>
+                        <field>
+                                <name>user</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>64</length>
+                        </field>
+                        <field>
+                                <name>permissions</name>
+                                <type>integer</type>
+                                <default>0</default>
+                                <notnull>true</notnull>
+                                <length>4</length>
+                        </field>
+
+                        <field>
+                                <name>state</name>
+                                <type>integer</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>2</length>
+                        </field>
+
+                        <field>
+                                <name>added_at</name>
+                                <type>timestamp</type>
+                                <default></default>
+                                <notnull>false</notnull>
+                        </field>
+
+                        <field>
+                                <name>destination_location</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>64</length>
+                        </field>
+
+                        <index>
+                                <name>user_added_destination_index</name>
+                                <field>
+                                        <name>user</name>
+                                        <sorting>ascending</sorting>
+                                </field>
+                                <field>
+                                        <name>added_at</name>
+                                        <sorting>ascending</sorting>
+                                </field>
+   				<field>
+                                        <name>destination_location</name>
+                                        <sorting>ascending</sorting>
+                                </field>
+                        </index>
+
+                </declaration>
+        </table>
 	
 
 </database>

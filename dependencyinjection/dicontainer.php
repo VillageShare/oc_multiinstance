@@ -46,6 +46,7 @@ use OCA\MultiInstance\Db\ReceivedResponseMapper;
 
 use OCA\MultiInstance\Db\QueuedFileCacheMapper;
 use OCA\MultiInstance\Db\QueuedPermissionMapper;
+use OCA\MultiInstance\Db\ReceivedPermissionMapper;
 use OCA\MultiInstance\Db\PermissionUpdateMapper;
 
 use OCA\MultiInstance\Db\LocationMapper;
@@ -152,6 +153,9 @@ class DIContainer extends BaseContainer {
 		});
 		$this['QueuedPermissionMapper'] = $this->share(function($c){
 			return new QueuedPermissionMapper($c['API']);
+		});
+		$this['ReceivedPermissionMapper'] = $this->share(function($c){
+			return new ReceivedPermissionMapper($c['API']);
 		});
 		$this['PermissionUpdateMapper'] = $this->share(function($c){
 			return new PermissionUpdateMapper($c['API']);

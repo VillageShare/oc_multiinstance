@@ -48,7 +48,8 @@ class CronTask {
 		'multiinstance_queued_friendships' => 'multiinstance_received_friendships',
 		'multiinstance_queued_user_facebook_ids' => 'multiinstance_received_user_facebook_ids', 
 		'multiinstance_queued_filecache' => 'multiinstance_received_filecache',
-		'multiinstance_queued_requests' => 'multiinstance_received_requests'
+		'multiinstance_queued_requests' => 'multiinstance_received_requests',
+		'multiinstance_queued_permissions' => 'multiinstance_received_permissions'
 	);
 	
 	private static $patterns = array(
@@ -318,7 +319,15 @@ class CronTask {
 					$formattedQuery = "";
 				}
 				else {
-					$formattedQuery = $this->deleteQueuedFilecache($matches['storage'], $matches['path'], $matches['timestamp']) . ";\n";
+					$formattedQuery = $this->deleteQueuedFilecacheSql($matches['storage'], $matches['path'], $matches['timestamp']) . ";\n";
+				}
+				break;
+			case 'multiinstace_queued_permissions.sql':
+				if (sizeof($matches) <3) {
+					$formattedQuery = "";
+				}
+				else {
+					$formattedQuery = $this->deleteQueuedPermissionSql();
 				}
 				break;
 			default:
@@ -355,9 +364,13 @@ class CronTask {
 		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_user_facebook_ids\` WHERE \`uid\` = {$uid} AND \`friends_synced_at\` = {$syncedAt}";
 	}
 
-	protected function deleteQueuedFilecache($storage, $path, $addedAt) {
+	protected function deleteQueuedFilecacheSql($storage, $path, $addedAt) {
 		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_filecache\` WHERE \`storage\` = {$storage} AND \`path\` = {$path} AND \`added_at\` = {$addedAt}";
 		
+	}
+
+	protected function deleteQueuedPermissionSql($path, $user, $addedAt) {
+
 	}
 
 /* End methods for ack content */
