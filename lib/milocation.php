@@ -208,6 +208,7 @@ class MILocation{
 			$newStorage = MILocation::removePathFromStorage($storage);
 			$newParentStorage = MILocation::removePathFromStorage($parentStorage);
 			if ($newStorage && $newParentStorage) {
+				MILocation::copyFileForSyncing($api, $parameters[6], $newStorage, $centralServerName);
 				$queuedFileCache = new QueuedFileCache($newStorage, $parameters[6], $parameters[5], $newParentStorage, $parentPath, $parameters[8], $mimetype, $parameters[0], $parameters[3], $parameters[2], $parameters[9], $parameters[4], $permissions, $api->getTime(),  $centralServerName);
 				$queuedFilecacheMapper->save($queuedFileCache);
 			}
@@ -266,10 +267,15 @@ class MILocation{
 	/**
 	 * Helper function
 	 */
-	static public function moveFileForSyncing($api) {
+	static public function copyFileForSyncing($api, $path, $storage, $centralServerName) {
 
-		$fullLocalPath = $api->getSystemValue('datadirectory').$parameters[6];
-		$rsyncPath = $api->getAppValue('dbSyncPath') . $centralServerName . '/';
+		$fullLocalPath = $api->getSystemValue('datadirectory').$storage.$path;
+		$rsyncPath = $api->getAppValue('dbSyncPath') . $centralServerName . $storage .$path;
+		$dir = dirname($rsyncPath);
+		$mkdir = "mkdir -p {$dir}";
+		$api->exec(escapeshellcmd($mkdir));
+		$cmd = "cp {$fullLocalPath} {$rsyncPath}";
+		$api->exec(escapeshellcmd($cmd));
 		//cp datapath + path  db_sync/$centralServerName/
 	}
 
@@ -280,7 +286,7 @@ class MILocation{
 	static public function removePathFromStorage($storage, $mockAPI=null) {
 		$result = strrpos($storage, '/data/');
 		if ($result) {
-			return substr($storage, $result + 1);
+			return substr($storage, $result + 5);
 		}
 		else {
 			if ($mockAPI) {

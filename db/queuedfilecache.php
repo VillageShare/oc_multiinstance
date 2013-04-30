@@ -55,7 +55,6 @@ class QueuedFileCache extends Entity {
 		$this->setMtime($mtime);
 		$this->setEncrypted($encrypted);
 		$this->setEtag($etag);
-		$this->setPermissions($permissions);
 
 	}
 
