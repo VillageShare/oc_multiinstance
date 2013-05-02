@@ -105,10 +105,17 @@ class MILocation{
 		return null;
 	}
 
+	/**
+	 * @brief Creates a request for central server to push a user to this server.  After receiving the response
+	 * 	additional processing will occur.
+ 	 */
 	static public function userExistsAtCentralServer($uid, $mockQueuedRequestMapper=null, $mockApi=null) {
 		self::pullUserFromCentralServer($uid, Request::USER_EXISTS, $mockQueuedRequestMapper, $mockApi);	
 	}
 
+	/**
+	 * @brief: creates a request for the central server to push a user to this server
+	 */
 	static public function fetchUserFromCentralServer($uid, $mockQueuedRequestMapper=null, $mockApi=null) {
 		self::pullUserFromCentralServer($uid, Request::FETCH_USER, $mockQueuedRequestMapper, $mockApi);	
 	}
@@ -131,141 +138,9 @@ class MILocation{
 		}
 	}
 
-	static public function createQueuedFriendship($friend_uid1, $friend_uid2, $updated_at, $status, $queuedFriendshipMapper=null, $mockApi=null, $mockUserUpdateMapper=null, $mockQueuedUserMapper=null) {
-		if ($queuedFriendshipMapper !== null && $mockApi !== null && $mockUserUpdateMapper !== null && $mockQueueduserMapper !== null) {
-			$qfm = $queuedFriendshipMapper;
-			$api = $mockApi;
-			$userUpdateMapper = $mockUserUpdateMapper;
-			$queuedUserMapper = $mockQueuedUserMapper;
-		}
-		else {
-			$di = new DIContainer();
-			$qfm = $di['QueuedFriendshipMapper'];
-			$api = $di['API'];
-			$userUpdateMapper = $di['UserUpdateMapper'];
-			$queuedUserMapper = $di['QueuedUserMapper'];
-		}
-		$centralServerName = $api->getAppValue('centralServer');
-		$location = $api->getAppValue('location');
-		if ($centralServerName !== $location) { //Non central server always pushes to central server
-			$queuedFriendship = new QueuedFriendship($friend_uid1, $friend_uid2, $updated_at, $status, $centralServerName, $location);
-			$qfm->save($queuedFriendship);
-		}
-		else if (!MILocation::uidContainsThisLocation($friend_uid1)){ //At central server, push to non-central server
-			$location1 = MILocation::getUidLocation($friend_uid1);
-			$userUpdate2 = $userUpdateMapper->find($friend_uid2);
-			$queuedUser = new QueuedUser($friend_uid2, $api->getDisplayName($friend_uid2), $api->getPassword($friend_uid2), $userUpdate2->getUpdatedAt(), $location1);
-			$queuedFriendship = new QueuedFriendship($friend_uid1, $friend_uid2, $updated_at, $status, $location1, $location);
-			$api->beginTransaction();
-			$queuedUserMapper->save($queuedUser);
-			$qfm->save($queuedFriendship);
-			$api->commit();
-			
-		}
-		else if (!MILocation::uidContainsThisLocation($friend_uid2)){ //At central server, push to non-central server
-			$location2 = MILocation::getUidLocation($friend_uid2);
-			$userUpdate1 = $userUpdateMapper->find($friend_uid1);
-			$queuedUser = new QueuedUser($friend_uid1, $api->getDisplayName($friend_uid1), $api->getPassword($friend_uid1), $userUpdate1->getUpdatedAt(), $location2);
-			$queuedFriendship = new QueuedFriendship($friend_uid1, $friend_uid2, $updated_at, $status, $location2, $location);
-			$api->beginTransaction();
-			$queuedUserMapper->save($queuedUser);
-			$qfm->save($queuedFriendship);
-			$api->commit();
-		}
-	}
-
-	static public function createQueuedUserFacebookId($uid, $facebookId, $facebookName, $syncedAt, $queuedUserFacebookIdMapper=null, $mockApi=null) {
-		if ($queuedUserFacebookIdMapper !== null && $mockApi !==null) {
-			$qm = $queuedUserFacebookIdMapper;
-			$api = $mockApi;
-		}
-		else {
-			$di = new DIContainer();
-			$qm = $di['QueuedUserFacebookIdMapper'];
-			$api = $di['API'];
-		}
-		$centralServerName = $api->getAppValue('centralServer');
-		if ($centralServerName !== $api->getAppValue('location')) {
-			$queuedUserFacebookId = new QueuedUserFacebookId($uid, $facebookId, $facebookName, $syncedAt);
-			$qm->save($queuedUserFacebookId);
-		}
-		
-	}
-
-
-	static public function queueFile($parameters, $storage, $mimetype, $parentPath, $mockQueuedFilecacheMapper=null, $mockApi=null) {
-		if ($mockQueuedFilecacheMapper !== null && $mockApi !==null) {
-			$queuedFilecacheMapper = $mockQueuedFilecacheMapper;
-			$api = $mockApi;
-		}
-		else {
-			$di = new DIContainer();
-			$queuedFilecacheMapper = $di['QueuedFileCacheMapper'];
-			$api = $di['API'];
-		}
-
-		$centralServerName = $api->getAppValue('centralServer');
-		if ($centralServerName !== $api->getAppValue('location')) {
-			$newStorage = MILocation::removePathFromStorage($storage);
-			if ($newStorage) {
-				MILocation::copyFileForSyncing($api, $parameters[6], $newStorage, $centralServerName);
-				$queuedFileCache = new QueuedFileCache($newStorage, $parameters[6], $parameters[5], $parentPath, $parameters[8], $mimetype, $parameters[0], $parameters[3], $parameters[2], $parameters[9], $parameters[4],  $centralServerName);
-				$queuedFilecacheMapper->save($queuedFileCache);
-			}
-			else {
-				$api->log("Unable to send file with path {$parameters[6]} and storage {$storage}  and parent with path {$parentPath} and storage {$parentStorage} to central server due to bad storage format");
-			}
-		}
-	}
-
-	static public function queuePermissionUpdate($fileid, $user, $permissions, $mockApi=null, $mockQueuedPermissionMapper=null, $mockPermissionUpdateMapper=null) {
-		MILocation::queuePermission($fileid, $user, $permissions, PermissionUpdate::VALID);
-	}
-
-	static public function queuePermissionDelete($fileid, $user, $mockApi=null, $mockQueuedPermissionMapper=null) {
-		MILocation::queuePermission($fileid, $user, $permissions, PermissionUpdate::DELETED);
-	}
-
-	static public function queuePermission($fileid, $user, $permissions, $state, $mockApi=null, $mockQueuedPermissionMapper=null, $mockPermissionUpdateMapper=null) {
-		if ($mockQueuedPermissionMapper !== null && $mockApi !== null) {
-			$queuedPermissionMapper = $mockQueuedPermissionMapper;
-			$permissionUpdateMapper = $mockPermissionUpdateMapper;
-			$api = $mockApi;
-		}
-		else {
-			$di = new DIContainer();
-			$queuedPermissionMapper = $di['QueuedPermissionMapper'];
-			$permissionUpdateMapper = $di['PermissionUpdateMapper'];
-			$api = $di['API'];
-		}
-		
-		$centralServerName = $api->getAppValue('centralServer');
-		if ($centralServerName !== $api->getAppValue('location')) {
-			$time =  $api->getTime();
-			try {
-				$permissionUpdate = $permissionUpdateMapper->find($fileid, $user);
-				$permissionUpdate->setUpdatedAt($time);
-				$permissionUpdate->setStatus(PermissionUpdate::VALID);
-				$permissionUpdateMapper->update($permissionUpdate);
-			}
-			catch (DoesNotExistException $e) {
-				$permissionUpdate = new PermissionUpdate($fileid, $user, $time, $state);
-				$permissionUpdateMapper->insert($permissionUpdate);
-			}
-			list($storage, $path) = \OC\Files\Cache\Cache::getById($fileid);
-			if (!$path) {
-				$api->log("Cannot get storage and path for fileid ] {$fileid}.  Not queuing file permissions.");
-				return;
-			}
-			$queuedPermission = new QueuedPermission($path, $user, $permissions, $time, $state, $centralServerName);
-			$queuedPermissionMapper->save($queuedPermission);
-		}
-		
-	}
-	
-
 	/**
 	 * Helper function
+	 * @brief Copy a file from its path to db_sync
 	 */
 	static public function copyFileForSyncing($api, $path, $subStorage, $serverName) {
 
@@ -278,6 +153,10 @@ class MILocation{
 		$api->exec(escapeshellcmd($cmd));
 	}
 
+	/**
+	 * Helper function
+	 * @brief Copy a file from db_sync to its appropriate path
+	 */
 	static public function copyFileToDataFolder($api, $path, $subStorage, $serverName) {
 		$rsyncPath = $api->getAppValue('dbSyncPathRecv') . $serverName . $subStorage .$path;
 		$fullLocalPath = $api->getSystemValue('datadirectory').$subStorage.$path;
