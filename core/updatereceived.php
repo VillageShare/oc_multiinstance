@@ -210,6 +210,7 @@ class UpdateReceived {
 					'mimetype' => $mimetypeId
 					
 				);
+				MILocation::copyFileToDataFolder($this->api, $receivedFilecache->getPath(), $receivedFilecache->getStorage(), $receivedFilecache->sendingLocation());
 				$cache->put($receivedFilecache->getPath(), $data);
 			}
 			else if ($receivedFilecache->getMtime() > $filecache['mtime']) { //if updated file
@@ -223,6 +224,7 @@ class UpdateReceived {
 					'etag' => $receivedFilecache->getEtag(),
 					'mimetype' => $mimetypeId
 				);
+				MILocation::copyFileToDataFolder($this->api, $receivedFilecache->getPath(), $receivedFilecache->getStorage(), $receivedFilecache->sendingLocation());
 				$cache->update($fileid, $data);
 			}
 			$this->api->commit();
@@ -245,33 +247,35 @@ class UpdateReceived {
 
 			$this->api->beginTransaction();
 			$permission = $permissions->get($fileid, $receivedPermission->getUser());
-			$permissionUpdate = $this->permissionUpdateMapper->find($fileid, $receivedPermission->getUser());
 
-			if ($permission) {
+			if ($permission) {  //permission update
 				$permissionUpdate = $this->permissionUpdateMapper->find($fileid, $receivedPermission->getUser());
-				if ($receivedPermission->getUpdatedAt() > $permissionUpdate->updatedAt()) {
+				if ($receivedPermission->getUpdatedAt() > $permissionUpdate->updatedAt()) {  //update if new data
 					$permissions->set($fileid, $receivedPermission->getUser(), $receivedPermission->getPermissions());
 					$permissionUpdate->setUpdatedAt($receivedPermission->getUpdated());
+					$permissionsUpdate->setState($receivedPermission->getState());
 					$this->permissionUpdateMapper->update($permissionUpdate);
 				}
-				//else old data
 			}
-			else {
+			else {  //new permission
 				$permissions->set($fileid, $receivedPermission->getUser(), $receivedPermission->getPermissions());
-				if ($permissionUpdate) {  //permissions could have been previously deleted
+				try {  	//permissions could have been previously deleted, so permissionUpdate may exist
+					$permissionUpdate = $this->permissionUpdateMapper->find($fileid, $receivedPermission->getUser());
 					$permissionUpdate->setUpdatedAt($receivedPermission->getUpdated());
+					$permissionUpdate->setState($receivedPermission->getState());
 					$this->permissionUpdateMapper->update($permissionUpdate);
 				}	
 				else {
-					$permissionUpdate = new PermissionUpdate($fileid, $receivedPermission->getUser(), $receivedPermission->getUpdatedAt());
+					$permissionUpdate = new PermissionUpdate($fileid, $receivedPermission->getUser(), $receivedPermission->getUpdatedAt(), $receivedPermission->getState());
 					$this->permissionUpdateMapper->insert($permissionUpdate);
 				}
-				
 			}
-			$this->api->commit();
+			if ($receivedPermission->getState() === PermissionUpdate::DELETED) {
+				$permissions->remove($fileid, $receivedPermission->getUser());
+			}
 			$this->receivedPermissionMapper->delete($receivedPermission);  //going to have to be a status on the update, but actually delete the permission
+			$this->api->commit();
 		}
 	}
-
 
 }

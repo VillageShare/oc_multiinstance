@@ -1,0 +1,15 @@
+This is a summary of known design constraints.
+
+Owncloud allows for different mounting points.
+This design assumes that all storages (see oc_storages in the db) will be of the form:
+/path/to/owncloud/data/<user>/
+e.g. local::/home/sjones/public_html/dev/owncloud/data/Froggy@UCSB/
+
+If the storage does not appear in this form, the implementation will break.  Working around this may take more modifications to core.
+
+
+oc_share contains 3 fields: item_source, item_target, file_source.
+This design assumes that all three will be the fileid (albeit in different forms).  If this is not the case, then this implementation will break.  
+
+
+

@@ -69,6 +69,22 @@ class MultiInstanceAPI extends API {
                 return $query->execute($params);
 	}
 
+	public function getShareStime($id) {
+		$sql = "SELECT `stime` FROM `*PREFIX*share` WHERE `id` = ?";
+		$params = array($id);
+		$query = $this->prepareQuery($sql);
+		$result = $query->execute($params);
+		$row = $result->fetchRow();;
+		return $row['stime'];
+	}
+
+	public function findShare($shareId) {
+		$sql = "SELECT * FROM `*PREFIX*share` WHERE `id` = ?";
+		$params = array($id);
+		$query = $this->prepareQuery($sql);
+		$result = $query->execute($params);
+		return $result->fetchRow();;
+	}
 
         public function fileGetContents($url) {
                 return file_get_contents($url);

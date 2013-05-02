@@ -28,9 +28,9 @@ use \OCA\AppFramework\Db\Entity;
 use \OCA\AppFramework\Db\DoesNotExistException;
 use \OCA\AppFramework\Db\MultipleObjectsReturnedException;
 
-use \OCA\MultiInstance\Db\PermissionUpdate;
+use \OCA\MultiInstance\Db\ShareUpdate;
 
-class PermissionUpdateMapper extends Mapper {
+class ShareUpdateMapper extends Mapper {
 
 
 
@@ -38,7 +38,7 @@ class PermissionUpdateMapper extends Mapper {
 	 * @param API $api: Instance of the API abstraction layer
 	 */
 	public function __construct($api){
-		parent::__construct($api, 'multiinstance_permission_updates');
+		parent::__construct($api, 'multiinstance_share_updates');
 
 	}
 
@@ -47,9 +47,9 @@ class PermissionUpdateMapper extends Mapper {
 	 * @throws DoesNotExistException: if the item does not exist
 	 * @return the item
 	 */
-	public function find($fileid, $user){
-		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `fileid` = ? AND `user` = ?';
-		$params = array($fileid, $user);
+	public function find($shareId){
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `share_id` = ?';
+		$params = array($shareId);
 
 		$result = array();
 		
@@ -57,17 +57,17 @@ class PermissionUpdateMapper extends Mapper {
 		$row = $result->fetchRow();
 
 		if ($row === false) {
-			throw new DoesNotExistException("PermissionUpdate with fileid {$fileid} user {$user} does not exist!");
+			throw new DoesNotExistException("ShareUpdate with share_id {$shareId} does not exist!");
 		} elseif($result->fetchRow() !== false) {
-			throw new MultipleObjectsReturnedException("PermissionUpdate with fileid {$fileid} user {$user}  returned more than one result.");
+			throw new MultipleObjectsReturnedException("ShareUpdate with share_id {$shareId} returned more than one result.");
 		}
-		return new PermissionUpdate($row);
+		return new ShareUpdate($row);
 
 	}
 
-	public function exists($fileid, $user){
+	public function exists($shareId){
 		try{
-			$this->find($fileid, $user);
+			$this->find($shareId);
 		}
 		catch (DoesNotExistException $e){
 			return false;
@@ -87,12 +87,11 @@ class PermissionUpdateMapper extends Mapper {
 
 		$entityList = array();
 		while($row = $result->fetchRow()){
-			$entity = new PermissionUpdate($row);
+			$entity = new ShareUpdate($row);
 			array_push($entityList, $entity);
 		}
 
 		return $entityList;
 	}
-
 
 }

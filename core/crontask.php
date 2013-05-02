@@ -364,8 +364,8 @@ class CronTask {
 		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_user_facebook_ids\` WHERE \`uid\` = {$uid} AND \`friends_synced_at\` = {$syncedAt}";
 	}
 
-	protected function deleteQueuedFilecacheSql($storage, $path, $addedAt) {
-		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_filecache\` WHERE \`storage\` = {$storage} AND \`path\` = {$path} AND \`added_at\` = {$addedAt}";
+	protected function deleteQueuedFilecacheSql($storage, $path, $mtime) {
+		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_filecache\` WHERE \`storage\` = {$storage} AND \`path\` = {$path} AND \`mtime\` = {$mtime}";
 		
 	}
 

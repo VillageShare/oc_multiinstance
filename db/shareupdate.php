@@ -26,34 +26,19 @@ namespace OCA\MultiInstance\Db;
 use \OCA\AppFramework\Db\Entity;
 
 
-class QueuedFileCache extends Entity {
+class ShareUpdate extends Entity {
 
-	public $storage;
-	public $path;
-	public $pathHash;
-	public $parentPath;
-	public $name;
-	public $mimetype;
-	public $mimepart;
-	public $size;
-	public $mtime;
-	public $encrypted;
-	public $etag;
-	public $destinationLocation;
+	public $shareId;
+	public $updatedAt;
+	public $state;
 
-	public function __construct($storage, $path, $pathHash, $parentPath, $name, $mimetype, $mimepart, $size, $mtime, $encrypted, $etag, $destinationLocation){
-		$this->setStorage($storage);
-		$this->setPath($path);
-		$this->setPathHash($pathHash);
-		$this->setParentPath($parentPath);
-		$this->setName($name);
-		$this->setMimetype($mimetype);
-		$this->setMimepart($mimepart);
-		$this->setSize($size);
-		$this->setMtime($mtime);
-		$this->setEncrypted($encrypted);
-		$this->setEtag($etag);
+	const VALID = 1;
+	const DELETED = 0;
 
+	public function __construct($shareId, $updatedAt, $state){
+		$this->setFileid($shareId);
+		$this->setUpdatedAt($updatedAt);
+		$this->setState($state);
 	}
 
 }

@@ -38,6 +38,7 @@ use OCA\MultiInstance\Db\QueuedPermission;
 use OCA\MultiInstance\Db\PermissionUpdate;
 /**
  * This is a static library methods for MultiInstance app.
+ * This also contains methods that would be hooks if hooks existed for the necessary events
  */
 class MILocation{
 
@@ -192,7 +193,7 @@ class MILocation{
 	}
 
 
-	static public function queueFile($parameters, $storage, $mimetype, $permissions, $parentStorage, $parentPath, $mockQueuedFilecacheMapper=null, $mockApi=null) {
+	static public function queueFile($parameters, $storage, $mimetype, $parentPath, $mockQueuedFilecacheMapper=null, $mockApi=null) {
 		if ($mockQueuedFilecacheMapper !== null && $mockApi !==null) {
 			$queuedFilecacheMapper = $mockQueuedFilecacheMapper;
 			$api = $mockApi;
@@ -206,10 +207,9 @@ class MILocation{
 		$centralServerName = $api->getAppValue('centralServer');
 		if ($centralServerName !== $api->getAppValue('location')) {
 			$newStorage = MILocation::removePathFromStorage($storage);
-			$newParentStorage = MILocation::removePathFromStorage($parentStorage);
-			if ($newStorage && $newParentStorage) {
+			if ($newStorage) {
 				MILocation::copyFileForSyncing($api, $parameters[6], $newStorage, $centralServerName);
-				$queuedFileCache = new QueuedFileCache($newStorage, $parameters[6], $parameters[5], $newParentStorage, $parentPath, $parameters[8], $mimetype, $parameters[0], $parameters[3], $parameters[2], $parameters[9], $parameters[4], $permissions, $api->getTime(),  $centralServerName);
+				$queuedFileCache = new QueuedFileCache($newStorage, $parameters[6], $parameters[5], $parentPath, $parameters[8], $mimetype, $parameters[0], $parameters[3], $parameters[2], $parameters[9], $parameters[4],  $centralServerName);
 				$queuedFilecacheMapper->save($queuedFileCache);
 			}
 			else {
@@ -262,22 +262,29 @@ class MILocation{
 		}
 		
 	}
-
+	
 
 	/**
 	 * Helper function
 	 */
-	static public function copyFileForSyncing($api, $path, $storage, $centralServerName) {
+	static public function copyFileForSyncing($api, $path, $subStorage, $serverName) {
 
-		$fullLocalPath = $api->getSystemValue('datadirectory').$storage.$path;
-		$rsyncPath = $api->getAppValue('dbSyncPath') . $centralServerName . $storage .$path;
+		$fullLocalPath = $api->getSystemValue('datadirectory').$subStorage.$path;
+		$rsyncPath = $api->getAppValue('dbSyncPath') . $serverName . $subStorage .$path;
 		$dir = dirname($rsyncPath);
 		$mkdir = "mkdir -p {$dir}";
 		$api->exec(escapeshellcmd($mkdir));
 		$cmd = "cp {$fullLocalPath} {$rsyncPath}";
 		$api->exec(escapeshellcmd($cmd));
-		//cp datapath + path  db_sync/$centralServerName/
 	}
+
+	static public function copyFileToDataFolder($api, $path, $subStorage, $serverName) {
+		$rsyncPath = $api->getAppValue('dbSyncPathRecv') . $serverName . $subStorage .$path;
+		$fullLocalPath = $api->getSystemValue('datadirectory').$subStorage.$path;
+
+		$cmd = "cp {$fullLocalPath} {$rsyncPath}";
+error_log(escapeshellcmd($cmd));
+	} 
 
 	/**
 	 * @brief Helper function for queueFile
