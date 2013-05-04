@@ -265,7 +265,7 @@ class UpdateReceived {
 					$permissionUpdate->setState($receivedPermission->getState());
 					$this->permissionUpdateMapper->update($permissionUpdate);
 				}	
-				else {
+				catch (DoesNotExistException $e) {
 					$permissionUpdate = new PermissionUpdate($fileid, $receivedPermission->getUser(), $receivedPermission->getUpdatedAt(), $receivedPermission->getState());
 					$this->permissionUpdateMapper->insert($permissionUpdate);
 				}
