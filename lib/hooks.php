@@ -29,6 +29,7 @@ use OCA\MultiInstance\DependencyInjection\DIContainer;
 use OCA\MultiInstance\Lib\MILocation;
 use OCA\MultiInstance\Db\QueuedFileCache;
 use OCA\MultiInstance\Db\QueuedPermission;
+use OCA\MultiInstance\Db\PermissionUpdate;
 
 use OC\Files\Cache\Cache;
 
