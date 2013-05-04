@@ -207,11 +207,11 @@ class Hooks{
 	}
 
 	static public function queuePermissionUpdate($fileid, $user, $permissions, $mockApi=null, $mockQueuedPermissionMapper=null, $mockPermissionUpdateMapper=null) {
-		MILocation::queuePermission($fileid, $user, $permissions, PermissionUpdate::VALID);
+		Hooks::queuePermission($fileid, $user, $permissions, PermissionUpdate::VALID);
 	}
 
 	static public function queuePermissionDelete($fileid, $user, $mockApi=null, $mockQueuedPermissionMapper=null) {
-		MILocation::queuePermission($fileid, $user, $permissions, PermissionUpdate::DELETED);
+		Hooks::queuePermission($fileid, $user, $permissions, PermissionUpdate::DELETED);
 	}
 
 	static public function queuePermission($fileid, $user, $permissions, $state, $mockApi=null, $mockQueuedPermissionMapper=null, $mockPermissionUpdateMapper=null) {
