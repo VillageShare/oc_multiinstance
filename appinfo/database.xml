@@ -748,7 +748,7 @@
                                 <length>40</length>
                         </field>
 			<field>
-				<name>updated_at</name>
+				<name>added_at</name>
 				<type>timestamp</type>
 				<default></default>
 				<notnull>false</notnull>
