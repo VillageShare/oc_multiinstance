@@ -686,7 +686,7 @@
                         </field>
 
                         <field>
-                                <name>var_path</name>
+                                <name>path_var</name>
                                 <type>text</type>
                                 <default></default>
                                 <notnull>true</notnull>
