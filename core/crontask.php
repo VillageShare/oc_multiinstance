@@ -323,7 +323,7 @@ class CronTask {
 					$formattedQuery = $this->deleteQueuedFilecacheSql($matches['storage'], $matches['path'], $matches['timestamp']) . ";\n";
 				}
 				break;
-			case 'multiinstace_queued_permissions.sql':
+			case 'multiinstance_queued_permissions.sql':
 				if (sizeof($matches) <3) {
 					$formattedQuery = "";
 				}
