@@ -22,6 +22,7 @@
 
 namespace OCA\MultiInstance\Lib;
 
+use OCA\AppFramework\Db\DoesNotExistException;
 use OCA\MultiInstance\Db\QueuedUser;
 use OCA\MultiInstance\Db\UserUpdate;
 use OCA\MultiInstance\Db\QueuedShare;
