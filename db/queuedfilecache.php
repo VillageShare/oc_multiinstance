@@ -28,10 +28,15 @@ use \OCA\AppFramework\Db\Entity;
 
 class QueuedFileCache extends Entity {
 
+	const DELETE = 0;
+	const CREATE = 1;
+	const RENAME = 2;
+	const UPDATE = 3;
+
 	public $storage;
 	public $path;
-	public $pathHash;
-	public $parentPath;
+	public $pathHash; //can do this on the other side
+	public $pathVar;  //can be the parentPath (if a new file), or the new file name (if rename)
 	public $name;
 	public $mimetype;
 	public $mimepart;
@@ -39,13 +44,16 @@ class QueuedFileCache extends Entity {
 	public $mtime;
 	public $encrypted;
 	public $etag;
+	public $addedAt;
+	public $queueType;
 	public $destinationLocation;
+	public $sendingLocation;
 
-	public function __construct($storage, $path, $pathHash, $parentPath, $name, $mimetype, $mimepart, $size, $mtime, $encrypted, $etag, $destinationLocation){
+	public function __construct($storage, $path, $pathHash, $pathVar, $name, $mimetype, $mimepart, $size, $mtime, $encrypted, $etag, $addedAt, $queueType, $destinationLocation, $sendingLocation){
 		$this->setStorage($storage);
 		$this->setPath($path);
 		$this->setPathHash($pathHash);
-		$this->setParentPath($parentPath);
+		$this->setPathVar($parentPath);
 		$this->setName($name);
 		$this->setMimetype($mimetype);
 		$this->setMimepart($mimepart);
@@ -53,6 +61,10 @@ class QueuedFileCache extends Entity {
 		$this->setMtime($mtime);
 		$this->setEncrypted($encrypted);
 		$this->setEtag($etag);
+		$this->setAddedAt($addedAt);
+		$this->setQueueType($queueType);
+		$this->setDestinationLocation($destinationLocation);
+		$this->setSendingLocation($sendingLocation);
 
 	}
 

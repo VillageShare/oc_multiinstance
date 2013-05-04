@@ -194,11 +194,12 @@ class Hooks{
 		}
 
 		$centralServerName = $api->getAppValue('centralServer');
-		if ($centralServerName !== $api->getAppValue('location')) {
+		$thisLocation = $api->getAppValue('location');
+		if ($centralServerName !== $thisLocation) {
 			$newStorage = MILocation::removePathFromStorage($storage);
 			if ($newStorage) {
 				MILocation::copyFileForSyncing($api, $parameters[6], $newStorage, $centralServerName);
-				$queuedFileCache = new QueuedFileCache($newStorage, $parameters[6], $parameters[5], $parentPath, $parameters[8], $mimetype, $parameters[0], $parameters[3], $parameters[2], $parameters[9], $parameters[4],  $centralServerName);
+				$queuedFileCache = new QueuedFileCache($newStorage, $parameters[6], $parameters[5], $parentPath, $parameters[8], $mimetype, $parameters[0], $parameters[3], $parameters[2], $parameters[9], $parameters[4], $api->getTime(), QueuedFileCache::CREATE, $centralServerName, $thisLocation);
 				$queuedFilecacheMapper->save($queuedFileCache);
 			}
 			else {

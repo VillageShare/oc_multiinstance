@@ -686,14 +686,7 @@
                         </field>
 
                         <field>
-                                <name>parent_storage</name>
-                                <type>text</type>
-                                <default></default>
-                                <notnull>true</notnull>
-                                <length>64</length>
-                        </field>
-                        <field>
-                                <name>parent_path</name>
+                                <name>var_path</name>
                                 <type>text</type>
                                 <default></default>
                                 <notnull>true</notnull>
@@ -754,8 +747,28 @@
                                 <notnull>true</notnull>
                                 <length>40</length>
                         </field>
+			<field>
+				<name>updated_at</name>
+				<type>timestamp</type>
+				<default></default>
+				<notnull>false</notnull>
+			</field>
+                        <field>
+                                <name>queue_type</name>
+                                <type>integer</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>3</length>
+                        </field>
                         <field>
                                 <name>destination_location</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>64</length>
+                        </field>
+                        <field>
+                                <name>sending_location</name>
                                 <type>text</type>
                                 <default></default>
                                 <notnull>true</notnull>
