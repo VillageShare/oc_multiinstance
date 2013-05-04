@@ -903,6 +903,44 @@
 
         </table>
 	<table>
+                <name>*dbprefix*multiinstance_filecache_updates</name>
+
+		<declaration>
+			<field>
+				<name>fileid</name>
+				<type>integer</type>
+                                <notnull>true</notnull>
+				<default>0</default>
+				<length>4</length>
+			</field>
+
+                        <field>
+                                <name>state</name>
+                                <type>integer</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>2</length>
+                        </field>
+
+			<field>
+				<name>updated_at</name>
+				<type>timestamp</type>
+				<default></default>
+				<notnull>false</notnull>
+			</field>
+
+			<index>
+                                <name>fileid_index</name>
+                                <unique>true</unique>
+                                <field>
+                                        <name>fileid</name>
+                                        <sorting>ascending</sorting>
+                                </field>
+                        </index>
+		</declaration>
+		
+	</table>
+	<table>
                 <name>*dbprefix*multiinstance_permission_updates</name>
 
 		<declaration>
