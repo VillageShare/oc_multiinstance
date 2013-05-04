@@ -53,7 +53,7 @@ class QueuedFileCache extends Entity {
 		$this->setStorage($storage);
 		$this->setPath($path);
 		$this->setPathHash($pathHash);
-		$this->setPathVar($parentPath);
+		$this->setPathVar($pathVar);
 		$this->setName($name);
 		$this->setMimetype($mimetype);
 		$this->setMimepart($mimepart);
