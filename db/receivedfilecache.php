@@ -43,7 +43,8 @@ class ReceivedFileCache extends Entity {
 	public $destinationLocation;
 	public $sendingLocation;
 
-	public function __construct(){
+	public function __construct($row){
+		$this->fromRow($row);
 	}
 
 }

@@ -88,7 +88,7 @@ class ReceivedFileCacheMapper extends Mapper {
 
 		$entityList = array();
 		while($row = $result->fetchRow()){
-			$entity = new QueuedFileCache($row);
+			$entity = new ReceivedFileCache($row);
 			array_push($entityList, $entity);
 		}
 
