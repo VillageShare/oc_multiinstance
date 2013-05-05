@@ -27,7 +27,8 @@ use \OCA\AppFramework\Db\Mapper;
 use \OCA\AppFramework\Db\DoesNotExistException;
 use \OCA\AppFramework\Db\MultipleObjectsReturnedException;
 
-use \OCA\AppFramework\Db\QueuedFileCache;
+use \OCA\AppFramework\Db\Entity;
+use OCA\MultiInstance\Db\ReceivedFilecache;
 
 class ReceivedFileCacheMapper extends Mapper {
 
