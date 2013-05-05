@@ -239,7 +239,7 @@ class UpdateReceived {
 					$cache->update($filecache['fileid'], $data);
 					$filecacheUpdate->setUpdatedAt($receivedFilecache->getAddedAt());
 					$filecacheUpdate->setState($state);
-					$this-filecacheUpdateMapper->update($filecacheUpdate);
+					$this->filecacheUpdateMapper->update($filecacheUpdate);
 					
 				}
 			}
