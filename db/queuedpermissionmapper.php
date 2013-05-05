@@ -78,22 +78,6 @@ class QueuedPermissionMapper extends Mapper {
 		return true;
 	}
 
-	/**
-	 * Finds all Items
-	 * @return array containing all items
-	 */
-	public function findAll(){
-		$result = $this->findAllQuery($this->getTableName());
-
-		$entityList = array();
-		while($row = $result->fetchRow()){
-			$entity = new QueuedPermission($row);
-			array_push($entityList, $entity);
-		}
-
-		return $entityList;
-	}
-
 
 	/**
 	 * Saves an item into the database
