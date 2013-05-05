@@ -30,7 +30,6 @@ class ReceivedFileCache extends Entity {
 
 	public $storage;
 	public $path;
-	public $pathHash; //can do this on the other side
 	public $pathVar;  //can be the parentPath (if a new file), or the new file name (if rename)
 	public $name;
 	public $mimetype;

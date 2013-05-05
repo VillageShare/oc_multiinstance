@@ -35,7 +35,6 @@ class QueuedFileCache extends Entity {
 
 	public $storage;
 	public $path;
-	public $pathHash; //can do this on the other side
 	public $pathVar;  //can be the parentPath (if a new file), or the new file name (if rename)
 	public $name;
 	public $mimetype;
@@ -49,10 +48,9 @@ class QueuedFileCache extends Entity {
 	public $destinationLocation;
 	public $sendingLocation;
 
-	public function __construct($storage, $path, $pathHash, $pathVar, $name, $mimetype, $mimepart, $size, $mtime, $encrypted, $etag, $addedAt, $queueType, $destinationLocation, $sendingLocation){
+	public function __construct($storage, $path, $pathVar, $name, $mimetype, $mimepart, $size, $mtime, $encrypted, $etag, $addedAt, $queueType, $destinationLocation, $sendingLocation){
 		$this->setStorage($storage);
 		$this->setPath($path);
-		$this->setPathHash($pathHash);
 		$this->setPathVar($pathVar);
 		$this->setName($name);
 		$this->setMimetype($mimetype);
