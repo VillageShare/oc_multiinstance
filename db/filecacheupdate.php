@@ -28,8 +28,8 @@ use \OCA\AppFramework\Db\Entity;
 
 class FileCacheUpdate extends Entity {
 
-	public $fileStorage;
-	public $filePathHash;
+	public $storage;
+	public $pathHash;
 	public $updatedAt;
 	public $state;
 
