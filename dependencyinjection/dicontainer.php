@@ -185,7 +185,7 @@ class DIContainer extends BaseContainer {
 			
 		});
 		$this['UpdateReceived'] = $this->share(function($c){
-			return new UpdateReceived($c['API'], $c['ReceivedUserMapper'], $c['UserUpdateMapper'], $c['ReceivedFriendshipMapper'], $c['UserFacebookIdMapper'], $c['ReceivedUserFacebookIdMapper'], $c['FriendshipMapper'], $c['QueuedFriendshipMapper'], $c['QueuedUserMapper'], $c['LocationMapper'], $c['ReceivedFilecacheMapper'], $c['FilecacheUpdateMapper']);
+			return new UpdateReceived($c['API'], $c['ReceivedUserMapper'], $c['UserUpdateMapper'], $c['ReceivedFriendshipMapper'], $c['UserFacebookIdMapper'], $c['ReceivedUserFacebookIdMapper'], $c['FriendshipMapper'], $c['QueuedFriendshipMapper'], $c['QueuedUserMapper'], $c['LocationMapper'], $c['ReceivedFileCacheMapper'], $c['FilecacheUpdateMapper']);
 			
 		});
 		$this['RequestResponse'] = $this->share(function($c){
