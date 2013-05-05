@@ -33,6 +33,7 @@ use OCA\MultiInstance\Db\QueuedUser;
 
 use OCA\MultiInstance\Lib\MILocation;
 use \OC\Files\Cache\Cache;
+use OCA\MultiInstance\Db\QueuedFileCache;
 
 /* Methods for updating instance db rows based on received rows */
 class UpdateReceived {
