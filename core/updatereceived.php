@@ -217,7 +217,7 @@ class UpdateReceived {
 					'mimetype' => $mimetypeId
 					
 				);
-				MILocation::copyFileToDataFolder($this->api, $receivedFilecache->getPath(), $receivedFilecache->getStorage(), $receivedFilecache->sendingLocation());
+				MILocation::copyFileToDataFolder($this->api, $receivedFilecache->getPath(), $receivedFilecache->getStorage(), $receivedFilecache->getSendingLocation());
 				$cache->put($receivedFilecache->getPath(), $data);
 				$filecache = $cache->get($receivedFilecache->getPath());
 				$filecacheUpdate = new FilecacheUpdate(md5($receivedFilecache->getPath()), $receivedFilecache->getStorage(), $receivedFilecache->getAddedAt(), $state);
@@ -237,7 +237,7 @@ class UpdateReceived {
 						'etag' => $receivedFilecache->getEtag(),
 						'mimetype' => $mimetypeId
 					);
-					MILocation::copyFileToDataFolder($this->api, $receivedFilecache->getPath(), $receivedFilecache->getStorage(), $receivedFilecache->sendingLocation());
+					MILocation::copyFileToDataFolder($this->api, $receivedFilecache->getPath(), $receivedFilecache->getStorage(), $receivedFilecache->getSendingLocation());
 					$cache->update($filecache['fileid'], $data);
 					$filecacheUpdate->setUpdatedAt($receivedFilecache->getAddedAt());
 					$filecacheUpdate->setState($state);
