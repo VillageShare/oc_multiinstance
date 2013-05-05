@@ -28,15 +28,17 @@ use \OCA\AppFramework\Db\Entity;
 
 class FileCacheUpdate extends Entity {
 
-	public $fileid;
+	public $fileStorage;
+	public $filePathHash;
 	public $updatedAt;
 	public $state;
 
 	const VALID = 1;
 	const DELETED = 0;
 
-	public function __construct($fileid, $updatedAt, $state){
-		$this->setFileid($fileid);
+	public function __construct($filePathHash, $fileStorage, $updatedAt, $state){
+		$this->setPathHash($filePathHash);
+		$this->setStorage($fileStorage);
 		$this->setUpdatedAt($updatedAt);
 		$this->setState($state);
 	}

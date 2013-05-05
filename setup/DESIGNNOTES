@@ -1,4 +1,4 @@
-This is a summary of known design constraints.
+This is a summary of known design limitations.
 
 Owncloud allows for different mounting points.
 This design assumes that all storages (see oc_storages in the db) will be of the form:
@@ -9,7 +9,7 @@ If the storage does not appear in this form, the implementation will break.  Wor
 
 
 oc_share contains 3 fields: item_source, item_target, file_source.
-This design assumes that all three will be the fileid (albeit in different forms).  If this is not the case, then this implementation will break.  
+This design assumes that all three will be the fileid (albeit in different forms).  If this is not the case, then this implementation will break.  As of May 2013, this is fine for files; contact and calendar sharing are incompatible with this design.
 
 
 

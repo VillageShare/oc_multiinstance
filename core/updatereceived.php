@@ -48,12 +48,14 @@ class UpdateReceived {
 	private $queuedFriendshipMapper;
 	private $queuedUserMapper;
 	private $locationMapper;
+	private $receivedFilecacheMapper;
+	private $filecacheUpdateMapper;
 
 
 	/**
 	 * @param API $api: an api wrapper instance
 	 */
-	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $queuedUserMapper, $locationMapper){
+	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $queuedUserMapper, $locationMapper, $receivedFilecacheMapper, $filecacheUpdateMapper){
 		$this->api = $api;
 		$this->receivedUserMapper = $receivedUserMapper;
 		$this->userUpdateMapper = $userUpdateMapper;
@@ -64,6 +66,8 @@ class UpdateReceived {
 		$this->queuedFriendshipMapper = $queuedFriendshipMapper;
 		$this->queuedUserMapper = $queuedUserMapper;
 		$this->locationMapper = $locationMapper;
+		$this->receivedFilecacheMapper = $receivedFilecacheMapper;
+		$this->filecacheUpdateMapper = $filecacheUpdateMapper;
 	}
 
 
@@ -197,6 +201,7 @@ class UpdateReceived {
 			$storageNumericId = $cache->getNumericStorageId();
 	
 			$mimetypeId = $cache->getMimetypeId($receivedFilecache->getMimetype());
+			$state = ($receivedFilecache->getQueueType() === QueuedFileCache::DELETE) ? FilecacheUpdate::DELETED : FilecacheUpdate::VALID;
 
 			$filecache = $cache->get($receivedFilecache->getPath());
 
@@ -212,20 +217,31 @@ class UpdateReceived {
 				);
 				MILocation::copyFileToDataFolder($this->api, $receivedFilecache->getPath(), $receivedFilecache->getStorage(), $receivedFilecache->sendingLocation());
 				$cache->put($receivedFilecache->getPath(), $data);
+				$filecache = $cache->get($receivedFilecache->getPath());
+				$filecacheUpdate = new FilecacheUpdate(md5($receivedFilecache->getPath()), $receivedFilecache->getStorage(), $receivedFilecache->getAddedAt(), $state);
+				$this->filecacheUpdateMapper->insert($filecacheUpdate);
+				
 			}
-			else if ($receivedFilecache->getMtime() > $filecache['mtime']) { //if updated file
-				$fileid = $cache->getId($receivedFilecache->getPath()); 
-				//cp
-				//TODO figure out what this needs to be
-				$data = array( 
-					'encrypted' => $receivedFilecache->getEncrypted(),
-					'size' => $receivedFilecache->getSize(),
-					'mtime' => $receivedFilecache->getMtime(),
-					'etag' => $receivedFilecache->getEtag(),
-					'mimetype' => $mimetypeId
-				);
-				MILocation::copyFileToDataFolder($this->api, $receivedFilecache->getPath(), $receivedFilecache->getStorage(), $receivedFilecache->sendingLocation());
-				$cache->update($fileid, $data);
+			else {  //not new file
+				$filecacheUpdate = $this->filecacheUpdateMapper->find(md5($receivedFilecache->getPath()), $receivedFilecache->getStorage());
+
+				if ($receivedFilecache->getAddedAt() > $filecacheUpdate->getUpdatedAt()) { //if updated file
+					//cp
+					//TODO figure out what this needs to be
+					$data = array( 
+						'encrypted' => $receivedFilecache->getEncrypted(),
+						'size' => $receivedFilecache->getSize(),
+						'mtime' => $receivedFilecache->getMtime(),
+						'etag' => $receivedFilecache->getEtag(),
+						'mimetype' => $mimetypeId
+					);
+					MILocation::copyFileToDataFolder($this->api, $receivedFilecache->getPath(), $receivedFilecache->getStorage(), $receivedFilecache->sendingLocation());
+					$cache->update($filecache['fileid'], $data);
+					$filecacheUpdate->setUpdatedAt($receivedFilecache->getAddedAt());
+					$filecacheUpdate->setState($state);
+					$this-filecacheUpdateMapper->update($filecacheUpdate);
+					
+				}
 			}
 			$this->api->commit();
 

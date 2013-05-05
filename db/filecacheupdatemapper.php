@@ -47,9 +47,9 @@ class FilecacheUpdateMapper extends Mapper {
 	 * @throws DoesNotExistException: if the item does not exist
 	 * @return the item
 	 */
-	public function find($fileid){
-		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `fileid` = ?';
-		$params = array($fileid);
+	public function find($pathHash, $storage){
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `path_hash` = ? AND `storage` = ?';
+		$params = array($pathHash, $storage);
 
 		$result = array();
 		
@@ -57,17 +57,17 @@ class FilecacheUpdateMapper extends Mapper {
 		$row = $result->fetchRow();
 
 		if ($row === false) {
-			throw new DoesNotExistException("FilecacheUpdate with fileid {$fileid} does not exist!");
+			throw new DoesNotExistException("FilecacheUpdate with path_hash {$pathHash} and storage {$storage} does not exist!");
 		} elseif($result->fetchRow() !== false) {
-			throw new MultipleObjectsReturnedException("FilecacheUpdate with fileid {$fileid} returned more than one result.");
+			throw new MultipleObjectsReturnedException("FilecacheUpdate with path_hash {$pathHash} storage {$storage} returned more than one result.");
 		}
 		return new FilecacheUpdate($row);
 
 	}
 
-	public function exists($fileid){
+	public function exists($pathHash, $storage){
 		try{
-			$this->find($fileid);
+			$this->find($pathHash, $storage);
 		}
 		catch (DoesNotExistException $e){
 			return false;
