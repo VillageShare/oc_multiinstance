@@ -77,6 +77,17 @@ class Hooks{
 		$c['UserUpdateMapper']->update($userUpdate);
 	}
 
+	static public function updateFriendship($parameters) { 
+			$friendship = $parameters['friendship'];
+			MILocation::createQueuedFriendship($friendship->getFriendUid1(), $friendship->getFriendUid2(), $date, $friendship->getStatus());	
+
+			if (!$this->api->userExists($friendship->getFriendUid1())) {
+				MILocation::userExistsAtCentralServer($friendship->getFriendUid1());
+			}
+			if (!$this->api->userExists($friendship->getFriendUid2())) {
+				MILocation::userExistsAtCentralServer($friendship->getFriendUid2());
+			}
+	}
 
 	/**
 	 * Note: parameters['accepted'] does not exist at this time.  Not sure where accepted is used.
