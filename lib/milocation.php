@@ -162,7 +162,7 @@ class MILocation{
 		$fullLocalPath = $api->getSystemValue('datadirectory').$subStorage.$path;
 
 		$cmd = "cp {$rsyncPath} {$fullLocalPath}";
-error_log(escapeshellcmd($cmd));
+		$api->exec(escapeshellcmd($cmd));
 	} 
 
 	/**
