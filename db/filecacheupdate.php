@@ -26,7 +26,7 @@ namespace OCA\MultiInstance\Db;
 use \OCA\AppFramework\Db\Entity;
 
 
-class FileCacheUpdate extends Entity {
+class FilecacheUpdate extends Entity {
 
 	public $storage;
 	public $pathHash;
