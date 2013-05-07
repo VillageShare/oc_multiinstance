@@ -193,7 +193,7 @@ class Hooks{
 		}
 	}
 
-	static public function queueFile($parameters, $storage, $mimetype, $parentPath, $mockQueuedFilecacheMapper=null, $mockApi=null) {
+	static public function queueFile($parameters, $mockQueuedFilecacheMapper=null, $mockApi=null) {
 		if ($mockQueuedFilecacheMapper !== null && $mockApi !==null) {
 			$queuedFilecacheMapper = $mockQueuedFilecacheMapper;
 			$api = $mockApi;
@@ -207,14 +207,17 @@ class Hooks{
 		$centralServerName = $api->getAppValue('centralServer');
 		$thisLocation = $api->getAppValue('location');
 		if ($centralServerName !== $thisLocation) {
-			$newStorage = MILocation::removePathFromStorage($storage);
+			$newStorage = MILocation::removePathFromStorage($parameters['fullStorage']);
 			if ($newStorage) {
-				MILocation::copyFileForSyncing($api, $parameters[6], $newStorage, $centralServerName);
-				$queuedFileCache = new QueuedFileCache($newStorage, $parameters[6], $parentPath, $parameters[8], $mimetype, $parameters[0], $parameters[3], $parameters[2], $parameters[9], $parameters[4], $api->getTime(), QueuedFileCache::CREATE, $centralServerName, $thisLocation);
+				MILocation::copyFileForSyncing($api, $parameters['path'], $newStorage, $centralServerName);
+				$queuedFileCache = new QueuedFileCache($newStorage, $parameters['path'], $parameters['parentPath'], $parameters['name'],
+									$parameters['mimetype'], $parameters['mimepart'], $parameters['size'], $parameters['mtime'],
+									$parameters['encrypted'], $parameters['etag'], $api->getTime(), QueuedFileCache::CREATE, 
+									$centralServerName, $thisLocation);
 				$queuedFilecacheMapper->save($queuedFileCache);
 			}
 			else {
-				$api->log("Unable to send file with path {$parameters[6]} and storage {$storage}  and parent with path {$parentPath} and storage {$parentStorage} to central server due to bad storage format");
+				$api->log("Unable to send file with path {$parameters['path']} and storage {$parameters['fullStorage']}  and parent with path {$parameters['parentPath']} to central server due to bad storage format");
 			}
 		}
 	}

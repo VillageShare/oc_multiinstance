@@ -768,10 +768,13 @@
                         </field>
 
                         <index>
-                                <name>fs_storage</name>
-                                <unique>true</unique>
+                                <name>storage_added_at</name>
                                 <field>
                                         <name>storage</name>
+                                        <sorting>ascending</sorting>
+                                </field>
+                                <field>
+                                        <name>added_at</name>
                                         <sorting>ascending</sorting>
                                 </field>
 			</index>
@@ -893,10 +896,13 @@
                         </field>
 
                         <index>
-                                <name>fs_storage</name>
-                                <unique>true</unique>
+                                <name>storage_added_at</name>
                                 <field>
                                         <name>storage</name>
+                                        <sorting>ascending</sorting>
+                                </field>
+                                <field>
+                                        <name>added_at</name>
                                         <sorting>ascending</sorting>
                                 </field>
 			</index>
