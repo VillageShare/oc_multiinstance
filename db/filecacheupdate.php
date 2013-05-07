@@ -36,11 +36,16 @@ class FileCacheUpdate extends Entity {
 	const VALID = 1;
 	const DELETED = 0;
 
-	public function __construct($filePathHash, $fileStorage, $updatedAt, $state){
-		$this->setPathHash($filePathHash);
-		$this->setStorage($fileStorage);
-		$this->setUpdatedAt($updatedAt);
-		$this->setState($state);
+	public function __construct($filePathHash, $fileStorage=null, $updatedAt=null, $state=null){
+		if ($fileStorage) {
+			$this->setPathHash($filePathHash);
+			$this->setStorage($fileStorage);
+			$this->setUpdatedAt($updatedAt);
+			$this->setState($state);
+		}
+		else {
+			$this->fromRow($filePathHash);
+		}
 	}
 
 }
