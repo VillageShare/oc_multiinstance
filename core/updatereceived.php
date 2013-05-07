@@ -244,6 +244,7 @@ class UpdateReceived {
 					
 				}
 			}
+			$this->receivedFilecacheMapper->delete($receivedFilecache);
 			$this->api->commit();
 
 
