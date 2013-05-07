@@ -116,7 +116,7 @@ class ReceivedFileCacheMapper extends Mapper {
 	 */
 	public function delete(Entity $entity){
 		$queuedFileCache = $entity;
-		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `path` = ? AND `storage` = ? AND `added_at` = ? AND `destination_location`';
+		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `path` = ? AND `storage` = ? AND `added_at` = ? AND `destination_location` = ?';
 		$params = array(
 			$queuedFileCache->getPath(),
 			$queuedFileCache->getStorage(),
