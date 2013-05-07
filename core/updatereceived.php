@@ -202,7 +202,6 @@ class UpdateReceived {
 			$cache = new Cache($storagePath);
 			$storageNumericId = $cache->getNumericStorageId();
 	
-			$mimetypeId = $cache->getMimetypeId($receivedFilecache->getMimetype());
 			$state = ($receivedFilecache->getQueueType() === QueuedFileCache::DELETE) ? FilecacheUpdate::DELETED : FilecacheUpdate::VALID;
 
 			$filecache = $cache->get($receivedFilecache->getPath());
@@ -214,7 +213,7 @@ class UpdateReceived {
 					'size' => $receivedFilecache->getSize(),
 					'mtime' => $receivedFilecache->getMtime(),
 					'etag' => $receivedFilecache->getEtag(),
-					'mimetype' => $mimetypeId
+					'mimetype' => $receivedFilecache->getMimetype()
 					
 				);
 				MILocation::copyFileToDataFolder($this->api, $receivedFilecache->getPath(), $receivedFilecache->getStorage(), $receivedFilecache->getSendingLocation());
