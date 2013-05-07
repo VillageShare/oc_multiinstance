@@ -193,14 +193,16 @@ class Hooks{
 		}
 	}
 
-	static public function queueFile($parameters, $mockQueuedFilecacheMapper=null, $mockApi=null) {
+	static public function queueFile($parameters, $mockQueuedFilecacheMapper=null, $mockApi=null, $mockFilecacheUpdateMapper=null) {
 		if ($mockQueuedFilecacheMapper !== null && $mockApi !==null) {
 			$queuedFilecacheMapper = $mockQueuedFilecacheMapper;
+			$filecacheUpdateMapper = $mockFilecacheUpdateMapper;
 			$api = $mockApi;
 		}
 		else {
 			$di = new DIContainer();
 			$queuedFilecacheMapper = $di['QueuedFileCacheMapper'];
+			$filecacheUpdateMapper = $di['FilecacheUpdateMapper'];
 			$api = $di['API'];
 		}
 
@@ -210,10 +212,13 @@ class Hooks{
 			$newStorage = MILocation::removePathFromStorage($parameters['fullStorage']);
 			if ($newStorage) {
 				MILocation::copyFileForSyncing($api, $parameters['path'], $newStorage, $centralServerName);
+				$date = $api->getTime();
 				$queuedFileCache = new QueuedFileCache($newStorage, $parameters['path'], $parameters['parentPath'], $parameters['name'],
 									$parameters['mimetype'], $parameters['mimepart'], $parameters['size'], $parameters['mtime'],
-									$parameters['encrypted'], $parameters['etag'], $api->getTime(), QueuedFileCache::CREATE, 
+									$parameters['encrypted'], $parameters['etag'], $date, QueuedFileCache::CREATE, 
 									$centralServerName, $thisLocation);
+				$filecacheUpdate = new FilecacheUpdate(md5($parameters['path']), $newStorage, $date, FilecacheUpdate::VALID);
+				$filecacheUpdateMapper->save($filecacheUpdate);
 				$queuedFilecacheMapper->save($queuedFileCache);
 			}
 			else {
