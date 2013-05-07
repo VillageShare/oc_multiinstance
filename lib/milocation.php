@@ -158,10 +158,10 @@ class MILocation{
 	 * @brief Copy a file from db_sync to its appropriate path
 	 */
 	static public function copyFileToDataFolder($api, $path, $subStorage, $serverName) {
-		$rsyncPath = $api->getAppValue('dbSyncPathRecv') . $serverName . $subStorage .$path;
+		$rsyncPath = $api->getAppValue('dbSyncRecvPath') . $serverName . $subStorage .$path;
 		$fullLocalPath = $api->getSystemValue('datadirectory').$subStorage.$path;
 
-		$cmd = "cp {$fullLocalPath} {$rsyncPath}";
+		$cmd = "cp {$rsyncPath} {$fullLocalPath}";
 error_log(escapeshellcmd($cmd));
 	} 
 
