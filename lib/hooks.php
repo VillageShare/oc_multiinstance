@@ -219,7 +219,7 @@ class Hooks{
 									$parameters['encrypted'], $parameters['etag'], $date, QueuedFileCache::CREATE, 
 									$centralServerName, $thisLocation);
 				$filecacheUpdate = new FilecacheUpdate(md5($parameters['path']), $newStorage, $date, FilecacheUpdate::VALID);
-				$filecacheUpdateMapper->save($filecacheUpdate);
+				$filecacheUpdateMapper->insert($filecacheUpdate);
 				$queuedFilecacheMapper->save($queuedFileCache);
 			}
 			else {
