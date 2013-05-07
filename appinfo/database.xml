@@ -681,7 +681,7 @@
                                 <name>path_var</name>
                                 <type>text</type>
                                 <default></default>
-                                <notnull>true</notnull>
+                                <notnull>false</notnull>
                                 <length>512</length>
                         </field>
 
@@ -809,7 +809,7 @@
                                 <name>path_var</name>
                                 <type>text</type>
                                 <default></default>
-                                <notnull>true</notnull>
+                                <notnull>false</notnull>
                                 <length>512</length>
                         </field>
 
