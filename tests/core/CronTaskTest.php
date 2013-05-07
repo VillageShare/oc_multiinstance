@@ -99,9 +99,10 @@ class CronTaskTest extends \PHPUnit_Framework_TestCase {
 	$insertResult = $this->cronTask->toAckFormat($insert, 'multiinstance_queued_friendships.sql');
 	$this->assertEquals("DELETE IGNORE FROM \`oc_multiinstance_queued_friendships\` WHERE \`friend_uid1\` = 'user15@UCSB' AND \`friend_uid2\` = 'user13@Kalene' AND \`updated_at\` = '2013-04-22 20:12:41';\n", $insertResult);
 
-	$insert = "INSERT  IGNORE INTO `oc_multiinstance_received_filecache` VALUES ('data/Karen@UCSB/','files/sample','8e7a47fd478475d5354448d2c1b0062f','sample','text/plain',5,172,1366930222,0,'5179b32e97bb2','2013-04-25 22:50:22','UCSB',27,'data/Karen@UCSB/','files')";
+	$insert = "INSERT  IGNORE INTO `oc_multiinstance_received_filecache` VALUES ('/user23@Kalene/','','','httpd/unix-directory',1,-1,1367963523,0,'5189778439299','UCSB',NULL,'2013-05-07 21:52:04',1,'Kalene')";
 	$insertResult = $this->cronTask->toAckFormat($insert, 'multiinstance_queued_filecache.sql');
-	$this->assertEquals("DELETE IGNORE FROM \`oc_multiinstance_queued_filecache\` WHERE \`storage\` = 'data/Karen@UCSB/' AND \`path\` = 'files/sample' AND \`added_at\` = '2013-04-25 22:50:22';\n", $insertResult);
+	$this->assertEquals("DELETE IGNORE FROM \`oc_multiinstance_queued_filecache\` WHERE \`storage\` = '/user23@Kalene/' AND \`path\` = '' AND \`added_at\` = '2013-05-07 21:52:04';\n", $insertResult);
+
 
     }
 

@@ -24,6 +24,7 @@ namespace OCA\MultiInstance\Lib;
 
 use OCA\AppFramework\Db\DoesNotExistException;
 use OCA\MultiInstance\Db\QueuedUser;
+use OCA\MultiInstance\Db\QueuedFriendship;
 use OCA\MultiInstance\Db\UserUpdate;
 use OCA\MultiInstance\Db\QueuedShare;
 use OCA\MultiInstance\DependencyInjection\DIContainer;
@@ -78,16 +79,24 @@ class Hooks{
 		$c['UserUpdateMapper']->update($userUpdate);
 	}
 
-	static public function updateFriendship($parameters) { 
-			$friendship = $parameters['friendship'];
-			MILocation::createQueuedFriendship($friendship->getFriendUid1(), $friendship->getFriendUid2(), $date, $friendship->getStatus());	
+	static public function updateFriendship($parameters, $mockAPI=null) { 
+		if ($mockAPI) {
+			$api = $mockAPI;
+		}
+		else {
+			$di = new DIContainer();
+			$api = $di['API'];
+		}
 
-			if (!$this->api->userExists($friendship->getFriendUid1())) {
-				MILocation::userExistsAtCentralServer($friendship->getFriendUid1());
-			}
-			if (!$this->api->userExists($friendship->getFriendUid2())) {
-				MILocation::userExistsAtCentralServer($friendship->getFriendUid2());
-			}
+		$friendship = $parameters['friendship'];
+		Hooks::createQueuedFriendship($friendship->getFriendUid1(), $friendship->getFriendUid2(), $friendship->getUpdatedAt(), $friendship->getStatus());	
+
+		if (!$api->userExists($friendship->getFriendUid1())) {
+			MILocation::userExistsAtCentralServer($friendship->getFriendUid1());
+		}
+		if (!$api->userExists($friendship->getFriendUid2())) {
+			MILocation::userExistsAtCentralServer($friendship->getFriendUid2());
+		}
 	}
 
 	/**
