@@ -205,51 +205,52 @@ class UpdateReceived {
 			$state = ($receivedFilecache->getQueueType() === QueuedFileCache::DELETE) ? FilecacheUpdate::DELETED : FilecacheUpdate::VALID;
 
 			$filecache = $cache->get($receivedFilecache->getPath());
-			//TODO need to compare filecacheUpdateMapper updatedAt to receivedFilecache addedAt (because file could have been deleted already, and thus would not return a filecache entry)
 
-			if (empty($filecache)) {  //if new file
-				//cp 
-				$data = array(  //the rest are derived
-					'encrypted' => $receivedFilecache->getEncrypted(),
-					'size' => $receivedFilecache->getSize(),
-					'mtime' => $receivedFilecache->getMtime(),
-					'etag' => $receivedFilecache->getEtag(),
-					'mimetype' => $receivedFilecache->getMimetype()
-					
-				);
-				if ($receivedFilecache->getMimetype() === 'httpd/unix-directory') {
-					//make directory
-					$this->api->mkdir($this->api->getSystemValue('datadirectory').$receivedFilecache->getStorage().$receivedFilecache->getPath());
+			//Check if this file has ever existed before by doing a find
+			try {
+				$filecacheUpdate = $this->filecacheUpdateMapper->find(md5($receivedFilecache->getPath()), $receivedFilecache->getStorage());
+				
+				if ($receivedFilecache->getAddedAt() <= $filecacheUpdate->getUpdatedAt()) {
+					$this->receivedFilecacheMapper->delete($receivedFilecache);
+					$this->api->commit();
+					continue;
 				}
-				else {
-					MILocation::copyFileToDataFolder($this->api, $receivedFilecache->getPath(), $receivedFilecache->getStorage(), $receivedFilecache->getSendingLocation(), $receivedFilecache->getFileid());
-				}
-				$cache->put($receivedFilecache->getPath(), $data);
-				$filecache = $cache->get($receivedFilecache->getPath());
+			}
+			catch (DoesNotExistException $e) {  //Make one if it has never existed before
 				$filecacheUpdate = new FilecacheUpdate(md5($receivedFilecache->getPath()), $receivedFilecache->getStorage(), $receivedFilecache->getAddedAt(), $state);
 				$this->filecacheUpdateMapper->insert($filecacheUpdate);
+			}
+			
+			//New update if made it this far
+		
+			if ($receivedFilecache->getMimetype() === 'httpd/unix-directory') {
+				//make directory
+				$this->api->mkdir($this->api->getSystemValue('datadirectory').$receivedFilecache->getStorage().$receivedFilecache->getPath());
+			}
+			else {
+				MILocation::copyFileToDataFolder($this->api, $receivedFilecache->getPath(), $receivedFilecache->getStorage(), $receivedFilecache->getSendingLocation(), $receivedFilecache->getFileid());
+			}
+
+			$data = array(  //the rest are derived
+				'encrypted' => $receivedFilecache->getEncrypted(),
+				'size' => $receivedFilecache->getSize(),
+				'mtime' => $receivedFilecache->getMtime(),
+				'etag' => $receivedFilecache->getEtag(),
+				'mimetype' => $receivedFilecache->getMimetype()
+				
+			);
+
+			if (empty($filecache)) {  //if new file
+				$cache->put($receivedFilecache->getPath(), $data);
+				//filecachemapper already created above
 				
 			}
 			else {  //not new file
-				$filecacheUpdate = $this->filecacheUpdateMapper->find(md5($receivedFilecache->getPath()), $receivedFilecache->getStorage());
-
-				if ($receivedFilecache->getAddedAt() > $filecacheUpdate->getUpdatedAt()) { //if updated file
-					//cp
-					//TODO figure out what this needs to be
-					$data = array( 
-						'encrypted' => $receivedFilecache->getEncrypted(),
-						'size' => $receivedFilecache->getSize(),
-						'mtime' => $receivedFilecache->getMtime(),
-						'etag' => $receivedFilecache->getEtag(),
-						'mimetype' => $mimetypeId
-					);
-					MILocation::copyFileToDataFolder($this->api, $receivedFilecache->getPath(), $receivedFilecache->getStorage(), $receivedFilecache->getSendingLocation());
-					$cache->update($filecache['fileid'], $data);
-					$filecacheUpdate->setUpdatedAt($receivedFilecache->getAddedAt());
-					$filecacheUpdate->setState($state);
-					$this->filecacheUpdateMapper->update($filecacheUpdate);
+				$cache->update($filecache['fileid'], $data);
+				$filecacheUpdate->setUpdatedAt($receivedFilecache->getAddedAt());
+				$filecacheUpdate->setState($state);
+				$this->filecacheUpdateMapper->update($filecacheUpdate);
 					
-				}
 			}
 			$this->receivedFilecacheMapper->delete($receivedFilecache);
 			$this->api->commit();
