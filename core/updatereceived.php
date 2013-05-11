@@ -219,10 +219,10 @@ class UpdateReceived {
 				);
 				if ($receivedFilecache->getMimetype() === 'httpd/unix-directory') {
 					//make directory
-					$this->api->mkdir($api->getSystemValue('datadirectory').$receivedFilecache->getStorage().$receivedFileacache->getPath());
+					$this->api->mkdir($this->api->getSystemValue('datadirectory').$receivedFilecache->getStorage().$receivedFilecache->getPath());
 				}
 				else {
-					MILocation::copyFileToDataFolder($this->api, $receivedFilecache->getPath(), $receivedFilecache->getStorage(), $receivedFilecache->getSendingLocation(), $receivedFilecache-getFileid());
+					MILocation::copyFileToDataFolder($this->api, $receivedFilecache->getPath(), $receivedFilecache->getStorage(), $receivedFilecache->getSendingLocation(), $receivedFilecache->getFileid());
 				}
 				$cache->put($receivedFilecache->getPath(), $data);
 				$filecache = $cache->get($receivedFilecache->getPath());

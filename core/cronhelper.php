@@ -70,7 +70,8 @@ class CronHelper {
 
 				$cmd = "rsync --verbose --compress --rsh ssh \
 				      --recursive --times --perms --links --delete \
-				      --exclude \"*~\" \
+				      --group \
+				      --exclude \"last_read.txt\" \
 				      db_sync/{$locationName}/ {$user}@{$location->getIP()}:{$dbSyncRecvPath}/{$thisLocation} >>{$output} 2>&1";
 
 				#$safe_cmd = escapeshellcmd($cmd);
@@ -84,7 +85,8 @@ class CronHelper {
 
 			$cmd = "rsync --verbose --compress --rsh ssh \
 			      --recursive --times --perms --links --delete \
-			      --exclude \"*~\" \
+			      --group \
+			      --exclude \"last_read.txt\" \
 			      db_sync/{$centralServerName}/ {$user}@{$server}:{$dbSyncRecvPath}/{$thisLocation} >>{$output} 2>&1";
 
 			#$safe_cmd = escapeshellcmd($cmd);

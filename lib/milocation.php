@@ -147,7 +147,7 @@ class MILocation{
 
 		$fullLocalPath = $api->getSystemValue('datadirectory').$subStorage.$path;
 		$rsyncPath = $api->getAppValue('dbSyncPath') . $serverName . '/' .(string)$fileid;
-		$cmd = "cp {$fullLocalPath} {$rsyncPath}";
+		$cmd = "cp --preserve {$fullLocalPath} {$rsyncPath}";
 		$api->exec(escapeshellcmd($cmd));
 	}
 
@@ -159,7 +159,7 @@ class MILocation{
 		$rsyncPath = $api->getAppValue('dbSyncRecvPath') . $serverName . '/' . (string)$fileid;
 		$fullLocalPath = $api->getSystemValue('datadirectory').$subStorage.$path;
 
-		$cmd = "cp {$rsyncPath} {$fullLocalPath}";
+		$cmd = "cp --preserve {$rsyncPath} {$fullLocalPath}";
 		$api->exec(escapeshellcmd($cmd));
 	} 
 
