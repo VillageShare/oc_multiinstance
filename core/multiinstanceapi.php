@@ -116,4 +116,8 @@ class MultiInstanceAPI extends API {
 		}
 		return glob($pathAndPattern);
 	}
+
+	public function mkdir($pathname) {
+		mkdir($pathname, 0775, true); 
+	}
 }	

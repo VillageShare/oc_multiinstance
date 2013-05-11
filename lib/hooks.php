@@ -221,9 +221,11 @@ class Hooks{
 		if ($centralServerName !== $thisLocation) {
 			$newStorage = MILocation::removePathFromStorage($parameters['fullStorage']);
 			if ($newStorage) {
-				MILocation::copyFileForSyncing($api, $parameters['path'], $newStorage, $centralServerName);
+				if ($parameters['mimetype'] !== 'httpd/unix-directory') {  //don't copy directories
+					MILocation::copyFileForSyncing($api, $parameters['path'], $newStorage, $centralServerName, $parameters['fileid']);
+				}
 				$date = $api->getTime();
-				$queuedFileCache = new QueuedFileCache($newStorage, $parameters['path'], $parameters['parentPath'], $parameters['name'],
+				$queuedFileCache = new QueuedFileCache($parameters['fileid'], $newStorage, $parameters['path'], $parameters['parentPath'], $parameters['name'],
 									$parameters['mimetype'], $parameters['mimepart'], $parameters['size'], $parameters['mtime'],
 									$parameters['encrypted'], $parameters['etag'], $date, QueuedFileCache::CREATE, 
 									$centralServerName, $thisLocation);

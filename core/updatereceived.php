@@ -205,6 +205,7 @@ class UpdateReceived {
 			$state = ($receivedFilecache->getQueueType() === QueuedFileCache::DELETE) ? FilecacheUpdate::DELETED : FilecacheUpdate::VALID;
 
 			$filecache = $cache->get($receivedFilecache->getPath());
+			//TODO need to compare filecacheUpdateMapper updatedAt to receivedFilecache addedAt (because file could have been deleted already, and thus would not return a filecache entry)
 
 			if (empty($filecache)) {  //if new file
 				//cp 
@@ -216,7 +217,13 @@ class UpdateReceived {
 					'mimetype' => $receivedFilecache->getMimetype()
 					
 				);
-				MILocation::copyFileToDataFolder($this->api, $receivedFilecache->getPath(), $receivedFilecache->getStorage(), $receivedFilecache->getSendingLocation());
+				if ($receivedFilecache->getMimetype() === 'httpd/unix-directory') {
+					//make directory
+					$this->api->mkdir($api->getSystemValue('datadirectory').$receivedFilecache->getStorage().$receivedFileacache->getPath());
+				}
+				else {
+					MILocation::copyFileToDataFolder($this->api, $receivedFilecache->getPath(), $receivedFilecache->getStorage(), $receivedFilecache->getSendingLocation(), $receivedFilecache-getFileid());
+				}
 				$cache->put($receivedFilecache->getPath(), $data);
 				$filecache = $cache->get($receivedFilecache->getPath());
 				$filecacheUpdate = new FilecacheUpdate(md5($receivedFilecache->getPath()), $receivedFilecache->getStorage(), $receivedFilecache->getAddedAt(), $state);

@@ -28,6 +28,7 @@ use \OCA\AppFramework\Db\Entity;
 
 class ReceivedFileCache extends Entity {
 
+	public $fileid;
 	public $storage;
 	public $path;
 	public $pathVar;  //can be the parentPath (if a new file), or the new file name (if rename)

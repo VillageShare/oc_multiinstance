@@ -660,7 +660,13 @@
                 <name>*dbprefix*multiinstance_queued_filecache</name>
 
                 <declaration>
-
+                        <field>
+                                <name>fileid</name>
+                                <type>integer</type>
+                                <default>0</default>
+                                <notnull>true</notnull>
+                                <length>4</length>
+                        </field>
                         <field>
                                 <name>storage</name>
                                 <type>text</type>
@@ -787,7 +793,13 @@
                 <name>*dbprefix*multiinstance_received_filecache</name>
 
                 <declaration>
-
+                        <field>
+                                <name>fileid</name>
+                                <type>integer</type>
+                                <default>0</default>
+                                <notnull>true</notnull>
+                                <length>4</length>
+                        </field>
                         <field>
                                 <name>storage</name>
                                 <type>text</type>

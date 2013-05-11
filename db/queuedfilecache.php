@@ -33,6 +33,7 @@ class QueuedFileCache extends Entity {
 	const RENAME = 2;
 	const UPDATE = 3;
 
+	public $fileid;
 	public $storage;
 	public $path;
 	public $pathVar;  //can be the parentPath (if a new file), or the new file name (if rename)
@@ -48,7 +49,8 @@ class QueuedFileCache extends Entity {
 	public $destinationLocation;
 	public $sendingLocation;
 
-	public function __construct($storage, $path, $pathVar, $name, $mimetype, $mimepart, $size, $mtime, $encrypted, $etag, $addedAt, $queueType, $destinationLocation, $sendingLocation){
+	public function __construct($fileid, $storage, $path, $pathVar, $name, $mimetype, $mimepart, $size, $mtime, $encrypted, $etag, $addedAt, $queueType, $destinationLocation, $sendingLocation){
+		$this->setFileid($fileid);
 		$this->setStorage($storage);
 		$this->setPath($path);
 		$this->setPathVar($pathVar);
