@@ -145,8 +145,8 @@ class MILocation{
 	static public function copyFileForSyncing($api, $path, $subStorage, $serverName, $fileid) {
 		
 
-		$fullLocalPath = $api->getSystemValue('datadirectory').$subStorage.$path;
-		$rsyncPath = $api->getAppValue('dbSyncPath') . $serverName . '/' .(string)$fileid;
+		$fullLocalPath = escapeshellarg($api->getSystemValue('datadirectory').$subStorage.$path);
+		$rsyncPath = escapeshellarg($api->getAppValue('dbSyncPath') . $serverName . '/' .(string)$fileid);
 		$cmd = "cp --preserve {$fullLocalPath} {$rsyncPath}";
 		$api->exec(escapeshellcmd($cmd));
 	}
@@ -156,8 +156,8 @@ class MILocation{
 	 * @brief Copy a file from db_sync to its appropriate path
 	 */
 	static public function copyFileToDataFolder($api, $path, $subStorage, $serverName, $fileid) {
-		$rsyncPath = $api->getAppValue('dbSyncRecvPath') . $serverName . '/' . (string)$fileid;
-		$fullLocalPath = $api->getSystemValue('datadirectory').$subStorage.$path;
+		$rsyncPath = escapeshellarg($api->getAppValue('dbSyncRecvPath') . $serverName . '/' . (string)$fileid);
+		$fullLocalPath = escapeshellarg($api->getSystemValue('datadirectory').$subStorage.$path);
 
 		$cmd = "cp --preserve {$rsyncPath} {$fullLocalPath}";
 		$api->exec(escapeshellcmd($cmd));
