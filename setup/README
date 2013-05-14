@@ -10,7 +10,7 @@ Use `id` command to verify gid is www-data
 
 Files that need to add group write permissions:
 cd <oc_directory>
-sudo chown 660 config/config.php 
+sudo chmod 660 config/config.php 
 sudo chmod 770 config
 sudo chmod 770 apps
 
@@ -22,6 +22,7 @@ mv appinfo/app.sample.php appinfo/app.php
 
 Modify the lines that say setAppValue to have the correct value.  The comments should be helpful.
 
+After creating the appinfo/app.php, enable the app (core setup instructions #12).
 
 You will need to create two subdirectories for multiinstance for the syncing:
 cd <path to multiinstance app>
