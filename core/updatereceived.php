@@ -248,7 +248,7 @@ class UpdateReceived {
 					$data['etag'] = $receivedFilecache->getEtag();
 				}
 				if ($receivedFilecache->getMimetype()) {
-					$data['mimetype'] => $receivedFilecache->getMimetype();
+					$data['mimetype'] = $receivedFilecache->getMimetype();
 
 				}
 
