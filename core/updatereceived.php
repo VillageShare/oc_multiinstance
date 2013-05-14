@@ -221,37 +221,57 @@ class UpdateReceived {
 				$this->filecacheUpdateMapper->insert($filecacheUpdate);
 			}
 			
-			//New update if made it this far
+			//New (not old) event if made it this far
 		
-			if ($receivedFilecache->getMimetype() === 'httpd/unix-directory') {
-				//make directory
-				$this->api->mkdir($this->api->getSystemValue('datadirectory').$receivedFilecache->getStorage().$receivedFilecache->getPath());
-			}
-			else {
-				MILocation::copyFileToDataFolder($this->api, $receivedFilecache->getPath(), $receivedFilecache->getStorage(), $receivedFilecache->getSendingLocation(), $receivedFilecache->getFileid());
-			}
+			//If create/update
+			if (($receivedFilecache->getQueueType() === QueuedFilecache::CREATE) || ($receivedFilecache->getQueueType() === QueuedFilecache::UPDATE)) {
+			
+				if ($receivedFilecache->getMimetype() === 'httpd/unix-directory') {
+					//make directory
+					$this->api->mkdir($this->api->getSystemValue('datadirectory').$receivedFilecache->getStorage().$receivedFilecache->getPath());
+				}
+				else {
+					MILocation::copyFileToDataFolder($this->api, $receivedFilecache->getPath(), $receivedFilecache->getStorage(), $receivedFilecache->getSendingLocation(), $receivedFilecache->getFileid());
+				}
 
-			$data = array(  //the rest are derived
-				'encrypted' => $receivedFilecache->getEncrypted(),
-				'size' => $receivedFilecache->getSize(),
-				'mtime' => $receivedFilecache->getMtime(),
-				'etag' => $receivedFilecache->getEtag(),
-				'mimetype' => $receivedFilecache->getMimetype()
-				
-			);
+				$data = array();  //build data array, the rest are derived
+				if ($receivedFilecache->getEncrypted()) {
+					$data['encrypted'] = $receivedFilecache->getEncrypted();
+				}
+				if ($receivedFilecache->getSize()) {
+					$data['size'] = $receivedFilecache->getSize();
+				}
+				if ($receivedFilecache->getMtime()) {
+					$data['mtime'] = $receivedFilecache->getMtime();
+				}
+				if ($receviedFilecache->getEtag()) {
+					$data['etag'] = $receivedFilecache->getEtag();
+				}
+				if ($receivedFilecache->getMimetype() {
+					$data['mimetype'] => $receivedFilecache->getMimetype();
 
-			if (empty($filecache)) {  //if new file
-				$cache->put($receivedFilecache->getPath(), $data);
-				//filecachemapper already created above
-				
-			}
-			else {  //not new file
-				$cache->update($filecache['fileid'], $data);
-				$filecacheUpdate->setUpdatedAt($receivedFilecache->getAddedAt());
-				$filecacheUpdate->setState($state);
-				$this->filecacheUpdateMapper->update($filecacheUpdate);
+				}
+
+				if (empty($filecache)) {  //if new file
+					$cache->put($receivedFilecache->getPath(), $data);
+					//filecachemapper already created above
 					
+				}
+				else {  //not new file
+					$cache->update($filecache['fileid'], $data);
+					$filecacheUpdate->setUpdatedAt($receivedFilecache->getAddedAt());
+					$filecacheUpdate->setState($state);
+					$this->filecacheUpdateMapper->update($filecacheUpdate);
+				}
+
 			}
+			else if ($receivedFilecache->getQueueType() === QueuedFilecache::RENAME) {
+				//TODO
+			}
+			else if ($receivedFilecache->getQueueType() === QueuedFilecache::DELETE) {
+				//TODO
+			}
+
 			$this->receivedFilecacheMapper->delete($receivedFilecache);
 			$this->api->commit();
 
