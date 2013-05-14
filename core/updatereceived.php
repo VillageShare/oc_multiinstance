@@ -202,7 +202,7 @@ class UpdateReceived {
 			$cache = new Cache($storagePath);
 			$storageNumericId = $cache->getNumericStorageId();
 	
-			$state = ($receivedFilecache->getQueueType() === QueuedFileCache::DELETE) ? FilecacheUpdate::DELETED : FilecacheUpdate::VALID;
+			$state = ((int)$receivedFilecache->getQueueType() === QueuedFileCache::DELETE) ? FilecacheUpdate::DELETED : FilecacheUpdate::VALID;
 
 			$filecache = $cache->get($receivedFilecache->getPath());
 
@@ -224,7 +224,7 @@ class UpdateReceived {
 			//New (not old) event if made it this far
 		
 			//If create/update
-			if (($receivedFilecache->getQueueType() === QueuedFilecache::CREATE) || ($receivedFilecache->getQueueType() === QueuedFilecache::UPDATE)) {
+			if (((int)$receivedFilecache->getQueueType() === QueuedFilecache::CREATE) || ((int)$receivedFilecache->getQueueType() === QueuedFilecache::UPDATE)) {
 			
 				if ($receivedFilecache->getMimetype() === 'httpd/unix-directory') {
 					//make directory
@@ -244,7 +244,7 @@ class UpdateReceived {
 				if ($receivedFilecache->getMtime()) {
 					$data['mtime'] = $receivedFilecache->getMtime();
 				}
-				if ($receviedFilecache->getEtag()) {
+				if ($receivedFilecache->getEtag()) {
 					$data['etag'] = $receivedFilecache->getEtag();
 				}
 				if ($receivedFilecache->getMimetype()) {
