@@ -225,12 +225,20 @@ class Hooks{
 					MILocation::copyFileForSyncing($api, $parameters['path'], $newStorage, $centralServerName, $parameters['fileid']);
 				}
 				$date = $api->getTime();
-				$queuedFileCache = new QueuedFileCache($parameters['fileid'], $newStorage, $parameters['path'], $parameters['parentPath'], $parameters['name'],
+				$queuedFileCache = new QueuedFileCache($parameters['fileid'], $newStorage, $parameters['path'], null, $parameters['name'],
 									$parameters['mimetype'], $parameters['mimepart'], $parameters['size'], $parameters['mtime'],
 									$parameters['encrypted'], $parameters['etag'], $date, QueuedFileCache::CREATE, 
 									$centralServerName, $thisLocation);
-				$filecacheUpdate = new FilecacheUpdate(md5($parameters['path']), $newStorage, $date, FilecacheUpdate::VALID);
-				$filecacheUpdateMapper->insert($filecacheUpdate);
+				try {
+					$filecacheUpdate = $filecacheUpdateMapper->find(md5($parameters['path']), $newStorage);
+					$filecacheUpdate->setUpdatedAt($date);
+					$filecacheUpdate->setState(FilecacheUpdate::VALID);
+					$filecacheUpdateMapper->update($filecacheUpdate);
+				}
+				catch (DoesNotExistException $e) {
+					$filecacheUpdate = new FilecacheUpdate(md5($parameters['path']), $newStorage, $date, FilecacheUpdate::VALID);
+					$filecacheUpdateMapper->insert($filecacheUpdate);
+				}
 				$queuedFilecacheMapper->save($queuedFileCache);
 			}
 			else {
@@ -238,6 +246,52 @@ class Hooks{
 			}
 		}
 	}
+
+	static public function queueFileUpdate($parameters, $mockQueuedFilecacheMapper=null, $mockApi=null, $mockFilecacheUpdateMapper=null) {
+		if ($mockQueuedFilecacheMapper !== null && $mockApi !==null) {
+			$queuedFilecacheMapper = $mockQueuedFilecacheMapper;
+			$filecacheUpdateMapper = $mockFilecacheUpdateMapper;
+			$api = $mockApi;
+		}
+		else {
+			$di = new DIContainer();
+			$queuedFilecacheMapper = $di['QueuedFileCacheMapper'];
+			$filecacheUpdateMapper = $di['FilecacheUpdateMapper'];
+			$api = $di['API'];
+		}
+
+		$centralServerName = $api->getAppValue('centralServer');
+		$thisLocation = $api->getAppValue('location');
+		if ($centralServerName !== $thisLocation) {
+			$newStorage = MILocation::removePathFromStorage($parameters['fullStorage']);
+			if ($newStorage) {
+				if ($parameters['mimetype'] !== 'httpd/unix-directory') {  //don't copy directories
+					MILocation::copyFileForSyncing($api, $parameters['path'], $newStorage, $centralServerName, $parameters['fileid']);
+				}
+				$date = $api->getTime();
+				$queuedFileCache = new QueuedFileCache($parameters['fileid'], $newStorage, $parameters['path'], null, null,
+									$parameters['mimetype'], null, $parameters['size'], $parameters['mtime'],
+									$parameters['encrypted'], $parameters['etag'], $date, QueuedFileCache::UPDATE, 
+									$centralServerName, $thisLocation);
+				
+				try {
+					$filecacheUpdate = $filecacheUpdateMapper->find(md5($parameters['path']), $newStorage);
+					$filecacheUpdate->setUpdatedAt($date);
+					$filecacheUpdate->setState(FilecacheUpdate::VALID);
+					$filecacheUpdateMapper->update($filecacheUpdate);
+				}
+				catch (DoesNotExistException $e) {
+					$filecacheUpdate = new FilecacheUpdate(md5($parameters['path']), $newStorage, $date, FilecacheUpdate::VALID);
+					$filecacheUpdateMapper->insert($filecacheUpdate);
+				}
+				$queuedFilecacheMapper->save($queuedFileCache);
+			}
+			else {
+				$api->log("Unable to send file with path {$parameters['path']} and storage {$parameters['fullStorage']}  and parent with path {$parameters['parentPath']} to central server due to bad storage format");
+			}
+		}
+	}
+
 
 	static public function queuePermissionUpdate($fileid, $user, $permissions, $mockApi=null, $mockQueuedPermissionMapper=null, $mockPermissionUpdateMapper=null) {
 		Hooks::queuePermission($fileid, $user, $permissions, PermissionUpdate::VALID);

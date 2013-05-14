@@ -695,14 +695,14 @@
                                 <name>name</name>
                                 <type>text</type>
                                 <default></default>
-                                <notnull>true</notnull>
+                                <notnull>false</notnull>
                                 <length>250</length>
                         </field>
                         <field>
                                 <name>mimetype</name>
                                 <type>text</type>
                                 <default></default>
-                                <notnull>true</notnull>
+                                <notnull>false</notnull>
                                 <length>255</length>
                         </field>           
 
@@ -710,7 +710,7 @@
                                 <name>mimepart</name>
                                 <type>integer</type>
                                 <default></default>
-                                <notnull>true</notnull>
+                                <notnull>false</notnull>
                                 <length>4</length>
                         </field>
 
@@ -718,7 +718,7 @@
                                 <name>size</name>
                                 <type>integer</type>
                                 <default></default>
-                                <notnull>true</notnull>
+                                <notnull>false</notnull>
                                 <length>8</length>
                         </field>
 
@@ -726,7 +726,7 @@
                                 <name>mtime</name>
                                 <type>integer</type>
                                 <default></default>
-                                <notnull>true</notnull>
+                                <notnull>false</notnull>
                                 <length>4</length>
                         </field>
 
@@ -734,7 +734,7 @@
                                 <name>encrypted</name>
                                 <type>integer</type>
                                 <default>0</default>
-                                <notnull>true</notnull>
+                                <notnull>false</notnull>
                                 <length>4</length>
                         </field>
 
@@ -742,7 +742,7 @@
                                 <name>etag</name>
                                 <type>text</type>
                                 <default></default>
-                                <notnull>true</notnull>
+                                <notnull>false</notnull>
                                 <length>40</length>
                         </field>
 			<field>
@@ -774,11 +774,14 @@
                         </field>
 
                         <index>
-                                <name>storage_added_at</name>
+                                <name>index_storage</name>
                                 <field>
                                         <name>storage</name>
                                         <sorting>ascending</sorting>
                                 </field>
+			</index>
+			<index>
+                                <name>index_added_at</name>
                                 <field>
                                         <name>added_at</name>
                                         <sorting>ascending</sorting>
@@ -816,7 +819,6 @@
                                 <length>512</length>
                         </field>
 
-
                         <field>
                                 <name>path_var</name>
                                 <type>text</type>
@@ -829,14 +831,14 @@
                                 <name>name</name>
                                 <type>text</type>
                                 <default></default>
-                                <notnull>true</notnull>
+                                <notnull>false</notnull>
                                 <length>250</length>
                         </field>
                         <field>
                                 <name>mimetype</name>
                                 <type>text</type>
                                 <default></default>
-                                <notnull>true</notnull>
+                                <notnull>false</notnull>
                                 <length>255</length>
                         </field>           
 
@@ -844,7 +846,7 @@
                                 <name>mimepart</name>
                                 <type>integer</type>
                                 <default></default>
-                                <notnull>true</notnull>
+                                <notnull>false</notnull>
                                 <length>4</length>
                         </field>
 
@@ -852,7 +854,7 @@
                                 <name>size</name>
                                 <type>integer</type>
                                 <default></default>
-                                <notnull>true</notnull>
+                                <notnull>false</notnull>
                                 <length>8</length>
                         </field>
 
@@ -860,7 +862,7 @@
                                 <name>mtime</name>
                                 <type>integer</type>
                                 <default></default>
-                                <notnull>true</notnull>
+                                <notnull>false</notnull>
                                 <length>4</length>
                         </field>
 
@@ -868,7 +870,7 @@
                                 <name>encrypted</name>
                                 <type>integer</type>
                                 <default>0</default>
-                                <notnull>true</notnull>
+                                <notnull>false</notnull>
                                 <length>4</length>
                         </field>
 
@@ -876,7 +878,7 @@
                                 <name>etag</name>
                                 <type>text</type>
                                 <default></default>
-                                <notnull>true</notnull>
+                                <notnull>false</notnull>
                                 <length>40</length>
                         </field>
 			<field>
@@ -908,11 +910,14 @@
                         </field>
 
                         <index>
-                                <name>storage_added_at</name>
+                                <name>index_storage</name>
                                 <field>
                                         <name>storage</name>
                                         <sorting>ascending</sorting>
                                 </field>
+			</index>
+			<index>
+                                <name>index_added_at</name>
                                 <field>
                                         <name>added_at</name>
                                         <sorting>ascending</sorting>
@@ -926,6 +931,14 @@
                 <name>*dbprefix*multiinstance_filecache_updates</name>
 
 		<declaration>
+			<field>
+				<name>id</name>
+				<type>integer</type>
+				<default>0</default>
+				<notnull>true</notnull>
+					<autoincrement>1</autoincrement>
+				<length>4</length>
+			</field>
                         <field>
                                 <name>storage</name>
                                 <type>text</type>

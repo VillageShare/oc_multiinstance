@@ -49,23 +49,27 @@ class QueuedFileCache extends Entity {
 	public $destinationLocation;
 	public $sendingLocation;
 
-	public function __construct($fileid, $storage, $path, $pathVar, $name, $mimetype, $mimepart, $size, $mtime, $encrypted, $etag, $addedAt, $queueType, $destinationLocation, $sendingLocation){
-		$this->setFileid($fileid);
-		$this->setStorage($storage);
-		$this->setPath($path);
-		$this->setPathVar($pathVar);
-		$this->setName($name);
-		$this->setMimetype($mimetype);
-		$this->setMimepart($mimepart);
-		$this->setSize($size);
-		$this->setMtime($mtime);
-		$this->setEncrypted($encrypted);
-		$this->setEtag($etag);
-		$this->setAddedAt($addedAt);
-		$this->setQueueType($queueType);
-		$this->setDestinationLocation($destinationLocation);
-		$this->setSendingLocation($sendingLocation);
-
+	public function __construct($fileid, $storage=null, $path=null, $pathVar=null, $name=null, $mimetype=null, $mimepart=null, $size=null, $mtime=null, $encrypted=null, $etag=null, $addedAt=null, $queueType=null, $destinationLocation=null, $sendingLocation=null){
+		if ($storage) {
+			$this->setFileid($fileid);
+			$this->setStorage($storage);
+			$this->setPath($path);
+			$this->setPathVar($pathVar);
+			$this->setName($name);
+			$this->setMimetype($mimetype);
+			$this->setMimepart($mimepart);
+			$this->setSize($size);
+			$this->setMtime($mtime);
+			$this->setEncrypted($encrypted);
+			$this->setEtag($etag);
+			$this->setAddedAt($addedAt);
+			$this->setQueueType($queueType);
+			$this->setDestinationLocation($destinationLocation);
+			$this->setSendingLocation($sendingLocation);
+		}
+		else {
+			$this->fromRow($fileid);
+		}
 	}
 
 }
