@@ -265,7 +265,7 @@ class Hooks{
 		if ($centralServerName !== $thisLocation) {
 			$newStorage = MILocation::removePathFromStorage($parameters['fullStorage']);
 			if ($newStorage) {
-				$mimetype = $parameters['mimetype'] ? $parameters['mimetype'] ? $parameters['storedMimetype'];  //parameters might not have mimetype
+				$mimetype = $parameters['mimetype'] ? $parameters['mimetype'] : $parameters['storedMimetype'];  //parameters might not have mimetype
 				if ($mimetype !== 'httpd/unix-directory') {  //don't copy directories
 					MILocation::copyFileForSyncing($api, $parameters['path'], $newStorage, $centralServerName, $parameters['fileid']);
 				}
