@@ -226,7 +226,10 @@ class UpdateReceived {
 			//If create/update
 			if (((int)$receivedFilecache->getQueueType() === QueuedFilecache::CREATE) || ((int)$receivedFilecache->getQueueType() === QueuedFilecache::UPDATE)) {
 				$mimetype = array_key_exists('mimetype', $filecache) ? $filecache['mimetype'] : null; //if typ update, it won't in the ReceivedFilecache
-				if (($receivedFilecache->getMimetype() === 'httpd/unix-directory' ) || ($mimetype === 'httpd/unix-directory')) {
+				if ($mimetype === 'httpd/unix-directory') {
+					// do nothing, would create directory, but already exists
+				}
+				else if ($receivedFilecache->getMimetype() === 'httpd/unix-directory' ) {
 					//make directory
 					$this->api->mkdir($this->api->getSystemValue('datadirectory').$receivedFilecache->getStorage().$receivedFilecache->getPath());
 				}
