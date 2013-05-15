@@ -122,9 +122,12 @@ class CronHelper {
 		//Dump
 		$this->cronTask->dumpResponses();
 		$this->cronTask->dumpQueued();
+		$this->cronTask->linkFiles();
 
 		//Sync
 		$this->sync();
+
+		$this->cronTask->unlinkFiles();
 
 	}
 }

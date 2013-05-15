@@ -28,12 +28,15 @@ use OCA\MultiInstance\Db\Request;
 use OCA\MultiInstance\Db\QueuedResponse;
 use OCA\MultiInstance\Db\QueuedUser;
 
+use OCA\MultiInstance\Lib\MILocation;
+
 class CronTask {
 	
 
 	private $api; 
 	private $locationMapper;
 	private $queuedResponseMapper; 
+	private $queuedFilecacheMapper;
 
 	private $dbuser;
 	private $dbpassword;
@@ -63,10 +66,11 @@ class CronTask {
 	/**
 	 * @param API $api: an api wrapper instance
 	 */
-	public function __construct($api, $locationMapper, $queuedResponseMapper){
+	public function __construct($api, $locationMapper, $queuedResponseMapper, $queuedFilecacheMapper){
 		$this->api = $api;
 		$this->locationMapper = $locationMapper;
 		$this->queuedResponseMapper = $queuedResponseMapper;
+		$this->queuedFilecacheMapper = $queuedFilecacheMapper;
 
 		$this->dbuser = $this->api->getSystemValue('dbuser'); 
 		$this->dbpassword = $this->api->getSystemValue('dbpassword'); 
@@ -159,6 +163,20 @@ class CronTask {
 		}
 
 		$this->queuedResponseMapper->deleteAllBeforeMicrotime($cutOffTime);
+	}
+
+	public function linkFiles() {
+		$queuedFiles = $this->queuedFilecacheMapper->findAll();
+	
+		foreach ($queuedFiles as $queuedFile) {
+			if ($queuedFile->getMimetype() !== 'httpd/unix-directory') {
+				MILocation::linkFileForSyncing($this->api, $queuedFile->getPath(), $queuedFile->getStorage(), $queuedFile->getDestinationLocation(), $queuedFile->getFileid());
+			}
+		}
+	}
+
+	public function unlinkFiles() {
+		error_log("unlink files");
 	}
 
 	/**

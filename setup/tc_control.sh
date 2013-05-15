@@ -23,15 +23,15 @@ IPTABLES="iptables"
 IFCONFIG="ifconfig"
  
  # Loading the required modules
-  insmod ifb
-  insmod sch_htb
-  insmod sch_ingress
-  insmod ipt_IMQ
-  insmod act_mirred
-  insmod act_connmark
-  insmod cls_u32
-  insmod cls_fw
-  insmod em_u32
+ # insmod ifb
+ # insmod sch_htb
+ # insmod sch_ingress
+ # insmod ipt_IMQ
+ # insmod act_mirred
+ # insmod act_connmark
+ # insmod cls_u32
+ # insmod cls_fw
+ # insmod em_u32
  
 tc qdisc del dev imq1 root
  

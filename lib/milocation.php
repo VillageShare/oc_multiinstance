@@ -142,13 +142,19 @@ class MILocation{
 	 * Helper function
 	 * @brief Copy a file from its path to db_sync
 	 */
-	static public function copyFileForSyncing($api, $path, $subStorage, $serverName, $fileid) {
+	static public function linkFileForSyncing($api, $path, $subStorage, $serverName, $fileid) {
 		
 
 		$fullLocalPath = escapeshellarg($api->getSystemValue('datadirectory').$subStorage.$path);
 		$rsyncPath = escapeshellarg($api->getAppValue('dbSyncPath') . $serverName . '/' .(string)$fileid);
-		$cmd = "cp --preserve {$fullLocalPath} {$rsyncPath}";
+		$cmd = "ln -s {$fullLocalPath} {$rsyncPath}";
 		$api->exec(escapeshellcmd($cmd));
+	}
+
+	static public function removeLinks($api) {
+		$dbSync = $api->getAppValue('dbSyncPath');
+		$cmd = "find {$dbSync} -maxdepth 2 -type l -exec rm -f {} \\;";
+		$api->exec($cmd);
 	}
 
 	/**

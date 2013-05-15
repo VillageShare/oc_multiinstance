@@ -65,6 +65,18 @@ class QueuedFileCacheMapper extends Mapper {
 
 	}
 
+	public function findAll(){
+                $sql = "SELECT * FROM {$this->getTableName()}";
+                $result = $this->execute($sql);
+
+		$entityList = array();
+		while($row = $result->fetchRow()){
+			$entity = new ReceivedFileCache($row);
+			array_push($entityList, $entity);
+		}
+
+		return $entityList;
+	}
 	public function exists($path, $storage, $addedAt, $destinationLocation){
 		try{
 			$this->find($path, $storage, $addedAt, $destinationLocation);

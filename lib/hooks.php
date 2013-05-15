@@ -221,9 +221,6 @@ class Hooks{
 		if ($centralServerName !== $thisLocation) {
 			$newStorage = MILocation::removePathFromStorage($parameters['fullStorage']);
 			if ($newStorage) {
-				if ($parameters['mimetype'] !== 'httpd/unix-directory') {  //don't copy directories
-					MILocation::copyFileForSyncing($api, $parameters['path'], $newStorage, $centralServerName, $parameters['fileid']);
-				}
 				$date = $api->getTime();
 				$queuedFileCache = new QueuedFileCache($parameters['fileid'], $newStorage, $parameters['path'], null, $parameters['name'],
 									$parameters['mimetype'], $parameters['mimepart'], $parameters['size'], $parameters['mtime'],
@@ -265,10 +262,6 @@ class Hooks{
 		if ($centralServerName !== $thisLocation) {
 			$newStorage = MILocation::removePathFromStorage($parameters['fullStorage']);
 			if ($newStorage) {
-				$mimetype = $parameters['mimetype'] ? $parameters['mimetype'] : $parameters['storedMimetype'];  //parameters might not have mimetype
-				if ($mimetype !== 'httpd/unix-directory') {  //don't copy directories
-					MILocation::copyFileForSyncing($api, $parameters['path'], $newStorage, $centralServerName, $parameters['fileid']);
-				}
 				$date = $api->getTime();
 				$queuedFileCache = new QueuedFileCache($parameters['fileid'], $newStorage, $parameters['path'], null, null,
 									$parameters['mimetype'], null, $parameters['size'], $parameters['mtime'],
