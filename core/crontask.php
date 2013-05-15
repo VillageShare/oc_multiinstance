@@ -176,7 +176,7 @@ class CronTask {
 	}
 
 	public function unlinkFiles() {
-		MILocation::removeLinks();
+		MILocation::removeLinks($this->api);
 	}
 
 	/**
