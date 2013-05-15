@@ -55,6 +55,7 @@ Modify /etc/ssh/sshd_config  so the following are uncommented and contain these 
 PermitRootLogin no
 PubkeyAuthentication yes
 AuthorizedKeysFile	%h/.ssh/authorized_keys
+Port <someportnumber> 	#This line should go underneath the Port 22 line.  This port number should be the same number as the rsyncPort in the appinfo/app.php.  This port should also be the SAME for all instances (if this is not possible, you'll need to modify the locations table to set the port and use that instead of reading from app.php).
 
 sudo service ssh restart
 

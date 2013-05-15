@@ -55,8 +55,14 @@ class CronHelper {
 		$dbSyncPath = $this->api->getAppValue('dbSyncPath');
 		$dbSyncRecvPath = $this->api->getAppValue('dbSyncRecvPath');
 		$user = $this->api->getAppValue('user');
+		$rsyncPort = $this->api->getAppValue('rsyncPort');
 
 		$locationList = $this->locationMapper->findAll();
+
+		$cmdPrefix = "rsync --verbose --compress --rsh='ssh -p{$rsyncPort}' \
+				      --recursive --times --perms --copy-links --delete \
+				      --group \
+				      --exclude \"last_read.txt\"";
 
 		if ($centralServerName === $thisLocation) {
 			foreach ($locationList as $location) {
@@ -68,10 +74,7 @@ class CronHelper {
 				$cmd = "echo {$microTime} > {$dbSyncPath}{$locationName}/last_updated.txt";
 				$this->api->exec($cmd);
 
-				$cmd = "rsync --verbose --compress --rsh ssh \
-				      --recursive --times --perms --links --delete \
-				      --group \
-				      --exclude \"last_read.txt\" \
+				$cmd =  "{$cmdPrefix} \
 				      db_sync/{$locationName}/ {$user}@{$location->getIP()}:{$dbSyncRecvPath}/{$thisLocation} >>{$output} 2>&1";
 
 				#$safe_cmd = escapeshellcmd($cmd);
@@ -83,10 +86,7 @@ class CronHelper {
 			$cmd = "echo {$microTime} > {$dbSyncPath}{$centralServerName}/last_updated.txt";
 			$this->api->exec($cmd);
 
-			$cmd = "rsync --verbose --compress --rsh ssh \
-			      --recursive --times --perms --links --delete \
-			      --group \
-			      --exclude \"last_read.txt\" \
+			$cmd = "{$cmdPrefix} \
 			      db_sync/{$centralServerName}/ {$user}@{$server}:{$dbSyncRecvPath}/{$thisLocation} >>{$output} 2>&1";
 
 			#$safe_cmd = escapeshellcmd($cmd);
