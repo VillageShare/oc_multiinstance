@@ -54,6 +54,7 @@ class CronHelper {
 
 		$dbSyncPath = $this->api->getAppValue('dbSyncPath');
 		$dbSyncRecvPath = $this->api->getAppValue('dbSyncRecvPath');
+		$rsyncPort = $this->api->getAppValue('rsyncPort');
 		$user = $this->api->getAppValue('user');
 
 		$locationList = $this->locationMapper->findAll();
@@ -68,7 +69,7 @@ class CronHelper {
 				$cmd = "echo {$microTime} > {$dbSyncPath}{$locationName}/last_updated.txt";
 				$this->api->exec($cmd);
 
-				$cmd = "rsync --verbose --compress --rsh ssh \
+				$cmd = "rsync --verbose --compress --rsh='ssh -p{$rsyncPort}' \
 				      --recursive --times --perms --links --delete \
 				      --group \
 				      --exclude \"last_read.txt\" \
@@ -83,7 +84,7 @@ class CronHelper {
 			$cmd = "echo {$microTime} > {$dbSyncPath}{$centralServerName}/last_updated.txt";
 			$this->api->exec($cmd);
 
-			$cmd = "rsync --verbose --compress --rsh ssh \
+			$cmd = "rsync --verbose --compress --rsh='ssh -p{$rsyncPort}' \
 			      --recursive --times --perms --links --delete \
 			      --group \
 			      --exclude \"last_read.txt\" \
