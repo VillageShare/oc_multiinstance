@@ -176,7 +176,7 @@ class CronTask {
 	}
 
 	public function unlinkFiles() {
-		error_log("unlink files");
+		MILocation::removeLinks();
 	}
 
 	/**
