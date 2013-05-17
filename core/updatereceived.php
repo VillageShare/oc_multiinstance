@@ -275,10 +275,10 @@ class UpdateReceived {
 				}
 
 			}
-			else if ($receivedFilecache->getQueueType() === QueuedFilecache::RENAME) {
+			else if ((int)$receivedFilecache->getQueueType() === QueuedFilecache::RENAME) {
 				//TODO
 			}
-			else if ($receivedFilecache->getQueueType() === QueuedFilecache::DELETE) {
+			else if ((int)$receivedFilecache->getQueueType() === QueuedFilecache::DELETE) {
 				if ($filecache) {
 					$cache->remove($receivedFilecache->getPath());	
 				}
