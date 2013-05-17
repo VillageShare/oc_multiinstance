@@ -239,7 +239,7 @@ class Hooks{
 				$queuedFilecacheMapper->save($queuedFileCache);
 			}
 			else {
-				$api->log("Unable to send file with path {$parameters['path']} and storage {$parameters['fullStorage']}  and parent with path {$parameters['parentPath']} to central server due to bad storage format");
+				$api->log("Unable to send file with path {$parameters['path']} and storage {$parameters['fullStorage']} to central server due to bad storage format");
 			}
 		}
 	}
@@ -281,11 +281,52 @@ class Hooks{
 				$queuedFilecacheMapper->save($queuedFileCache);
 			}
 			else {
-				$api->log("Unable to send file with path {$parameters['path']} and storage {$parameters['fullStorage']}  and parent with path {$parameters['parentPath']} to central server due to bad storage format");
+				$api->log("Unable to send file with path {$parameters['path']} and storage {$parameters['fullStorage']} to central server due to bad storage format");
 			}
 		}
 	}
 
+	static public function queueFileDelete($parameters, $mockQueuedFilecacheMapper=null, $mockApi=null, $mockFilecacheUpdateMapper=null) {
+		if ($mockQueuedFilecacheMapper !== null && $mockApi !==null) {
+			$queuedFilecacheMapper = $mockQueuedFilecacheMapper;
+			$filecacheUpdateMapper = $mockFilecacheUpdateMapper;
+			$api = $mockApi;
+		}
+		else {
+			$di = new DIContainer();
+			$queuedFilecacheMapper = $di['QueuedFileCacheMapper'];
+			$filecacheUpdateMapper = $di['FilecacheUpdateMapper'];
+			$api = $di['API'];
+		}
+
+		$centralServerName = $api->getAppValue('centralServer');
+		$thisLocation = $api->getAppValue('location');
+		if ($centralServerName !== $thisLocation) {
+			$newStorage = MILocation::removePathFromStorage($parameters['fullStorage']);
+			if ($newStorage) {
+				$date = $api->getTime();
+				$queuedFileCache = new QueuedFileCache(null, $newStorage, $parameters['path'], null, null,
+									null, null, null, null,
+									null, null, $date, QueuedFileCache::DELETE, 
+									$centralServerName, $thisLocation);
+				
+				try {
+					$filecacheUpdate = $filecacheUpdateMapper->find(md5($parameters['path']), $newStorage);
+					$filecacheUpdate->setUpdatedAt($date);
+					$filecacheUpdate->setState(FilecacheUpdate::DELETED);
+					$filecacheUpdateMapper->update($filecacheUpdate);
+				}
+				catch (DoesNotExistException $e) { 
+					$filecacheUpdate = new FilecacheUpdate(md5($parameters['path']), $newStorage, $date, FilecacheUpdate::DELETED);
+					$filecacheUpdateMapper->insert($filecacheUpdate);
+				}
+				$queuedFilecacheMapper->save($queuedFileCache);
+			}
+			else {
+				$api->log("Unable to send file with path {$parameters['path']} and storage {$parameters['fullStorage']} to central server due to bad storage format");
+			}
+		}
+	}
 
 	static public function queuePermissionUpdate($fileid, $user, $permissions, $mockApi=null, $mockQueuedPermissionMapper=null, $mockPermissionUpdateMapper=null) {
 		Hooks::queuePermission($fileid, $user, $permissions, PermissionUpdate::VALID);
