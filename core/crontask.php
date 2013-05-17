@@ -27,6 +27,7 @@ use OCA\MultiInstance\Db\Location;
 use OCA\MultiInstance\Db\Request;
 use OCA\MultiInstance\Db\QueuedResponse;
 use OCA\MultiInstance\Db\QueuedUser;
+use OCA\MultiInstance\Db\QueuedFileCache;
 
 use OCA\MultiInstance\Lib\MILocation;
 
