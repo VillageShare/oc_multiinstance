@@ -171,7 +171,7 @@ class CronTask {
 	
 		foreach ($queuedFiles as $queuedFile) {
 			if (($queuedFile->getMimetype() !== 'httpd/unix-directory') && ((int)$queuedFile->getQueueType() !== QueuedFileCache::DELETE)
-				&& ((int)$queuedFile->getQueueType !== QueuedFileCache::RENAME)
+				&& ((int)$queuedFile->getQueueType() !== QueuedFileCache::RENAME)
 			) {
 				MILocation::linkFileForSyncing($this->api, $queuedFile->getPath(), $queuedFile->getStorage(), $queuedFile->getDestinationLocation(), $queuedFile->getFileid());
 			}
