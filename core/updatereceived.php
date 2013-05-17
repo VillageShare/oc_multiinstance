@@ -215,6 +215,12 @@ class UpdateReceived {
 					$this->api->commit();
 					continue;
 				}
+				else { //new event
+					$filecacheUpdate->setUpdatedAt($receivedFilecache->getAddedAt());
+					$filecacheUpdate->setState($state);
+					$this->filecacheUpdateMapper->update($filecacheUpdate);
+				}
+				
 			}
 			catch (DoesNotExistException $e) {  //Make one if it has never existed before
 				$filecacheUpdate = new FilecacheUpdate(md5($receivedFilecache->getPath()), $receivedFilecache->getStorage(), $receivedFilecache->getAddedAt(), $state);
@@ -257,14 +263,10 @@ class UpdateReceived {
 
 				if (empty($filecache)) {  //if new file
 					$cache->put($receivedFilecache->getPath(), $data);
-					//filecachemapper already created above
 					
 				}
 				else {  //not new file
 					$cache->update($filecache['fileid'], $data);
-					$filecacheUpdate->setUpdatedAt($receivedFilecache->getAddedAt());
-					$filecacheUpdate->setState($state);
-					$this->filecacheUpdateMapper->update($filecacheUpdate);
 				}
 
 			}
@@ -272,11 +274,15 @@ class UpdateReceived {
 				//TODO
 			}
 			else if ($receivedFilecache->getQueueType() === QueuedFilecache::DELETE) {
-				$cache->remove($receivedFilecache->getPath());	
-				$filecacheUpdate->setUpdatedAt($receivedFilecache->getAddedAt());
-				$filecacheUpdate->setState($state);
-				$this->filecacheUpdateMapper->update($filecacheUpdate);
+				if ($filecache) {
+					$cache->remove($receivedFilecache->getPath());	
+				}
 			}
+
+			//TODO: Propogate changes (if the file is shared, should progagate to each of those users' location).  Note: in order to prevent
+			//	the receiving noncentral server from pushing back to the central server afterwards, perhaps add an optional param to the
+			//	put, update, move, and remove functions in core lib/files/cache/cache.php that can be a parameter in the hook that
+			//	indicates whether or not the app lib/hooks.php function should queue the file event.
 
 			$this->receivedFilecacheMapper->delete($receivedFilecache);
 			$this->api->commit();
