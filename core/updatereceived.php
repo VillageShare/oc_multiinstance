@@ -272,7 +272,10 @@ class UpdateReceived {
 				//TODO
 			}
 			else if ($receivedFilecache->getQueueType() === QueuedFilecache::DELETE) {
-				//TODO
+				$cache->remove($receivedFilecache->getPath());	
+				$filecacheUpdate->setUpdatedAt($receivedFilecache->getAddedAt());
+				$filecacheUpdate->setState($state);
+				$this->filecacheUpdateMapper->update($filecacheUpdate);
 			}
 
 			$this->receivedFilecacheMapper->delete($receivedFilecache);
