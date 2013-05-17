@@ -263,6 +263,11 @@ class UpdateReceived {
 
 				if (empty($filecache)) {  //if new file
 					$cache->put($receivedFilecache->getPath(), $data);
+					$index = strpos($receivedFilecache->getPath(), "/");
+					$rootDir = substr($receivedFilecache->getPath(), 0, $index);
+					$path = substr($receivedFilecache->getPath(), $index);
+					$view = new \OC\Files\View($receivedFilecache->getStorage() . $rootDir) //   /user/files
+					$view->unlink($path);			//   /rest-of-path
 					
 				}
 				else {  //not new file
