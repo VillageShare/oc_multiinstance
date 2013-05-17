@@ -36,7 +36,7 @@ class QueuedFileCache extends Entity {
 	public $fileid;
 	public $storage;
 	public $path;
-	public $pathVar;  //can be the parentPath (if a new file), or the new file name (if rename)
+	public $pathVar;  //if optimize rename, use this for the new path name
 	public $name;
 	public $mimetype;
 	public $mimepart;

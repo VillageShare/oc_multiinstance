@@ -268,11 +268,12 @@ class UpdateReceived {
 				}
 
 			}
-			else if ((int)$receivedFilecache->getQueueType() === QueuedFilecache::RENAME) {
+			//This piece was for rename, but rename does not use "move" method as expected.  It creates and deletes.
+			/*else if ((int)$receivedFilecache->getQueueType() === QueuedFilecache::RENAME) {
 				$cache->move($receivedFilecache->getPath(), $receivedFilecache->getPathVar());
 				$filecacheUpdate->setPathHash(md5($receivedFilecache->getPathVar()));
 				$filecacheUpdateMapper->update($filecacheUpdate);
-			}
+			}*/
 			else if ((int)$receivedFilecache->getQueueType() === QueuedFilecache::DELETE) {
 				if ($filecache) {
 					$cache->remove($receivedFilecache->getPath());	
