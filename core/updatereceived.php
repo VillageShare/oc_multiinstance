@@ -220,7 +220,6 @@ class UpdateReceived {
 					$filecacheUpdate->setState($state);
 					$this->filecacheUpdateMapper->update($filecacheUpdate);
 				}
-				
 			}
 			catch (DoesNotExistException $e) {  //Make one if it has never existed before
 				$filecacheUpdate = new FilecacheUpdate(md5($receivedFilecache->getPath()), $receivedFilecache->getStorage(), $receivedFilecache->getAddedAt(), $state);
@@ -270,7 +269,9 @@ class UpdateReceived {
 
 			}
 			else if ((int)$receivedFilecache->getQueueType() === QueuedFilecache::RENAME) {
-				//TODO
+				$cache->move($receivedFilecache->getPath(), $receivedFilecache->getPathVar());
+				$filecacheUpdate->setPathHash(md5($receivedFilecache->getPathVar()));
+				$filecacheUpdateMapper->update($filecacheUpdate);
 			}
 			else if ((int)$receivedFilecache->getQueueType() === QueuedFilecache::DELETE) {
 				if ($filecache) {
