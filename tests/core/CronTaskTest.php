@@ -103,6 +103,10 @@ class CronTaskTest extends \PHPUnit_Framework_TestCase {
 	$insertResult = $this->cronTask->toAckFormat($insert, 'multiinstance_queued_filecache.sql');
 	$this->assertEquals("DELETE IGNORE FROM \`oc_multiinstance_queued_filecache\` WHERE \`storage\` = '/user23@Kalene/' AND \`path\` = '' AND \`added_at\` = '2013-05-07 21:52:04';\n", $insertResult);
 
+	$insert = "INSERT  IGNORE INTO `oc_multiinstance_received_permissions` VALUES ('files/coolio','user16@UCSB',27,1,'2013-05-20 22:15:37','UCSB')";
+	$insertResult = $this->cronTask->toAckFormat($insert, 'multiinstance_queued_permissions.sql');
+	$this->assertEquals("DELETE IGNORE FROM \`oc_multiinstance_queued_permissions\` WHERE \`path\` = 'files/coolio' AND \`user\` = 'user16@UCSB' AND \`added_at\` = '2013-05-20 22:15:37';\n", $insertResult);
+	
 
     }
 

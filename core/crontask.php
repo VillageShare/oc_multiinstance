@@ -61,7 +61,7 @@ class CronTask {
 		'multiinstance_queued_friendships.sql' =>'/^INSERT.*VALUES \((?<friend_uid1>[^,]+),(?<friend_uid2>[^,]+),\d,(?<timestamp>[^,]+),[^,]*,[^,]*\)$/',  
 		'multiinstance_queued_user_facebook_ids.sql' =>  '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+)\)$/', 
 		'multiinstance_queued_filecache.sql' => '/^INSERT.*VALUES \((?<storage>[^,]+),(?<path>[^,]+),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(?<timestamp>[^,]+),[^,]*,[^,]*,[^,]*\)$/',
-		'multiinstance_queued_permissions.sql' => '/^.*$/'
+		'multiinstance_queued_permissions.sql' => '/^INSERT.*VALUES \((?<path>[^,]+),(?<user>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+),(?<destination>[^,]+)\)$/'
 	);
 
 	/**
@@ -349,7 +349,7 @@ class CronTask {
 					$formattedQuery = "";
 				}
 				else {
-					$formattedQuery = $this->deleteQueuedPermissionSql();
+					$formattedQuery = $this->deleteQueuedPermissionSql($matches['path'], $matches['user'], $matches['timestamp']) . ";\n";
 				}
 				break;
 			default:
@@ -392,7 +392,7 @@ class CronTask {
 	}
 
 	protected function deleteQueuedPermissionSql($path, $user, $addedAt) {
-
+		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_permissions\` WHERE \`path\` = {$path} AND \`user\` = {$user} AND \`added_at\` = {$addedAt}";
 	}
 
 /* End methods for ack content */

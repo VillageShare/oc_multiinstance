@@ -30,6 +30,7 @@ use \OC_User;
 use OCA\Friends\Db\Friendship;
 use OCA\MultiInstance\Db\QueuedFriendship;
 use OCA\MultiInstance\Db\QueuedUser;
+use OCA\MultiInstance\Db\QueuedPermission;
 
 use OCA\MultiInstance\Lib\MILocation;
 use \OC\Files\Cache\Cache;
@@ -52,12 +53,13 @@ class UpdateReceived {
 	private $locationMapper;
 	private $receivedFilecacheMapper;
 	private $filecacheUpdateMapper;
+	private $receivedPermissionMapper;
 
 
 	/**
 	 * @param API $api: an api wrapper instance
 	 */
-	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $queuedUserMapper, $locationMapper, $receivedFilecacheMapper, $filecacheUpdateMapper){
+	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $queuedUserMapper, $locationMapper, $receivedFilecacheMapper, $filecacheUpdateMapper, $receivedPermissionMapper){
 		$this->api = $api;
 		$this->receivedUserMapper = $receivedUserMapper;
 		$this->userUpdateMapper = $userUpdateMapper;
@@ -70,6 +72,7 @@ class UpdateReceived {
 		$this->locationMapper = $locationMapper;
 		$this->receivedFilecacheMapper = $receivedFilecacheMapper;
 		$this->filecacheUpdateMapper = $filecacheUpdateMapper;
+		$this->receivedPermissionMapper = $receivedPermissionMapper;
 	}
 
 
