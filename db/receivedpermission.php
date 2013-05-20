@@ -35,13 +35,18 @@ class ReceivedPermission extends Entity {
 	public $state;
 	public $destinationLocation;
 
-	public function __construct($path, $user, $permissions, $addedAt, $state, $destinationLocation){
-		$this->setPath($path);
-		$this->setUser($user);
-		$this->setPermissions($permissions);
-		$this->setAddedAt($addedAt);
-		$this->setState($state);
-		$this->setDestinationLocation($destinationLocation);
+	public function __construct($path, $user=null, $permissions=null, $addedAt=null, $state=null, $destinationLocation=null){
+		if ($user !== null) {
+			$this->setPath($path);
+			$this->setUser($user);
+			$this->setPermissions($permissions);
+			$this->setAddedAt($addedAt);
+			$this->setState($state);
+			$this->setDestinationLocation($destinationLocation);
+		}
+		else {
+			$this->fromRow($path);
+		}
 	}
 
 }
