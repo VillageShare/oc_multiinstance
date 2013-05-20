@@ -309,7 +309,7 @@ class UpdateReceived {
 
 		foreach ($receivedPermissions as $receivedPermission) {
 			$dataPath = $this->api->getSystemValue('datadirectory');
-			$storagePath = "local::" . $dataPath . $receivedPermission->getUser() . '/';
+			$storagePath = "local::" . $dataPath . '/' . $receivedPermission->getUser() . '/';
 
 			$permissions = new \OC\Files\Cache\Permissions($storagePath);
 			$cache = new Cache($storagePath);
