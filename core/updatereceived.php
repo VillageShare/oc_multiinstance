@@ -322,32 +322,33 @@ class UpdateReceived {
 			$this->api->beginTransaction();
 			$permission = $permissions->get($fileid, $receivedPermission->getUser());
 
-			if ($permission) {  //permission update
+
+			try {
 				$permissionUpdate = $this->permissionUpdateMapper->find($fileid, $receivedPermission->getUser());
-				if ($receivedPermission->getUpdatedAt() > $permissionUpdate->updatedAt()) {  //update if new data
-					if ((int)$receivedPermission->getState() === PermissionUpdate::DELETED) {
-						$permissions->remove($fileid, $receivedPermission->getUser());
-					}
-					else {
-						$permissions->set($fileid, $receivedPermission->getUser(), $receivedPermission->getPermissions());
-					}
-					$permissionUpdate->setUpdatedAt($receivedPermission->getUpdated());
-					$permissionsUpdate->setState($receivedPermission->getState());
-					$this->permissionUpdateMapper->update($permissionUpdate);
+				if ($receivedPermission->getUpdatedAt() <= $permissionUpdate->updatedAt()) {  //old
+					$this->receivedPermissionMapper->delete($receivedPermission);  //going to have to be a status on the update, but actually delete the permission
+					$this->api->commit();
+					continue;
 				}
-			}
-			else {  //new permission
-				$permissions->set($fileid, $receivedPermission->getUser(), $receivedPermission->getPermissions());
-				try {  	//permissions could have been previously deleted, so permissionUpdate may exist
-					$permissionUpdate = $this->permissionUpdateMapper->find($fileid, $receivedPermission->getUser());
+				else {  //new event
 					$permissionUpdate->setUpdatedAt($receivedPermission->getUpdated());
 					$permissionUpdate->setState($receivedPermission->getState());
 					$this->permissionUpdateMapper->update($permissionUpdate);
-				}	
-				catch (DoesNotExistException $e) {
+				}
+			} 
+			catch (DoesNotExistException $e) {
 					$permissionUpdate = new PermissionUpdate($fileid, $receivedPermission->getUser(), $receivedPermission->getUpdatedAt(), $receivedPermission->getState());
 					$this->permissionUpdateMapper->insert($permissionUpdate);
+			}
+
+			//new event
+			if ((int)$receivedPermission->getState() === PermissionUpdate::DELETED) {
+				if ($permission) {  //permission update
+					$permissions->remove($fileid, $receivedPermission->getUser());
 				}
+			}
+			else {
+				$permissions->set($fileid, $receivedPermission->getUser(), $receivedPermission->getPermissions());
 			}
 			$this->receivedPermissionMapper->delete($receivedPermission);  //going to have to be a status on the update, but actually delete the permission
 			$this->api->commit();
