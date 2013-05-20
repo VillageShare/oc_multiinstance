@@ -314,6 +314,10 @@ class UpdateReceived {
 			$permissions = new \OC\Files\Cache\Permissions($storagePath);
 			$cache = new Cache($storagePath);
 			$fileid = $cache->getId($receivedPermission->getPath());
+			if ($fileid === -1) {
+				$this->receivedPermissionMapper->delete($receivedPermission);  //going to have to be a status on the update, but actually delete the permission
+				continue;
+			}
 
 			$this->api->beginTransaction();
 			$permission = $permissions->get($fileid, $receivedPermission->getUser());
