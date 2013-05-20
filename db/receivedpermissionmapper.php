@@ -116,7 +116,7 @@ class ReceivedPermissionMapper extends Mapper {
 	 */
 	public function delete(Entity $entity){
 		$receivedPermission = $entity;
-		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `path` = ? AND `user` = ? AND `added_at` = ? AND `destination_location`';
+		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `path` = ? AND `user` = ? AND `added_at` = ? AND `destination_location` = ?';
 		$params = array(
 			$receivedPermission->getPath(),
 			$receivedPermission->getUser(),
