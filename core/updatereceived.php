@@ -316,7 +316,12 @@ class UpdateReceived {
 			if ($permission) {  //permission update
 				$permissionUpdate = $this->permissionUpdateMapper->find($fileid, $receivedPermission->getUser());
 				if ($receivedPermission->getUpdatedAt() > $permissionUpdate->updatedAt()) {  //update if new data
-					$permissions->set($fileid, $receivedPermission->getUser(), $receivedPermission->getPermissions());
+					if ((int)$receivedPermission->getState() === PermissionUpdate::DELETED) {
+						$permissions->remove($fileid, $receivedPermission->getUser());
+					}
+					else {
+						$permissions->set($fileid, $receivedPermission->getUser(), $receivedPermission->getPermissions());
+					}
 					$permissionUpdate->setUpdatedAt($receivedPermission->getUpdated());
 					$permissionsUpdate->setState($receivedPermission->getState());
 					$this->permissionUpdateMapper->update($permissionUpdate);
@@ -334,9 +339,6 @@ class UpdateReceived {
 					$permissionUpdate = new PermissionUpdate($fileid, $receivedPermission->getUser(), $receivedPermission->getUpdatedAt(), $receivedPermission->getState());
 					$this->permissionUpdateMapper->insert($permissionUpdate);
 				}
-			}
-			if ($receivedPermission->getState() === PermissionUpdate::DELETED) {
-				$permissions->remove($fileid, $receivedPermission->getUser());
 			}
 			$this->receivedPermissionMapper->delete($receivedPermission);  //going to have to be a status on the update, but actually delete the permission
 			$this->api->commit();
