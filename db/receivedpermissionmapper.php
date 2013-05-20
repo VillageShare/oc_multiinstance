@@ -28,7 +28,7 @@ use \OCA\AppFramework\Db\Entity;
 use \OCA\AppFramework\Db\DoesNotExistException;
 use \OCA\AppFramework\Db\MultipleObjectsReturnedException;
 
-use \OCA\AppFramework\Db\ReceivedPermission;
+use \OCA\MultiInstance\Db\ReceivedPermission;
 
 class ReceivedPermissionMapper extends Mapper {
 
