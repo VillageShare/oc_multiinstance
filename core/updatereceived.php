@@ -54,12 +54,13 @@ class UpdateReceived {
 	private $receivedFilecacheMapper;
 	private $filecacheUpdateMapper;
 	private $receivedPermissionMapper;
+	private $permissionUpdateMapper;
 
 
 	/**
 	 * @param API $api: an api wrapper instance
 	 */
-	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $queuedUserMapper, $locationMapper, $receivedFilecacheMapper, $filecacheUpdateMapper, $receivedPermissionMapper){
+	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $queuedUserMapper, $locationMapper, $receivedFilecacheMapper, $filecacheUpdateMapper, $receivedPermissionMapper, $permissionUpdateMapper){
 		$this->api = $api;
 		$this->receivedUserMapper = $receivedUserMapper;
 		$this->userUpdateMapper = $userUpdateMapper;
@@ -73,6 +74,7 @@ class UpdateReceived {
 		$this->receivedFilecacheMapper = $receivedFilecacheMapper;
 		$this->filecacheUpdateMapper = $filecacheUpdateMapper;
 		$this->receivedPermissionMapper = $receivedPermissionMapper;
+		$this->permissionUpdateMapper = $permissionUpdateMapper;
 	}
 
 
