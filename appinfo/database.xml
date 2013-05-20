@@ -72,21 +72,16 @@
 				<length>64</length>
 			</field>
 			<index>
-				<name>uid_index</name>
+				<name>uid_added_at_destination_location_index</name>
+				<unique>false</unique>
 				<field>
 					<name>uid</name>
 					<sorting>ascending</sorting>
 				</field>
-			</index>
-			<index>
-				<name>added_at_index</name>
 				<field>
 					<name>added_at</name>
 					<sorting>descending</sorting>
 				</field>
-			</index>
-			<index>
-				<name>destination_location_index</name>
 				<field>
 					<name>destination_location</name>
 					<sorting>ascending</sorting>
@@ -137,14 +132,12 @@
 				<length>64</length>
 			</field>
 			<index>
-				<name>uid_index</name>
+				<name>uid_added_at_index</name>
+				<unique>false</unique>
 				<field>
 					<name>uid</name>
 					<sorting>ascending</sorting>
 				</field>
-			</index>
-			<index>
-				<name>added_at_index</name>
 				<field>
 					<name>added_at</name>
 					<sorting>descending</sorting>
