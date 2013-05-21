@@ -249,19 +249,19 @@ class UpdateReceived {
 				}
 
 				$data = array();  //build data array, the rest are derived
-				if ($receivedFilecache->getEncrypted()) {
+				if ($receivedFilecache->getEncrypted() !== null) {
 					$data['encrypted'] = $receivedFilecache->getEncrypted();
 				}
-				if ($receivedFilecache->getSize()) {
+				if ($receivedFilecache->getSize() !== null) {
 					$data['size'] = $receivedFilecache->getSize();
 				}
-				if ($receivedFilecache->getMtime()) {
+				if ($receivedFilecache->getMtime() !== null) {
 					$data['mtime'] = $receivedFilecache->getMtime();
 				}
-				if ($receivedFilecache->getEtag()) {
+				if ($receivedFilecache->getEtag() !== null) {
 					$data['etag'] = $receivedFilecache->getEtag();
 				}
-				if ($receivedFilecache->getMimetype()) {
+				if ($receivedFilecache->getMimetype() !== null) {
 					$data['mimetype'] = $receivedFilecache->getMimetype();
 
 				}
