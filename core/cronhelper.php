@@ -61,7 +61,7 @@ class CronHelper {
 
 		$cmdPrefix = "rsync --verbose --compress --rsh='ssh -p{$rsyncPort}' \
 				      --recursive --times --perms --copy-links --delete \
-				      --group \
+				      --group --partial \
 				      --exclude \"last_read.txt\"";
 
 		if ($centralServerName === $thisLocation) {
