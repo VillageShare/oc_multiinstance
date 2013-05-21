@@ -26,9 +26,9 @@ use \OCA\AppFramework\Db\Entity;
 
 class Location extends Entity {
 
-	private $id;
-	private $location;
-	private $ip;
+	public $id;
+	public $location;
+	public $ip;
 
 	public function __construct($fromRow=null){
 		$this->addType('id', 'int');
