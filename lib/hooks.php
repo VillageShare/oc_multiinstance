@@ -328,12 +328,12 @@ class Hooks{
 		}
 	}
 
-	static public function queuePermissionUpdate($fileid, $user, $permissions, $mockApi=null, $mockQueuedPermissionMapper=null, $mockPermissionUpdateMapper=null) {
-		Hooks::queuePermission($fileid, $user, $permissions, PermissionUpdate::VALID);
+	static public function queuePermissionUpdate($parameters, $mockApi=null, $mockQueuedPermissionMapper=null, $mockPermissionUpdateMapper=null) {
+		Hooks::queuePermission($parameters['fileid'], $parameters['user'], $parameters['permissions'], PermissionUpdate::VALID);
 	}
 
-	static public function queuePermissionDelete($fileid, $user, $mockApi=null, $mockQueuedPermissionMapper=null) {
-		Hooks::queuePermission($fileid, $user, $permissions, PermissionUpdate::DELETED);
+	static public function queuePermissionDelete($parameters, $mockApi=null, $mockQueuedPermissionMapper=null) {
+		Hooks::queuePermission($parameters['fileid'], $parameters['user'], null, PermissionUpdate::DELETED);
 	}
 
 	static public function queuePermission($fileid, $user, $permissions, $state, $mockApi=null, $mockQueuedPermissionMapper=null, $mockPermissionUpdateMapper=null) {
@@ -355,7 +355,7 @@ class Hooks{
 			try {
 				$permissionUpdate = $permissionUpdateMapper->find($fileid, $user);
 				$permissionUpdate->setUpdatedAt($time);
-				$permissionUpdate->setStatus(PermissionUpdate::VALID);
+				$permissionUpdate->setStatus($state);
 				$permissionUpdateMapper->update($permissionUpdate);
 			}
 			catch (DoesNotExistException $e) {

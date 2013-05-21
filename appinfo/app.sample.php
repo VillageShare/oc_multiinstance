@@ -66,3 +66,6 @@ $rsyncPort = 10001;
 \OCP\Util::connectHook('Cache', 'post_put', 'OCA\MultiInstance\Lib\Hooks', 'queueFile');
 \OCP\Util::connectHook('Cache', 'post_update', 'OCA\MultiInstance\Lib\Hooks', 'queueFileUpdate');
 \OCP\Util::connectHook('Cache', 'post_delete', 'OCA\MultiInstance\Lib\Hooks', 'queueFileDelete');
+\OCP\Util::connectHook('Permissions', 'post_set', 'OCA\MultiInstance\Lib\Hooks', 'queuePermissionUpdate');
+\OCP\Util::connectHook('Permissions', 'post_remove', 'OCA\MultiInstance\Lib\Hooks', 'queuePermissionDelete');
+
