@@ -25,17 +25,18 @@ namespace OCA\MultiInstance\Core;
 
 use \OCA\AppFramework\Db\DoesNotExistException;
 
-use OCA\MultiInstance\Db\UserUpdate;
+use \OCA\MultiInstance\Db\UserUpdate;
 use \OC_User;
-use OCA\Friends\Db\Friendship;
-use OCA\MultiInstance\Db\QueuedFriendship;
-use OCA\MultiInstance\Db\QueuedUser;
-use OCA\MultiInstance\Db\QueuedPermission;
+use \OCA\Friends\Db\Friendship;
+use \OCA\MultiInstance\Db\QueuedFriendship;
+use \OCA\MultiInstance\Db\QueuedUser;
+use \OCA\MultiInstance\Db\QueuedPermission;
+use \OCA\MultiInstance\Db\PermissionUpdate;
 
-use OCA\MultiInstance\Lib\MILocation;
+use \OCA\MultiInstance\Lib\MILocation;
 use \OC\Files\Cache\Cache;
-use OCA\MultiInstance\Db\QueuedFileCache;
-use OCA\MultiInstance\Db\FilecacheUpdate;
+use \OCA\MultiInstance\Db\QueuedFileCache;
+use \OCA\MultiInstance\Db\FilecacheUpdate;
 
 /* Methods for updating instance db rows based on received rows */
 class UpdateReceived {
