@@ -47,7 +47,7 @@ class PermissionUpdate extends Entity {
 			$this->setState($state);
 		}
 		else {
-			$this->fromRow($user);
+			$this->fromRow($fileid);
 		}
 	}
 
