@@ -37,12 +37,6 @@ class Location extends Entity {
 		}
 	}
 
-	public function fromRow($row){
-		$this->id = $row['id'];
-		$this->location = $row['location'];
-		$this->ip = $row['ip'];
-	}
-
 	public function getIP(){
 		return $this->ip;
 	}
