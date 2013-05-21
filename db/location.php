@@ -30,6 +30,7 @@ class Location {
 	private $ip;
 
 	public function __construct($fromRow=null){
+		$this->addType('id', 'int');
 		if($fromRow){
 			$this->fromRow($fromRow);
 		}

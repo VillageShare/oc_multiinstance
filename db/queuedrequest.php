@@ -35,6 +35,9 @@ class QueuedRequest extends Entity{
 	public $field1;
 
 	public function __construct($requestTypeOrFromRow, $sendingLocation=null, $addedAt=null, $destinationLocation=null, $field1=null){
+		$this->addType('id', 'int');
+		$this->addType('requestType', 'int');
+
 		if($sendingLocation === null){
 			$this->fromRow($requestTypeOrFromRow);
 		}

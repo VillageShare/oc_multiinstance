@@ -37,6 +37,9 @@ class PermissionUpdate extends Entity {
 	const DELETED = 0;
 
 	public function __construct($fileid, $user, $updatedAt, $state){
+		$this->addType('fileid', 'int');
+		$this->addType('state', 'int');
+
 		$this->setFileid($fileid);
 		$this->setUser($user);
 		$this->setUpdatedAt($updatedAt);

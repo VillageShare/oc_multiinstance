@@ -36,6 +36,8 @@ class ShareUpdate extends Entity {
 	const DELETED = 0;
 
 	public function __construct($shareId, $updatedAt, $state){
+		$this->addType('state', 'int');
+
 		$this->setFileid($shareId);
 		$this->setUpdatedAt($updatedAt);
 		$this->setState($state);

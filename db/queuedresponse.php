@@ -33,6 +33,8 @@ class QueuedResponse extends Entity {
 	public $addedAtMicroTime;
 
 	public function __construct($requestIdOrFromRow, $destinationLocation=null, $answer=null, $addedAtMicroTime=null){
+		$this->addType('requestId', 'int');
+
 		if($destinationLocation === null){
 			$this->fromRow($requestIdOrFromRow);
 		}

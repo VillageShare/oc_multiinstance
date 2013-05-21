@@ -38,6 +38,8 @@ class FilecacheUpdate extends Entity {
 	const DELETED = 0;
 
 	public function __construct($filePathHash, $fileStorage=null, $updatedAt=null, $state=null){
+		$this->addType('id', 'int');
+		$this->addType('state', 'int');
 		if ($fileStorage) {
 			$this->setPathHash($filePathHash);
 			$this->setStorage($fileStorage);

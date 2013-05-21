@@ -33,6 +33,8 @@ class ReceivedRequest extends Entity{
 	public $field1;
 
 	public function __construct($requestTypeOrFromRow, $id=null, $sendingLocation=null, $addedAt=null, $field1=null){
+		$this->addType('id', 'int');
+		$this->addType('requestType', 'int');
 		if($id === null){
 			$this->fromRow($requestTypeOrFromRow);
 		}

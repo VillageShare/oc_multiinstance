@@ -50,6 +50,9 @@ class QueuedFileCache extends Entity {
 	public $sendingLocation;
 
 	public function __construct($fileid, $storage=null, $path=null, $pathVar=null, $name=null, $mimetype=null, $mimepart=null, $size=null, $mtime=null, $encrypted=null, $etag=null, $addedAt=null, $queueType=null, $destinationLocation=null, $sendingLocation=null){
+		$this->addType('fileid', 'int');
+		$this->addType('queueType', 'int');
+
 		if ($storage) {
 			$this->setFileid($fileid);
 			$this->setStorage($storage);

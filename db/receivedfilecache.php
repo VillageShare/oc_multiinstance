@@ -45,6 +45,8 @@ class ReceivedFileCache extends Entity {
 	public $sendingLocation;
 
 	public function __construct($row){
+		$this->addType('fileid', 'int');
+		$this->addType('queueType', 'int');
 		$this->fromRow($row);
 	}
 

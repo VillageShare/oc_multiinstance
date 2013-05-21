@@ -36,6 +36,7 @@ class ReceivedPermission extends Entity {
 	public $destinationLocation;
 
 	public function __construct($path, $user=null, $permissions=null, $addedAt=null, $state=null, $destinationLocation=null){
+		$this->addType('state', 'int');
 		if ($user !== null) {
 			$this->setPath($path);
 			$this->setUser($user);

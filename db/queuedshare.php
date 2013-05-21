@@ -51,6 +51,8 @@ class QueuedShare extends Entity {
 
 	//also need parent information
 	public function __construct($shareType, $shareWith, $uidOwner, $itemType, $fileSourceStorage, $fileSourcePath, $fileTarget, $permissions, $stime, $token, $destinationLocation, $sendingLocation, $queueType){
+		$this->addType('queueType', 'int');
+
 		$this->setShareType($shareType);
 		$this->setShareWith($shareWith);
 		$this->setUidOwner($uidOwner);

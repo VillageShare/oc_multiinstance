@@ -36,6 +36,9 @@ class QueuedPermission extends Entity {
 	public $destinationLocation;
 
 	public function __construct($path, $user, $permissions, $addedAt, $state, $destinationLocation){
+		$this->addType('permissions', 'int');
+		$this->addType('state', 'int');
+
 		$this->setPath($path);
 		$this->setUser($user);
 		$this->setPermissions($permissions);

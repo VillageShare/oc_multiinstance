@@ -31,6 +31,8 @@ class UserUpdate extends Entity{
 	public $updatedAt;
 
 	public function __construct($uidOrRow, $updatedAt=null){
+		$this->addType('id', 'int');
+
 		if ($updatedAt !== null) {
 			$this->setUid($uidOrRow);
 			$this->setUpdatedAt($updatedAt);

@@ -22,8 +22,9 @@
 
 namespace OCA\MultiInstance\Db;
 
+use \OCA\AppFramework\Db\Entity;
 
-class ReceivedResponse {
+class ReceivedResponse extends Entity {
 
 	
 	private $requestId;
@@ -31,6 +32,8 @@ class ReceivedResponse {
 	private $answer;
 
 	public function __construct($requestIdOrFromRow, $destinationLocation=null, $answer=null){
+		$this->addType('requestId', 'int');
+		
 		if($destinationLocation === null){
 			$this->fromRow($requestIdOrFromRow);
 		}
