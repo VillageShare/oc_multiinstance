@@ -207,7 +207,7 @@ class UpdateReceived {
 			$cache = new Cache($storagePath);
 			$storageNumericId = $cache->getNumericStorageId();
 	
-			$state = ((int)$receivedFilecache->getQueueType() === QueuedFileCache::DELETE) ? FilecacheUpdate::DELETED : FilecacheUpdate::VALID;
+			$state = ($receivedFilecache->getQueueType() === QueuedFileCache::DELETE) ? FilecacheUpdate::DELETED : FilecacheUpdate::VALID;
 
 			$filecache = $cache->get($receivedFilecache->getPath());
 
@@ -234,7 +234,7 @@ class UpdateReceived {
 			//New (not old) event if made it this far
 		
 			//If create/update
-			if (((int)$receivedFilecache->getQueueType() === QueuedFilecache::CREATE) || ((int)$receivedFilecache->getQueueType() === QueuedFilecache::UPDATE)) {
+			if (($receivedFilecache->getQueueType() === QueuedFilecache::CREATE) || ($receivedFilecache->getQueueType() === QueuedFilecache::UPDATE)) {
 				$mimetype = ($filecache && array_key_exists('mimetype', $filecache)) ? $filecache['mimetype'] : null; //if typ update, it won't in the ReceivedFilecache
 				if ($mimetype === 'httpd/unix-directory') {
 					// do nothing, would create directory, but already exists
@@ -274,12 +274,12 @@ class UpdateReceived {
 
 			}
 			//This piece was for rename, but rename does not use "move" method as expected.  It creates and deletes.
-			/*else if ((int)$receivedFilecache->getQueueType() === QueuedFilecache::RENAME) {
+			/*else if ($receivedFilecache->getQueueType() === QueuedFilecache::RENAME) {
 				$cache->move($receivedFilecache->getPath(), $receivedFilecache->getPathVar());
 				$filecacheUpdate->setPathHash(md5($receivedFilecache->getPathVar()));
 				$filecacheUpdateMapper->update($filecacheUpdate);
 			}*/
-			else if ((int)$receivedFilecache->getQueueType() === QueuedFilecache::DELETE) {
+			else if ($receivedFilecache->getQueueType() === QueuedFilecache::DELETE) {
 				if ($filecache) {
 					$cache->remove($receivedFilecache->getPath());	
 
@@ -342,7 +342,7 @@ class UpdateReceived {
 			}
 
 			//new event
-			if ((int)$receivedPermission->getState() === PermissionUpdate::DELETED) {
+			if ($receivedPermission->getState() === PermissionUpdate::DELETED) {
 				if ($permission) {  //permission update
 					$permissions->remove($fileid, $receivedPermission->getUser());
 				}
