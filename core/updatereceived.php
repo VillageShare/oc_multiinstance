@@ -326,19 +326,19 @@ class UpdateReceived {
 
 			try {
 				$permissionUpdate = $this->permissionUpdateMapper->find($fileid, $receivedPermission->getUser());
-				if ($receivedPermission->getUpdatedAt() <= $permissionUpdate->getUpdatedAt()) {  //old
+				if ($receivedPermission->getAddedAt() <= $permissionUpdate->getUpdatedAt()) {  //old
 					$this->receivedPermissionMapper->delete($receivedPermission);  //going to have to be a status on the update, but actually delete the permission
 					$this->api->commit();
 					continue;
 				}
 				else {  //new event
-					$permissionUpdate->setUpdatedAt($receivedPermission->getUpdatedAt());
+					$permissionUpdate->setUpdatedAt($receivedPermission->getAddedAt());
 					$permissionUpdate->setState($receivedPermission->getState());
 					$this->permissionUpdateMapper->update($permissionUpdate);
 				}
 			} 
 			catch (DoesNotExistException $e) {
-					$permissionUpdate = new PermissionUpdate($fileid, $receivedPermission->getUser(), $receivedPermission->getUpdatedAt(), $receivedPermission->getState());
+					$permissionUpdate = new PermissionUpdate($fileid, $receivedPermission->getUser(), $receivedPermission->getAddedAt(), $receivedPermission->getState());
 					$this->permissionUpdateMapper->insert($permissionUpdate);
 			}
 
