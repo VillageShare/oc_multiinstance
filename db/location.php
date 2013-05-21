@@ -22,8 +22,9 @@
 
 namespace OCA\MultiInstance\Db;
 
+use \OCA\AppFramework\Db\Entity;
 
-class Location {
+class Location extends Entity {
 
 	private $id;
 	private $location;
@@ -42,19 +43,7 @@ class Location {
 		$this->ip = $row['ip'];
 	}
 
-
-	public function getId(){
-		return $this->id;
-	}
-
-	public function getLocation(){
-		return $this->location;
-	}
-
 	public function getIP(){
 		return $this->ip;
-	}
-	public function setLocation($location) {
-		$this->location = $location;
 	}
 }
