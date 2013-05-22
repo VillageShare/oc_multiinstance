@@ -116,8 +116,6 @@ class CronTask {
 				$this->api->exec($cmd);
 				$replace = "sed -i 's/{$qTable}/{$rTable}/g' {$file}";
 				$this->api->exec(escapeshellcmd($replace));
-				$eof = "sed -i '1i-- done;' {$file}";
-				$this->api->exec($eof);
 			}
 		}
 	}
@@ -159,8 +157,6 @@ class CronTask {
 			$this->api->exec($cmd);
 			$replace = "sed -i 's/{$queuedTable}/{$receivedTable}/g' {$file}";
 			$this->api->exec(escapeshellcmd($replace));
-			$eof = "sed -i '1i-- done;' {$file}";
-			$this->api->exec($eof);
 		}
 
 		$this->queuedResponseMapper->deleteAllBeforeMicrotime($cutOffTime);
@@ -272,20 +268,12 @@ class CronTask {
 	 * source: http://stackoverflow.com/questions/7840044/how-to-execute-mysql-script-file-in-php
 	 */
 	protected function mysqlExecuteFile($filename, $locationName){
-		$first = true;
 		$ackedList = "";
 		$filebase = $this->api->baseName($filename);
 		$acks = $filebase !== "multiinstance_queued_requests.sql" ? true : false; //Don't want to delete with acknowledgement, want to delete with answer
 		if ($file = $this->api->fileGetContents($filename)){
 			foreach(explode(";", $file) as $query){
 				$query = trim($query);
-				if ($first) {
-					//If still being written
-					if ($query !== "-- done")
-						return;
-					$first = false;
-					continue;
-				}
 				if ($acks) {
 					$ackedList .= $this->toAckFormat($query, $filebase);
 				}

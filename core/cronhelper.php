@@ -59,6 +59,7 @@ class CronHelper {
 
 		$locationList = $this->locationMapper->findAll();
 
+		//Note: we cannot use option --inplace.  We do not want incomplete files to be processed!
 		$cmdPrefix = "rsync --verbose --compress --rsh='ssh -p{$rsyncPort}' \
 				      --recursive --times --perms --copy-links --delete \
 				      --group --partial \
