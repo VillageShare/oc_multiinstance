@@ -60,6 +60,7 @@ class CronHelper {
 		$locationList = $this->locationMapper->findAll();
 
 		//Note: we cannot use option --inplace.  We do not want incomplete files to be processed!
+		//We can consider using the bandwidth limit option (--bwlimit) instead of tc
 		$cmdPrefix = "rsync --verbose --compress --rsh='ssh -p{$rsyncPort}' \
 				      --recursive --times --perms --copy-links --delete \
 				      --group --partial \
