@@ -47,13 +47,13 @@ class CronTask {
 	private $recvPathPrefix;
 	private $sendPathPrefix;
 	
-	private static $tables = array(
-		'multiinstance_queued_users' => 'multiinstance_received_users',
+	private static $tables = array( 
 		'multiinstance_queued_friendships' => 'multiinstance_received_friendships',
 		'multiinstance_queued_user_facebook_ids' => 'multiinstance_received_user_facebook_ids', 
-		'multiinstance_queued_filecache' => 'multiinstance_received_filecache',
+		'multiinstance_queued_permissions' => 'multiinstance_received_permissions', //we want permissions before files because permissions dependent on files
+		'multiinstance_queued_filecache' => 'multiinstance_received_filecache', 
 		'multiinstance_queued_requests' => 'multiinstance_received_requests',
-		'multiinstance_queued_permissions' => 'multiinstance_received_permissions'
+		'multiinstance_queued_users' => 'multiinstance_received_users' //we want users to be last since other types are dependent on users
 	);
 	
 	private static $patterns = array(
