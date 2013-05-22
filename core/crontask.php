@@ -47,7 +47,7 @@ class CronTask {
 	private $recvPathPrefix;
 	private $sendPathPrefix;
 	
-	private static $tables = array( 
+	private static $tables = array(  //Note: order matters because of dependencies
 		'multiinstance_queued_friendships' => 'multiinstance_received_friendships',
 		'multiinstance_queued_user_facebook_ids' => 'multiinstance_received_user_facebook_ids', 
 		'multiinstance_queued_permissions' => 'multiinstance_received_permissions', //we want permissions before files because permissions dependent on files
@@ -191,7 +191,7 @@ class CronTask {
 
 		foreach ($dirs as $dir){
 			$locationName = $this->api->baseName($dir);	
-			foreach (self::$tables as $queuedTable => $receivedTable) {
+			foreach (self::$tables as $queuedTable => $receivedTable) { //order doesn't matter here because we finish reading in all before processing
 				$full_file =  "{$dir}/{$queuedTable}.sql";
 				if(!$this->api->fileExists($full_file)) {
 					continue;
