@@ -250,7 +250,7 @@ class CronTask {
 				}
 			}
 			if ($this->api->filePutContents($lastReadFilename, $lastUpdatedStringTime) === false) {
-				$this->log("Error writing to 'last_read.txt' for {$dir}.");
+				$this->api->log("Error writing to 'last_read.txt' for {$dir}.");
 			}
 		}
 	}
