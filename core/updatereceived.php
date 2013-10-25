@@ -52,12 +52,13 @@ class UpdateReceived {
 	private $locationMapper;
 	private $receivedFilecacheMapper;
 	private $filecacheUpdateMapper;
-
+	private $receivedShareMapper;
+	private $shareUpdateMapper;
 
 	/**
 	 * @param API $api: an api wrapper instance
 	 */
-	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $queuedUserMapper, $locationMapper, $receivedFilecacheMapper, $filecacheUpdateMapper){
+	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $queuedUserMapper, $locationMapper, $receivedFilecacheMapper, $filecacheUpdateMapper, $receivedShareMapper, $shareUpdateMapper){
 		$this->api = $api;
 		$this->receivedUserMapper = $receivedUserMapper;
 		$this->userUpdateMapper = $userUpdateMapper;
@@ -70,6 +71,8 @@ class UpdateReceived {
 		$this->locationMapper = $locationMapper;
 		$this->receivedFilecacheMapper = $receivedFilecacheMapper;
 		$this->filecacheUpdateMapper = $filecacheUpdateMapper;
+		$this->receivedShareMapper = $receivedShareMapper;
+		$this->shareUpdateMapper = $shareUpdateMapper;
 	}
 
 
@@ -168,7 +171,63 @@ class UpdateReceived {
 		}
 	}
 
+	public function updateSharesWithReceivedShares($mockLocationMapper=null) {
+		$receivedShares = $this->receivedShareMapper->findAll();
 
+		foreach ($receivedShares as $receivedShare) {
+
+                        $location1 = MILocation::getUidLocation($receivedShare->getUidOwner(), $mockLocationMapper);
+                        $location2 = MILocation::getUidLocation($receivedShare->getShareWith(), $mockLocationMapper);
+                        $centralServer = $this->api->getAppValue('centralServer');
+                        $thisLocation = $this->api->getAppValue('location');
+
+                        //If a user from another instance is involved, push info to that instance
+                        if ($receivedShare->getSendingLocation() !== $centralServer) {
+                                if ($location1 !== $receivedShare->getSendingLocation() && $location1 !== $centralServer) {
+                                        $shareId = $receivedShare->getShareId();
+                                        $shareUpdate = $this->shareUpdateMapper->find($shareId);
+					$queuedFileCache = $this->filecacheUpdateMapper->find($receivedShare->getFileSourcePath, $receivedShare->getSourceStorage);
+                                        $queuedShare = new QueuedShare($receivedShare->getShareId(), $receivedShare->getSharetype(), $receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getItemType(), $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), $receivedShare->getFileTarget(), $receivedShare->getPermissions(), $receivedShare->getSTime(), $receivedShare->getAccepted(), $receivedShare->getExpiration(), $receivedShare->getToken(), $receivedShare->getDestinationLocation() , $receivedShare->getSendingLocation(), $receivedShare->getQueuedType(), $receivedShare->getState(), $receivedShare->getUpdatedAt());
+
+                                        $this->api->beginTransaction();
+                                        $this->queuedShareMapper->save($queuedShare);
+                                        $this->queuedFileCacheMapper->save($queuedFileCache);
+                                        $this->api->commit();
+                                }
+                                if ($location2 !== $receivedFriendship->getSendingLocation() && $location2 !== $centralServer) {
+					$shareId = $receivedShare->getShareId();
+                                        $shareUpdate = $this->shareUpdateMapper->find($shareId);
+                                        $queuedFileCache = $this->filecacheUpdateMapper->find($receivedShare->getFileSourcePath, $receivedShare->getSourceStorage);
+                                        $queuedShare = new QueuedShare($receivedShare->getShareId(), $receivedShare->getSharetype(), $receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getItemType(), $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), $receivedShare->getFileTarget(), $receivedShare->getPermissions(), $receivedShare->getSTime(), $receivedShare->getAccepted(), $receivedShare->getExpiration(), $receivedShare->getToken(), $receivedShare->getDestinationLocation() , $receivedShare->getSendingLocation(), $receivedShare->getQueuedType(), $receivedShare->getState(), $receivedShare->getUpdatedAt());
+
+                                        $this->api->beginTransaction();
+                                        $this->queuedShareMapper->save($queuedShare);
+                                        $this->queuedFileCacheMapper->save($queuedFileCache);
+                                        $this->api->commit();
+                                }
+                        }
+			//TODO: try block with rollback?
+                        $this->api->beginTransaction();
+                        try {
+                                #$shareUpdate = $this->shareUpdateMapper->find($receivedShare->getFriendUid1(), $receivedFriendship->getFriendUid2());
+                                if ($receivedShare->getUpdatedAt() > $shareUpdate->getUpdatedAt()) { //if newer than last update
+                                        $shareUpdate->setState($receivedShare->getState());
+                                        $shareUpdate->setUpdatedAt($receivedShare->getUpdatedAt());
+                                        $this->shareUpdateMapper->update($shareUpdate);
+                                }
+                        }
+                        catch (DoesNotExistException $e) {
+                                $shareUpdate = new ShareUpdate();
+                                $shareUpdate->setShareId($receivedShare->getShareId());
+                                $shareUpdate->setUpdatedAt($receivedShare->getUpdatedAt());
+                                $shareUpdate->setState($receivedShare->getState());
+                                $this->shareUpdateMapper->insert($shareUpdate);
+                        }
+                        $this->receivedShareMapper->delete($receivedShare);
+                        $this->api->commit();
+
+		
+	}
 	public function updateUserFacebookIdsWithReceivedUserFacebookIds() {
 		$receivedUserFacebookIds = $this->receivedUserFacebookIdMapper->findAll();
 	

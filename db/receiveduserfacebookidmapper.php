@@ -87,4 +87,45 @@ class ReceivedUserFacebookIdMapper extends Mapper {
 	}
 
 
+	/** 
+         * Checks to see if a row already exists
+         * @param $uid - the owncloud uid of a user
+         * @return boolean: whether or not it exists (note: will return true if more than one is found)
+         */
+        public function exists($uid, $syncedAt, $destinationLocation){
+                try{
+                        $this->find($uid, $syncedAt, $destinationLocation);
+                }
+                catch (DoesNotExistException $e){
+                        return false;
+                }
+                catch (MultipleObjectsReturnedException $e){
+                        return true;
+                }
+                return true;
+        }
+
+	/**
+         * 
+         * @param  $userFacebookId: the UserFacebookId object to be saved
+         * @return true if successful
+         */
+        public function save($userFacebookId){
+                if ($this->exists($userFacebookId->getUid(), $userFacebookId->getFriendsSyncedAt()), $userFacebookId()->getDestinationLocation()){
+                        return false;
+                }
+                $sql = 'INSERT INTO `'. $this->getTableName() . '` (`uid`, `facebook_id`, `facebook_name`, `friends_synced_at`, `destination_location`)'.
+                                ' VALUES(?, ?, ?, ?, ?)';
+
+                $params = array(
+                        $userFacebookId->getUid(),
+                        $userFacebookId->getFacebookId(),
+                        $userFacebookId->getFacebookName(),
+                        $userFacebookId->getFriendsSyncedAt(),
+                        $userFacebookId->getDestinationLocation()
+                );
+
+                return $this->execute($sql, $params);
+        }
+
 }

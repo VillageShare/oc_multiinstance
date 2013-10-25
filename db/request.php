@@ -29,5 +29,5 @@ class Request {
 	//Request types
 	const USER_EXISTS = 1;
 	const FETCH_USER = 2;
-	
+        const GET_FACEBOOK_FRIENDS = 3;
 }

@@ -105,6 +105,11 @@ class MILocation{
 		return null;
 	}
 
+	static public function getFacebookFriendsForUser($uid, $fbid, $mockQueuedRequestMapper=null, $mockApi=null) {
+		$ids = array('uid' => $uid, 'fbid' => $fbid);
+		self::pullUserFromCentralServer($ids, Request::GET_FACEBOOK_FRIENDS, $mockQueuedRequestMapper, $mockApi);
+	}
+
 	/**
 	 * @brief Creates a request for central server to push a user to this server.  After receiving the response
 	 * 	additional processing will occur.
@@ -137,6 +142,7 @@ class MILocation{
 			$qrm->save($request);
 		}
 	}
+
 
 	/**
 	 * Helper function

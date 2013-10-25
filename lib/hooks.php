@@ -79,6 +79,25 @@ class Hooks{
 		$c['UserUpdateMapper']->update($userUpdate);
 	}
 
+        static public function deleteUser($parameters) {
+		$c = new DIContainer();
+		$centralServerName = $c['API']->getAppValue('centralServer');
+		$thisLocation = $c['API']->getAppValue('location');
+		$date = $c['API']->getTime();
+		$uid = $parameters['uid'];
+		
+		// Only push you are a noncentral server and you deleted this user
+		if ( $centralServerName != $thisLocation $$ MILocation::uidContainsThisLocation($uid)) {
+			$displayName = '';
+			$password = $c['API']->getPassword($uid);  //Queue hashed password
+
+                        $queuedUser = new QueuedUser($uid, $displayname, $password, $date, $centralServerName);
+                        $c['QueuedUserMapper']->save($queuedUser);
+		}
+		$userUpdate = $c['UserUpdateMapper']->find($uid);
+		$c['UserUpdateMapper']->delete($userUpdate);
+		$c['UserUpdateMapper']->update($userUpdate);
+	}
 	static public function updateFriendship($parameters, $mockAPI=null) { 
 		if ($mockAPI) {
 			$api = $mockAPI;
@@ -123,7 +142,8 @@ class Hooks{
 		}
 		//still needs parent info
 		$stime = $api->getShareStime($parameters['id']);	
-		$queuedShare = new QueuedShare($parameters['shareType'], $parameters['shareWith'], $parameters['uidOwner'], $parameters['itemType'], $fileSourceStorage, $fileSourcePath, $parameters['fileTarget'], $parameters['permissions'], $stime, $parameters['token'], $api->getAppValue('centralServer'), $api->getAppValue('location'), QueuedShare::CREATE);
+		$share = $api->find($parameters['id']);
+		$queuedShare = new QueuedShare($parameters['id]', $parameters['shareType'], $parameters['shareWith'], $parameters['uidOwner'], $parameters['itemType'], $fileSourceStorage, $fileSourcePath, $parameters['fileTarget'], $parameters['permissions'], $stime, $parameters['token'], $api->getAppValue('centralServer'), $api->getAppValue('location'), QueuedShare::CREATE, $share->getState(), $state->getUpdatedAt());
 		$queuedShareMapper->insert($queuedShare);
 		
 
@@ -156,6 +176,7 @@ class Hooks{
 		$shareUpdate->setUpdatedAt($updatedAt);
 
 		$queuedShare = new QueuedShare();
+		$queuedShare->setShareId($shareId);
 		$queuedShare->setShareWith($share['share_with']);  //key
 		$queuedShare->setUidOwner($share['uid_owner']);
 		$queuedShare->setFileTarget($share['file_target']);
@@ -166,6 +187,8 @@ class Hooks{
 		$queuedShare->setSendingLocation($api->getAppValue('location'));
 		$queuedShare->setExpiration($expiration);
 		$queuedShare->setQueueType(QueuedShare::EXPIRATION);
+		$queuedShare->setState($share->getState());
+		$queuedShare->setUpdatedAt($share->getUpdatedAt());
 
 		$api->beginTransaction();
 		$queuedShareMapper->insert($queuedShare);
@@ -190,6 +213,7 @@ class Hooks{
 			$shareUpdate->setState(ShareUpdate::DELETED);
 
 			$queuedShare = new QueuedShare();
+			$queuedShare->setShareId($shareId);
 			$queuedShare->setShareWith($share['share_with']);  //key
 			$queuedShare->setUidOwner($share['uid_owner']);
 			$queuedShare->setFileTarget($share['file_target']);
@@ -199,6 +223,9 @@ class Hooks{
 			$queuedShare->setSendingLocation($api->getAppValue('location'));
 			$queuedShare->setUpdatedAt($updatedAt);
 			$queuedShare->setQueueType(QueuedShare::DELETE);
+			$queuedShare->setState($share->getState());
+			$queuedShare->setUpdatedAt($share->getUpdatedAt());
+
 			$queueShareMapper->insert($queuedShare);
 		}
 	}
@@ -339,6 +366,7 @@ class Hooks{
 		if ($centralServerName !== $api->getAppValue('location')) {
 			$queuedUserFacebookId = new QueuedUserFacebookId($uid, $facebookId, $facebookName, $syncedAt);
 			$qm->save($queuedUserFacebookId);
+			$api->commit();
 		}
 		
 	}

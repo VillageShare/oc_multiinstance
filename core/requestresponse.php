@@ -27,6 +27,8 @@ use OCA\MultiInstance\Db\Location;
 use OCA\MultiInstance\Db\Request;
 use OCA\MultiInstance\Db\QueuedResponse;
 use OCA\MultiInstance\Db\QueuedUser;
+use OCA\MultiInstance\Db\QueuedUserFacebookId;
+use OCA\Friends\Lib\Hooks;
 
 class RequestResponse {
 	
@@ -39,13 +41,15 @@ class RequestResponse {
 	private $queuedRequestMapper;
 	private $queuedUserMapper;
 	private $friendshipMapper;
+	private $receivedUserFacebookIdMapper;
+	private $queuedUserFacebookIdMapper;
 
 
 
 	/**
 	 * @param API $api: an api wrapper instance
 	 */
-	public function __construct($api, $userUpdateMapper, $receivedResponseMapper, $receivedRequestMapper, $queuedResponseMapper, $queuedRequestMapper, $queuedUserMapper, $friendshipMapper){
+	public function __construct($api, $userUpdateMapper, $receivedResponseMapper, $receivedRequestMapper, $queuedResponseMapper, $queuedRequestMapper, $queuedUserMapper, $friendshipMapperi, $receivedUserFacebookIdMapper){
 		$this->api = $api;
 		$this->userUpdateMapper = $userUpdateMapper;
 		$this->receivedResponseMapper = $receivedResponseMapper;
@@ -54,6 +58,8 @@ class RequestResponse {
 		$this->queuedRequestMapper = $queuedRequestMapper;
 		$this->queuedUserMapper = $queuedUserMapper;
 		$this->friendshipMapper = $friendshipMapper;
+		$this->queuedUserFacebookIdMapper = $queuedUserFacebookIdMapper;
+		$this->receivedUserFacebookIdMapper = $receivedUserFacebookIdMapper;
 	}
 
 
@@ -87,6 +93,16 @@ class RequestResponse {
 					}
 					$this->api->commit();
 					
+					break;
+				case Request::GET_FACEBOOK_FRIENDS: // Want
+					$this->api->beginTransaction();
+					$response = new QueuedResponse($id, $sendingLocation, (string) $userExists, $this->api->microTime());
+					$this->queuedResponseMapper($response);
+					$uid = $field1['uid'];
+					$fbid = $field1['fbid'];					
+
+					Hooks::getFriendsFromUserFacebookId($uid, $fbid);
+					$this->api->commit();
 					break;
 				default:
 					$this->api->log("Invalid request_type {$type} for request from {$sendingLocation} added_at {$addedAt}, field1 = {$field1}");
@@ -148,7 +164,13 @@ class RequestResponse {
  					$this->queuedRequestMapper->delete($receivedResponse);
 					$this->api->commit();
 					
-					break;	
+					break;
+				case Request::GET_FACEBOOK_FRIENDS:
+					$this->api->beginTransaction();
+					$this->receivedResponseMapper->delete($receivedResponse);
+					$this->queuedRequestMapper->delete($receivedResponse);
+					$this->api->commit();
+
 				default:
 					$this->api->log("Invalid request_type {$type} for request id {$requestId}");
 					continue;

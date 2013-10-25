@@ -26,7 +26,7 @@ namespace OCA\MultiInstance\Db;
 use \OCA\AppFramework\Db\Entity;
 
 
-class QueuedShare extends Entity {
+class ReceivedShare extends Entity {
 
 	public $shareId;	
 	public $shareType;
