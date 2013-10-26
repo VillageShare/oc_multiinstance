@@ -187,7 +187,7 @@ class UpdateReceived {
                                         $shareId = $receivedShare->getShareId();
                                         $shareUpdate = $this->shareUpdateMapper->find($shareId);
 					$queuedFileCache = $this->filecacheUpdateMapper->find($receivedShare->getFileSourcePath, $receivedShare->getSourceStorage);
-                                        $queuedShare = new QueuedShare($receivedShare->getShareId(), $receivedShare->getSharetype(), $receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getItemType(), $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), $receivedShare->getFileTarget(), $receivedShare->getPermissions(), $receivedShare->getSTime(), $receivedShare->getAccepted(), $receivedShare->getExpiration(), $receivedShare->getToken(), $receivedShare->getDestinationLocation() , $receivedShare->getSendingLocation(), $receivedShare->getQueuedType(), $receivedShare->getState(), $receivedShare->getUpdatedAt());
+                                        $queuedShare = new QueuedShare($receivedShare->getShareId(), $receivedShare->getSharetype(), $receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getItemType(), $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), $receivedShare->getFileTarget(), $receivedShare->getPermissions(), $receivedShare->getStime(), $receivedShare->getAccepted(), $receivedShare->getExpiration(), $receivedShare->getToken(), $receivedShare->getDestinationLocation() , $receivedShare->getSendingLocation(), $receivedShare->getQueuedType(), $receivedShare->getState(), $receivedShare->getUpdatedAt());
 
                                         $this->api->beginTransaction();
                                         $this->queuedShareMapper->save($queuedShare);
@@ -198,7 +198,7 @@ class UpdateReceived {
 					$shareId = $receivedShare->getShareId();
                                         $shareUpdate = $this->shareUpdateMapper->find($shareId);
                                         $queuedFileCache = $this->filecacheUpdateMapper->find($receivedShare->getFileSourcePath, $receivedShare->getSourceStorage);
-                                        $queuedShare = new QueuedShare($receivedShare->getShareId(), $receivedShare->getSharetype(), $receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getItemType(), $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), $receivedShare->getFileTarget(), $receivedShare->getPermissions(), $receivedShare->getSTime(), $receivedShare->getAccepted(), $receivedShare->getExpiration(), $receivedShare->getToken(), $receivedShare->getDestinationLocation() , $receivedShare->getSendingLocation(), $receivedShare->getQueuedType(), $receivedShare->getState(), $receivedShare->getUpdatedAt());
+                                        $queuedShare = new QueuedShare($receivedShare->getShareId(), $receivedShare->getSharetype(), $receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getItemType(), $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), $receivedShare->getFileTarget(), $receivedShare->getPermissions(), $receivedShare->getStime(), $receivedShare->getAccepted(), $receivedShare->getExpiration(), $receivedShare->getToken(), $receivedShare->getDestinationLocation() , $receivedShare->getSendingLocation(), $receivedShare->getQueuedType(), $receivedShare->getState(), $receivedShare->getUpdatedAt());
 
                                         $this->api->beginTransaction();
                                         $this->queuedShareMapper->save($queuedShare);
@@ -226,8 +226,10 @@ class UpdateReceived {
                         $this->receivedShareMapper->delete($receivedShare);
                         $this->api->commit();
 
-		
+		}
 	}
+
+
 	public function updateUserFacebookIdsWithReceivedUserFacebookIds() {
 		$receivedUserFacebookIds = $this->receivedUserFacebookIdMapper->findAll();
 	

@@ -82,7 +82,8 @@ class ReceivedShareMapper extends Mapper {
 	 * @return array containing all items
 	 */
 	public function findAll(){
-		$result = $this->findAllQuery($this->getTableName());
+		$sql = "SELECT * FROM {$this->getTableName()}";
+                $result = $this->execute($sql);
 
 		$entityList = array();
 		while($row = $result->fetchRow()){
