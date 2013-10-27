@@ -197,7 +197,7 @@ class DIContainer extends BaseContainer {
 			
 		});
 		$this['RequestResponse'] = $this->share(function($c){
-			return new RequestResponse($c['API'], $c['UserUpdateMapper'], $c['ReceivedResponseMapper'], $c['ReceivedRequestMapper'], $c['QueuedResponseMapper'], $c['QueuedRequestMapper'], $c['QueuedUserMapper'], $c['FriendshipMapper']);
+			return new RequestResponse($c['API'], $c['UserUpdateMapper'], $c['ReceivedResponseMapper'], $c['ReceivedRequestMapper'], $c['QueuedResponseMapper'], $c['QueuedRequestMapper'], $c['QueuedUserMapper'], $c['FriendshipMapper'], $c['QueuedUserFacebookIdMapper'], $c['ReceivedUserFacebookIdMapper']);
 			
 		});
 	}

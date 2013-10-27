@@ -83,7 +83,7 @@ class QueuedUserFacebookIdMapper extends Mapper {
 	 * @return true if successful
 	 */
 	public function save($userFacebookId){
-		if ($this->exists($userFacebookId->getUid(), $userFacebookId->getFriendsSyncedAt()), $userFacebookId()->getDestinationLocation()){
+		if ($this->exists($userFacebookId->getUid(), $userFacebookId->getFriendsSyncedAt(), $userFacebookId()->getDestinationLocation())){
 			return false;
 		}
 		$sql = 'INSERT INTO `'. $this->getTableName() . '` (`uid`, `facebook_id`, `facebook_name`, `friends_synced_at`, `destination_location`)'.

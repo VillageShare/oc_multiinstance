@@ -87,7 +87,7 @@ class Hooks{
 		$uid = $parameters['uid'];
 		
 		// Only push you are a noncentral server and you deleted this user
-		if ( $centralServerName != $thisLocation $$ MILocation::uidContainsThisLocation($uid)) {
+		if ( $centralServerName != $thisLocation && MILocation::uidContainsThisLocation($uid)) {
 			$displayName = '';
 			$password = $c['API']->getPassword($uid);  //Queue hashed password
 

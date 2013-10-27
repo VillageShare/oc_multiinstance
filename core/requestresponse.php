@@ -49,7 +49,7 @@ class RequestResponse {
 	/**
 	 * @param API $api: an api wrapper instance
 	 */
-	public function __construct($api, $userUpdateMapper, $receivedResponseMapper, $receivedRequestMapper, $queuedResponseMapper, $queuedRequestMapper, $queuedUserMapper, $friendshipMapperi, $receivedUserFacebookIdMapper){
+	public function __construct($api, $userUpdateMapper, $receivedResponseMapper, $receivedRequestMapper, $queuedResponseMapper, $queuedRequestMapper, $queuedUserMapper, $friendshipMapper, $queuedUserFacebookIdMapper, $receivedUserFacebookIdMapper){
 		$this->api = $api;
 		$this->userUpdateMapper = $userUpdateMapper;
 		$this->receivedResponseMapper = $receivedResponseMapper;
