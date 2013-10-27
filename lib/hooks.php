@@ -143,7 +143,7 @@ class Hooks{
 		//still needs parent info
 		$stime = $api->getShareStime($parameters['id']);	
 		$share = $api->find($parameters['id']);
-		$queuedShare = new QueuedShare($parameters['id]', $parameters['shareType'], $parameters['shareWith'], $parameters['uidOwner'], $parameters['itemType'], $fileSourceStorage, $fileSourcePath, $parameters['fileTarget'], $parameters['permissions'], $stime, $parameters['token'], $api->getAppValue('centralServer'), $api->getAppValue('location'), QueuedShare::CREATE, $share->getState(), $state->getUpdatedAt());
+		$queuedShare = new QueuedShare($parameters['id'], $parameters['shareType'], $parameters['shareWith'], $parameters['uidOwner'], $parameters['itemType'], $fileSourceStorage, $fileSourcePath, $parameters['fileTarget'], $parameters['permissions'], $stime, $parameters['token'], $api->getAppValue('centralServer'), $api->getAppValue('location'), QueuedShare::CREATE, $share->getState(), $state->getUpdatedAt());
 		$queuedShareMapper->insert($queuedShare);
 		
 
