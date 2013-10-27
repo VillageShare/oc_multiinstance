@@ -41,15 +41,13 @@ class RequestResponse {
 	private $queuedRequestMapper;
 	private $queuedUserMapper;
 	private $friendshipMapper;
-	private $receivedUserFacebookIdMapper;
-	private $queuedUserFacebookIdMapper;
 
 
 
 	/**
 	 * @param API $api: an api wrapper instance
 	 */
-	public function __construct($api, $userUpdateMapper, $receivedResponseMapper, $receivedRequestMapper, $queuedResponseMapper, $queuedRequestMapper, $queuedUserMapper, $friendshipMapper, $queuedUserFacebookIdMapper, $receivedUserFacebookIdMapper){
+	public function __construct($api, $userUpdateMapper, $receivedResponseMapper, $receivedRequestMapper, $queuedResponseMapper, $queuedRequestMapper, $queuedUserMapper, $friendshipMapper){
 		$this->api = $api;
 		$this->userUpdateMapper = $userUpdateMapper;
 		$this->receivedResponseMapper = $receivedResponseMapper;
@@ -58,8 +56,6 @@ class RequestResponse {
 		$this->queuedRequestMapper = $queuedRequestMapper;
 		$this->queuedUserMapper = $queuedUserMapper;
 		$this->friendshipMapper = $friendshipMapper;
-		$this->queuedUserFacebookIdMapper = $queuedUserFacebookIdMapper;
-		$this->receivedUserFacebookIdMapper = $receivedUserFacebookIdMapper;
 	}
 
 

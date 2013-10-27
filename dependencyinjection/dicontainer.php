@@ -133,10 +133,10 @@ class DIContainer extends BaseContainer {
 		$this['UserFacebookIdMapper'] = $this->share(function($c){
 			return new UserFacebookIdMapper($c['API']);
 		});
-		$this['QueuedUserFacebookIdMapper'] = $this->share(Function($c){
+		$this['QueuedUserFacebookIdMapper'] = $this->share(function($c){
 			return new QueuedUserFacebookIdMapper($c['API']);
 		});
-		$this['ReceivedUserFacebookIdMapper'] = $this->share(Function($c){
+		$this['ReceivedUserFacebookIdMapper'] = $this->share(function($c){
 			return new ReceivedUserFacebookIdMapper($c['API']);
 		});
 		
@@ -197,7 +197,7 @@ class DIContainer extends BaseContainer {
 			
 		});
 		$this['RequestResponse'] = $this->share(function($c){
-			return new RequestResponse($c['API'], $c['UserUpdateMapper'], $c['ReceivedResponseMapper'], $c['ReceivedRequestMapper'], $c['QueuedResponseMapper'], $c['QueuedRequestMapper'], $c['QueuedUserMapper'], $c['FriendshipMapper'], $c['QueuedUserFacebookIdMapper'], $c['ReceivedUserFacebookIdMapper']);
+			return new RequestResponse($c['API'], $c['UserUpdateMapper'], $c['ReceivedResponseMapper'], $c['ReceivedRequestMapper'], $c['QueuedResponseMapper'], $c['QueuedRequestMapper'], $c['QueuedUserMapper'], $c['FriendshipMapper']);
 			
 		});
 	}
