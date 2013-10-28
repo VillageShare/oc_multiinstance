@@ -31,6 +31,7 @@ class ReceivedUser extends Entity {
 	public $password;
 	public $addedAt;
 	public $destinationLocaiton;
+	public $status;
 
 	public function __construct($uid, $displayname=null, $password=null, $addedAt=null, $destinationLocation=null){
 		if ($displayname) {

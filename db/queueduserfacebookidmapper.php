@@ -114,6 +114,4 @@ class QueuedUserFacebookIdMapper extends Mapper {
 		return $this->execute($sql, $params);
 	
 	}
-
-
 }

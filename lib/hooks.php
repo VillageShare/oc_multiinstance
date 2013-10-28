@@ -264,14 +264,13 @@ class Hooks{
 		}
 	}
 
-	static public function queuePermissionUpdate($fileid, $user, $permissions, $mockApi=null, $mockQueuedPermissionMapper=null, $mockPermissionUpdateMapper=null) {
-		Hooks::queuePermission($fileid, $user, $permissions, PermissionUpdate::VALID);
-	}
+	static public function queuePermissionUpdate(/*$fileid, $user, $permissions*/$parameters, $mockApi=null, $mockQueuedPermissionMapper=null, $mockPermissionUpdateMapper=null) {
+                Hooks::queuePermission($parameters['fileid'], $parameters['user'], $parameters['permissions'], PermissionUpdate::VALID);
+        }
 
-	static public function queuePermissionDelete($fileid, $user, $mockApi=null, $mockQueuedPermissionMapper=null) {
-		Hooks::queuePermission($fileid, $user, $permissions, PermissionUpdate::DELETED);
-	}
-
+        static public function queuePermissionDelete(/*$fileid, $user*/ $parameters, $mockApi=null, $mockQueuedPermissionMapper=null) {
+                Hooks::queuePermission($fileid, $parameters['user'], $permissions, PermissionUpdate::DELETED);
+        }
 	static public function queuePermission($fileid, $user, $permissions, $state, $mockApi=null, $mockQueuedPermissionMapper=null, $mockPermissionUpdateMapper=null) {
 		if ($mockQueuedPermissionMapper !== null && $mockApi !== null) {
 			$queuedPermissionMapper = $mockQueuedPermissionMapper;

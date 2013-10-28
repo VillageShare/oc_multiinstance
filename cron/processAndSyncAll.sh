@@ -20,7 +20,7 @@
 #
 ###
 
-
+cd /home/owncloud/public_html/apps/multiinstance
 if ps -ef | grep -v grep | grep processAndSyncAll.php ; then
 	echo "processAndSyncAll.php is not starting because it is already running." >> /home/owncloud/public_html/apps/multiinstance/cron/error.txt 
         exit 0

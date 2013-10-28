@@ -99,14 +99,12 @@ class UserUpdateMapper extends Mapper {
 	 * @param string $uid: the uid of the UserUpdate
 	 */
 	public function delete(Entity $userUpdate){
-		/*$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `uid` = ?';
+		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `uid` = ?';
 		$params = array(
 			$userUpdate->getUid(),
 		);
 		
-		return $this->execute($sql, $params);*/
-		$userUpdate->setStatus(UserUpdate::DELETED);
-		return true;
+		return $this->execute($sql, $params);
 	}
 
 

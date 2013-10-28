@@ -29,17 +29,11 @@ class UserUpdate extends Entity{
 	public $id;
 	public $uid;
 	public $updatedAt;
-	public $status;
-
-
-	const CREATED = 1;
-        const DELETED = 2;
 
 	public function __construct($uidOrRow, $updatedAt=null){
 		if ($updatedAt !== null) {
 			$this->setUid($uidOrRow);
 			$this->setUpdatedAt($updatedAt);
-			$this->setStatus(UserUpdate::CREATED);
 		}
 		else{
 			$this->fromRow($uidOrRow);

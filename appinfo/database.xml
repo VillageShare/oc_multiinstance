@@ -195,7 +195,7 @@
 				<type>integer</type>
 				<default></default>
 				<notnull>false</notnull>
-				<length>1</length>
+				<length>2</length>
 			</field>
 			<index>
 				<name>uid_index</name>
@@ -1287,7 +1287,7 @@
 	</table>
 
         <table>
-                <name>*dbprefix*multiinstance_received_share</name>
+                <name>*dbprefix*multiinstance_received_shares</name>
                 <declaration>
                         <field>
                                 <name>share_type</name>
