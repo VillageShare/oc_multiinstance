@@ -210,6 +210,13 @@
 				<notnull>false</notnull>
 			</field>
 			<field>
+				<name>next_destination_location</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>64</length>
+			</field>
+			<field>
 				<name>destination_location</name>
 				<type>text</type>
 				<default></default>
@@ -284,6 +291,13 @@
 				<default></default>
 				<notnull>false</notnull>
 			</field>
+                        <field>
+                                <name>next_destination_location</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>64</length>
+                        </field>
 			<field>
 				<name>destination_location</name>
 				<type>text</type>
