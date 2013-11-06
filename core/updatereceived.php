@@ -37,6 +37,8 @@ use \OCA\MultiInstance\Lib\MILocation;
 use \OC\Files\Cache\Cache;
 use \OCA\MultiInstance\Db\QueuedFileCache;
 use \OCA\MultiInstance\Db\FilecacheUpdate;
+use \OCP\Share;
+use \OCA\MultiInstance\Db\QueuedShare;
 
 /* Methods for updating instance db rows based on received rows */
 class UpdateReceived {
@@ -56,12 +58,14 @@ class UpdateReceived {
 	private $filecacheUpdateMapper;
 	private $receivedPermissionMapper;
 	private $permissionUpdateMapper;
+	private $shareUpdateMapper;
+	private $recievedShareMapper;
 
 
 	/**
 	 * @param API $api: an api wrapper instance
 	 */
-	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $queuedUserMapper, $locationMapper, $receivedFilecacheMapper, $filecacheUpdateMapper, $receivedPermissionMapper, $permissionUpdateMapper){
+	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $queuedUserMapper, $locationMapper, $receivedFilecacheMapper, $filecacheUpdateMapper, $receivedPermissionMapper, $permissionUpdateMapper, $receivedShareMapper, $shareUpdateMapper){
 		$this->api = $api;
 		$this->receivedUserMapper = $receivedUserMapper;
 		$this->userUpdateMapper = $userUpdateMapper;
@@ -76,6 +80,8 @@ class UpdateReceived {
 		$this->filecacheUpdateMapper = $filecacheUpdateMapper;
 		$this->receivedPermissionMapper = $receivedPermissionMapper;
 		$this->permissionUpdateMapper = $permissionUpdateMapper;
+		$this->shareUpdateMapper = $shareUpdateMapper;
+		$this->receivedShareMapper = $receivedShareMapper;
 	}
 
 
