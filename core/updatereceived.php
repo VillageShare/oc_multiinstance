@@ -379,7 +379,7 @@ class UpdateReceived {
 			$thisLocation = $this->api->getAppValue('location');
 			
 			try {
-				\OCP\Share->shareItem($receivedShare->getItemType(), $receivedShare->getFileSourcePath(), $receivedShare->getShareType(), $receivedShare->getShareWith(), $receivedShare->getPermissions());
+				Share::shareItem($receivedShare->getItemType(), $receivedShare->getFileSourcePath(), $receivedShare->getShareType(), $receivedShare->getShareWith(), $receivedShare->getPermissions());
 			} catch (Exception $e) {
 				
 			}

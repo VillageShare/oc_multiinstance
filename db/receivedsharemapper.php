@@ -60,8 +60,7 @@ class ReceivedShareMapper extends Mapper {
 		} elseif($result->fetchRow() !== false) {
 			throw new MultipleObjectsReturnedException("ReceivedShare with path_hash {$shareWith} storage {$uidOwner} and addedAt = {$stime} and destinationLocation {$destinationLocation} returned more than one result.");
 		}
-		return new Received
-Share($row);
+		return new ReceivedShare($row);
 
 	}
 
@@ -83,7 +82,9 @@ Share($row);
 	 * @return array containing all items
 	 */
 	public function findAll(){
-		$result = $this->findAllQuery($this->getTableName());
+
+		$sql = "SELECT * FROM {$this->getTableName()}";
+                $result = $this->execute($sql);
 
 		$entityList = array();
 		while($row = $result->fetchRow()){
