@@ -378,11 +378,11 @@ class UpdateReceived {
 			$centralServer = $this->api->getAppValue('centralServer');
 			$thisLocation = $this->api->getAppValue('location');
 			
-			try {
+			/*try {
 				Share::shareItem($receivedShare->getItemType(), $receivedShare->getFileSourcePath(), $receivedShare->getShareType(), $receivedShare->getShareWith(), $receivedShare->getPermissions());
 			} catch (Exception $e) {
 				
-			}
+			}*/
 
 			// If a user from a non-central instance is involved, push info to that instance
 			if ($receivedShare->getSendingLocation() !== $centralServer) {
@@ -395,11 +395,11 @@ class UpdateReceived {
 					$queuedShare = new QueuedShare($receivedShare->getShareType(), $receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getItemType(), $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), $receivedShare->getFileTarget(), $receivedShare->getPermissions(), $receivedShare->getStime(), $receivedShare->getAccepted(), $receivedShare->getExpiration(), $receivedShare->getToken(), $dest_location, $thisLocation, $receivedShare->getQueueType());
 			
 					// Handle FileCache
-                        		$cache = new Cache($storagePath);
+                        		/*$cache = new Cache($storagePath);
                        		 	$fileid = $cache->getId($receivedPermission->getPath());
 					$fileCacheUpdate = $this->filecacheUpdateMapper->find(md5($receivedShare->getFileSourcePath()), $receivedShare->getFileSourceStorage());
 					$queuedFilecache = new QueuedFileCache($fileid);
-
+					*/
 					$this->api->beginTransfer();
 					$this->queuedShareMapper->save($queuedShare);
 					$this->queuedFilecacheMapper->save($queuedFilecache);
@@ -414,11 +414,11 @@ class UpdateReceived {
                                         $queuedShare = new QueuedShare($receivedShare->getShareType(), $receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getItemType(), $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), $receivedShare->getFileTarget(), $receivedShare->getPermissions(), $receivedShare->getStime(), $receivedShare->getAccepted(), $receivedShare->getExpiration(), $receivedShare->getToken(), $orig_location, $thisLocation, $receivedShare->getQueueType());
                         
                                         // Handle FileCache
-                                        $cache = new Cache($storagePath);
+                                        /*$cache = new Cache($storagePath);
                                         $fileid = $cache->getId($receivedPermission->getPath());
                                         $fileCacheUpdate = $this->filecacheUpdateMapper->find(md5($receivedShare->getFileSourcePath()), $receivedShare->getFileSourceStorage());
                                         $queuedFilecache = new QueuedFileCache($fileid);
-
+					*/
                                         $this->api->beginTransfer();
                                         $this->queuedShareMapper->save($queuedShare);
                                         $this->queuedFilecacheMapper->save($queuedFilecache);

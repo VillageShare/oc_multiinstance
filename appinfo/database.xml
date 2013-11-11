@@ -1282,4 +1282,123 @@
                         </field>
 		</declaration>
 	</table>
+
+	<table>
+                <name>*dbprefix*multiinstance_received_share</name>
+                <declaration>
+                        <field>
+                                <name>share_type</name>
+                                <type>integer</type>
+                                <default>0</default>
+                                <notnull>true</notnull>
+                                <length>1</length>
+                        </field>
+
+                        <field>
+                                <name>share_with</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>false</notnull>
+                                <length>255</length>
+                        </field>
+
+                        <field>
+                                <name>uid_owner</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>255</length>
+                        </field>
+			
+			<field>
+                                <name>item_type</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>64</length>
+                        </field>
+                        <field>
+                                <name>file_source_storage</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>64</length>
+                        </field>
+                        <field>
+                                <name>file_source_path</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>512</length>
+                        </field>
+
+                        <field>
+                                <name>file_target</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>false</notnull>
+                                <length>512</length>
+                        </field>
+
+			<field>
+                                <name>permissions</name>
+                                <type>integer</type>
+                                <default>0</default>
+                                <notnull>true</notnull>
+                                <length>1</length>
+                        </field>
+
+                        <field>
+                                <name>stime</name>
+                                <type>integer</type>
+                                <default>0</default>
+                                <notnull>true</notnull>
+                                <length>8</length>
+                        </field>
+
+                        <field>
+                                <name>accepted</name>
+                                <type>integer</type>
+                                <default>0</default>
+                                <notnull>true</notnull>
+                                <length>1</length>
+                        </field>
+
+                        <field>
+                                <name>expiration</name>
+                                <type>timestamp</type>
+                                <default></default>
+                                <notnull>false</notnull>
+                        </field>
+			
+			<field>
+                                <name>token</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>false</notnull>
+                                <length>32</length>
+                        </field>
+                        <field>
+                                <name>destination_location</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>64</length>
+                        </field>
+                        <field>
+                                <name>sending_location</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>64</length>
+                        </field>
+                        <field>
+                                <name>queue_type</name>
+                                <type>integer</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>3</length>
+                        </field>
+                </declaration>
+        </table>
 </database>

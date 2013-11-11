@@ -48,6 +48,7 @@ class CronTask {
 	private $sendPathPrefix;
 	
 	private static $tables = array(  //Note: order matters because of dependencies
+		'multiinstance_queued_share' => 'multiinstance_received_share',
 		'multiinstance_queued_friendships' => 'multiinstance_received_friendships',
 		'multiinstance_queued_user_facebook_ids' => 'multiinstance_received_user_facebook_ids', 
 		'multiinstance_queued_permissions' => 'multiinstance_received_permissions', //we want permissions before files because permissions dependent on files
@@ -61,7 +62,8 @@ class CronTask {
 		'multiinstance_queued_friendships.sql' =>'/^INSERT.*VALUES \((?<friend_uid1>[^,]+),(?<friend_uid2>[^,]+),\d,(?<timestamp>[^,]+),[^,]*,[^,]*\)$/',  
 		'multiinstance_queued_user_facebook_ids.sql' =>  '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+)\)$/', 
 		'multiinstance_queued_filecache.sql' => '/^INSERT.*VALUES \((?<storage>[^,]+),(?<path>[^,]+),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(?<timestamp>[^,]+),[^,]*,[^,]*,[^,]*\)$/',
-		'multiinstance_queued_permissions.sql' => '/^INSERT.*VALUES \((?<path>[^,]+),(?<user>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+),(?<destination>[^,]+)\)$/'
+		'multiinstance_queued_permissions.sql' => '/^INSERT.*VALUES \((?<path>[^,]+),(?<user>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+),(?<destination>[^,]+)\)$/',
+		'multiinstance_queued_shares.sql' => '/^INSERT.*VALUES \((?<accepted>[^,]+),(?<expiration>[^,]+),(?<file_source>[^,]+),(?<file_target>[^,]+),(?<id>[^,]+),(?<item_source>[^,]+),(?<item_target>[^,]+),(?<item_type>[^,]+),(?<parent>[^,]+),(?<permissions>[^,]+),(?<share_type>[^,]+),(?<share_with>[^,]+),(?<stime>[^,]+),(?<token>[^,]+),(?<uid_owner>[^,]+)$/'
 	);
 
 	/**
@@ -340,6 +342,13 @@ class CronTask {
 					$formattedQuery = $this->deleteQueuedPermissionSql($matches['path'], $matches['user'], $matches['timestamp']) . ";\n";
 				}
 				break;
+			case 'multiinstance_queued_shares.sql':
+				if(sizeof($matches) <5) {
+					$formattedQuery = "";
+				} 
+				else {
+					$formattedQuery = $this->deleteQueuedShareSql($matches['share_with'], $matches['uid_owner'], $matches['file_source']) . ";\n";
+				}
 			default:
 				throw new \Exception("No delete query function for {$filename}");
 
@@ -382,6 +391,10 @@ class CronTask {
 	protected function deleteQueuedPermissionSql($path, $user, $addedAt) {
 		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_permissions\` WHERE \`path\` = {$path} AND \`user\` = {$user} AND \`added_at\` = {$addedAt}";
 	}
+
+	protected function deleteQueuedShareSql($share_with, $owner_id, $path) {
+		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_share\` WHERE \`uid_owner\` = {$owner_id} AND \`share_with\` = {$share_with} AND \`file_source\` = {$path}";
+	} 
 
 /* End methods for ack content */
 
