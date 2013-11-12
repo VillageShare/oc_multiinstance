@@ -63,7 +63,7 @@ class CronTask {
 		'multiinstance_queued_user_facebook_ids.sql' =>  '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+)\)$/', 
 		'multiinstance_queued_filecache.sql' => '/^INSERT.*VALUES \((?<storage>[^,]+),(?<path>[^,]+),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(?<timestamp>[^,]+),[^,]*,[^,]*,[^,]*\)$/',
 		'multiinstance_queued_permissions.sql' => '/^INSERT.*VALUES \((?<path>[^,]+),(?<user>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+),(?<destination>[^,]+)\)$/',
-		'multiinstance_queued_shares.sql' => '/^INSERT.*VALUES \((?<accepted>[^,]+),(?<expiration>[^,]+),(?<file_source>[^,]+),(?<file_target>[^,]+),(?<id>[^,]+),(?<item_source>[^,]+),(?<item_target>[^,]+),(?<item_type>[^,]+),(?<parent>[^,]+),(?<permissions>[^,]+),(?<share_type>[^,]+),(?<share_with>[^,]+),(?<stime>[^,]+),(?<token>[^,]+),(?<uid_owner>[^,]+)$/'
+		'multiinstance_queued_share.sql' => '/^INSERT.*VALUES \((?<accepted>[^,]+),(?<expiration>[^,]+),(?<file_source>[^,]+),(?<file_target>[^,]+),(?<id>[^,]+),(?<item_source>[^,]+),(?<item_target>[^,]+),(?<item_type>[^,]+),(?<parent>[^,]+),(?<permissions>[^,]+),(?<share_type>[^,]+),(?<share_with>[^,]+),(?<stime>[^,]+),(?<token>[^,]+),(?<uid_owner>[^,]+)\)$/',
 	);
 
 	/**
@@ -342,7 +342,7 @@ class CronTask {
 					$formattedQuery = $this->deleteQueuedPermissionSql($matches['path'], $matches['user'], $matches['timestamp']) . ";\n";
 				}
 				break;
-			case 'multiinstance_queued_shares.sql':
+			case 'multiinstance_queued_share.sql':
 				if(sizeof($matches) <5) {
 					$formattedQuery = "";
 				} 
@@ -392,9 +392,9 @@ class CronTask {
 		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_permissions\` WHERE \`path\` = {$path} AND \`user\` = {$user} AND \`added_at\` = {$addedAt}";
 	}
 
-	protected function deleteQueuedShareSql($share_with, $owner_id, $path) {
+	/*protected function deleteQueuedShareSql($share_with, $owner_id, $path) {
 		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_share\` WHERE \`uid_owner\` = {$owner_id} AND \`share_with\` = {$share_with} AND \`file_source\` = {$path}";
-	} 
+	}*/
 
 /* End methods for ack content */
 
