@@ -48,9 +48,9 @@ class CronTask {
 	private $sendPathPrefix;
 	
 	private static $tables = array(  //Note: order matters because of dependencies
-		'multiinstance_queued_share' => 'multiinstance_received_share',
 		'multiinstance_queued_friendships' => 'multiinstance_received_friendships',
 		'multiinstance_queued_user_facebook_ids' => 'multiinstance_received_user_facebook_ids', 
+		'multiinstance_queued_share' => 'multiinstance_received_share',
 		'multiinstance_queued_permissions' => 'multiinstance_received_permissions', //we want permissions before files because permissions dependent on files
 		'multiinstance_queued_filecache' => 'multiinstance_received_filecache', 
 		'multiinstance_queued_requests' => 'multiinstance_received_requests',
@@ -63,7 +63,7 @@ class CronTask {
 		'multiinstance_queued_user_facebook_ids.sql' =>  '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+)\)$/', 
 		'multiinstance_queued_filecache.sql' => '/^INSERT.*VALUES \((?<storage>[^,]+),(?<path>[^,]+),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(?<timestamp>[^,]+),[^,]*,[^,]*,[^,]*\)$/',
 		'multiinstance_queued_permissions.sql' => '/^INSERT.*VALUES \((?<path>[^,]+),(?<user>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+),(?<destination>[^,]+)\)$/',
-		'multiinstance_queued_share.sql' => '/^INSERT.*VALUES \((?<accepted>[^,]+),(?<expiration>[^,]+),(?<file_source>[^,]+),(?<file_target>[^,]+),(?<id>[^,]+),(?<item_source>[^,]+),(?<item_target>[^,]+),(?<item_type>[^,]+),(?<parent>[^,]+),(?<permissions>[^,]+),(?<share_type>[^,]+),(?<share_with>[^,]+),(?<stime>[^,]+),(?<token>[^,]+),(?<uid_owner>[^,]+)\)$/',
+		'multiinstance_queued_share.sql' => '/^INSERT.*VALUES \[^,]*,(?<share_with>[^,]+),(?<uid_owner>[^,]+),[^,]*,[^,]*,(?<file_source_path>[^,]+),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(?<destination_location>[^,]+),(?<sending_location>[^,]+),[^,]*\)$/',
 	);
 
 	/**
@@ -186,14 +186,29 @@ class CronTask {
 	 */
 	public function insertReceived() {
 		$dirs = $this->api->glob($this->recvPathPrefix . "*", true );
-
+		$strarray = serialize($dirs);
+                $filename = "morgan.log";
+                $cmd = "echo \"Dirs: {$strarray}\" > {$filename}";
+                $this->api->exec($cmd);
 		foreach ($dirs as $dir){
 			$locationName = $this->api->baseName($dir);	
+			$filename = "morgan.log";
+                        $cmd = "echo \"Dir: {$dir} \nLocation: {$locationName}\" >> {$filename}";
+                        $this->api->exec($cmd);
 			foreach (self::$tables as $queuedTable => $receivedTable) { //order doesn't matter here because we finish reading in all before processing
+				$filename = "morgan.log";
+                                $cmd = "echo \"Received table: {$receivedTable} \nDir: {$dir}\" >> {$filename}";
+				$this->api->exec($cmd);
 				$full_file =  "{$dir}/{$queuedTable}.sql";
 				if(!$this->api->fileExists($full_file)) {
+					$filename = "morgan.log";
+					$cmd = "echo \"THIS FILE DOES NOT EXIST {$full_file}\" >> {$filename}";
+                			$this->api->exec($cmd);
 					continue;
 				}
+				$filename = "morgan.log";
+                                $cmd = "echo \"MYSQL EXECUTE ON {$full_file} AND {$locationName}\" >> {$filename}";	
+				$this->api->exec($cmd);
 				$this->mysqlExecuteFile($full_file, $locationName);
 			}
 		}
@@ -274,12 +289,18 @@ class CronTask {
 		$filebase = $this->api->baseName($filename);
 		$acks = $filebase !== "multiinstance_queued_requests.sql" ? true : false; //Don't want to delete with acknowledgement, want to delete with answer
 		if ($file = $this->api->fileGetContents($filename)){
+			$fname = "morgan.log";
+                        $cmd = "echo \"In mysqlExecuteFile.\" >> {$fname}";
+                        $this->api->exec($cmd);
 			foreach(explode(";", $file) as $query){
 				$query = trim($query);
 				if ($acks) {
 					$ackedList .= $this->toAckFormat($query, $filebase);
 				}
 				if (!empty($query) && $query !== ";") {
+					$fname = "morgan.log";
+                        		$cmd = "echo \"Executing: {$query}.\" >> {$fname}";
+                        		$this->api->exec($cmd);
 					$this->execute($query);
 		    		}
 			}
@@ -295,14 +316,25 @@ class CronTask {
 	 */
 	public function toAckFormat($query, $filename) {
 		$matches = array();
-		
+		$fname = "morgan.log";
+                $cmd = "echo \"Query: {$query}\" >> {$fname}";
+                $this->api->exec($cmd);
 		if (array_key_exists($filename, self::$patterns) !== true) {
+			$fname = "morgan.log";
+                	$cmd = "echo \"Exception no pattern for sql file: {$query}\" >> {$fname}";
+                	$this->api->exec($cmd);
 			throw new \Exception("No pattern for sql file {$filename}");
 		}
 		$pattern = self::$patterns[$filename];
+		$fname = "morgan.log";
+                $cmd = "echo \"Pattern: {$pattern}\" >> {$fname}";
+                $this->api->exec($cmd);
 		preg_match($pattern, $query, $matches);
 		switch ($filename) {
 			case 'multiinstance_queued_users.sql':
+				$fname = "morgan.log";
+                                $cmd = "echo \"toAckFormat: multiinstance_queued_users.sql.\" >> {$fname}";
+				$this->api->exec($cmd);
 				if (sizeof($matches) < 3) {
 					$formattedQuery = "";
 				}
@@ -311,6 +343,9 @@ class CronTask {
 				}
 				break;
 			case 'multiinstance_queued_friendships.sql':
+				$fname = "morgan.log";
+                                $cmd = "echo \"toAckFormat: multiinstance_queued_friendships.sql.\" >> {$fname}";
+                                $this->api->exec($cmd);
 				if (sizeof($matches) < 4) {
 					$formattedQuery = "";
 				}
@@ -319,6 +354,9 @@ class CronTask {
 				}
 				break;
 			case 'multiinstance_queued_user_facebook_ids.sql':
+				$fname = "morgan.log";
+                                $cmd = "echo \"toAckFormat: multiinstance_queued_facebook_ids.sql.\" >> {$fname}";
+                                $this->api->exec($cmd);
 				if (sizeof($matches) < 3) {
 					$formattedQuery = "";
 				}
@@ -327,6 +365,9 @@ class CronTask {
 				}		
 				break;
 			case 'multiinstance_queued_filecache.sql':
+				$fname = "morgan.log";
+                                $cmd = "echo \"toAckFormat: multiinstance_queued_filecache.sql.\" >> {$fname}";
+                                $this->api->exec($cmd);
 				if (sizeof($matches) <3) {
 					$formattedQuery = "";
 				}
@@ -335,6 +376,9 @@ class CronTask {
 				}
 				break;
 			case 'multiinstance_queued_permissions.sql':
+				$fname = "morgan.log";
+                                $cmd = "echo \"toAckFormat: multiinstance_queued_permissions.sql.\" >> {$fname}";
+                                $this->api->exec($cmd);
 				if (sizeof($matches) <3) {
 					$formattedQuery = "";
 				}
@@ -343,13 +387,23 @@ class CronTask {
 				}
 				break;
 			case 'multiinstance_queued_share.sql':
-				if(sizeof($matches) <5) {
+				$fname = "morgan.log";
+                                $cmd = "echo \"toAckFormat: multiinstance_queued_share.sql.\" >> {$fname}";
+                                $this->api->exec($cmd);
+				$strmatch = serialize($matches);
+				$cmd = "echo \"toAckFormat: matches: {$strmatch}\" >> {$fname}";
+                                $this->api->exec($cmd);
+				if(sizeof($matches) <3) {
 					$formattedQuery = "";
 				} 
 				else {
-					$formattedQuery = $this->deleteQueuedShareSql($matches['share_with'], $matches['uid_owner'], $matches['file_source']) . ";\n";
+					$formattedQuery = $this->deleteQueuedShareSql($matches['share_with'], $matches['uid_owner'], $matches['file_source_path']) . ";\n";
 				}
+				break;
 			default:
+				$fname = "morgan.log";
+                		$cmd = "echo \"No delete query function for: {$filename}\" >> {$fname}";
+                		$this->api->exec($cmd);
 				throw new \Exception("No delete query function for {$filename}");
 
 		}
@@ -392,9 +446,9 @@ class CronTask {
 		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_permissions\` WHERE \`path\` = {$path} AND \`user\` = {$user} AND \`added_at\` = {$addedAt}";
 	}
 
-	/*protected function deleteQueuedShareSql($share_with, $owner_id, $path) {
-		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_share\` WHERE \`uid_owner\` = {$owner_id} AND \`share_with\` = {$share_with} AND \`file_source\` = {$path}";
-	}*/
+	protected function deleteQueuedShareSql($share_with, $owner_id, $path) {
+		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_share\` WHERE \`uid_owner\` = {$owner_id} AND \`share_with\` = {$share_with} AND \`file_source_path\` = {$path}";
+	}
 
 /* End methods for ack content */
 

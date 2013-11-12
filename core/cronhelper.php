@@ -113,12 +113,12 @@ class CronHelper {
 		$this->cronTask->insertReceived();
 
 		//Process
-		$this->updateReceived->updateUsersWithReceivedUsers();
+		/*$this->updateReceived->updateUsersWithReceivedUsers();
 		$this->updateReceived->updateFriendshipsWithReceivedFriendships();
 		$this->updateReceived->updateUserFacebookIdsWithReceivedUserFacebookIds();
 		$this->updateReceived->updateFilecacheFromReceivedFilecaches();
 		$this->updateReceived->updatePermissionsFromReceivedPermissions();
-		$this->updateReceived->updateSharesWithReceivedShares();
+		//$this->updateReceived->updateSharesWithReceivedShares();
 		$this->cronTask->readAcksAndResponses(); //This method checks to whether or not it should read responses (only non-central servers should process responses)
 
 		$this->requestsAndResponses();
@@ -132,6 +132,6 @@ class CronHelper {
 		$this->sync();
 
 		$this->cronTask->unlinkFiles();
-
+		*/
 	}
 }
