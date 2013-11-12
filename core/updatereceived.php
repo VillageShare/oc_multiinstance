@@ -27,6 +27,7 @@ use \OCA\AppFramework\Db\DoesNotExistException;
 
 use \OCA\MultiInstance\Db\UserUpdate;
 use \OC_User;
+use \OCP\Share;
 use \OCA\Friends\Db\Friendship;
 use \OCA\MultiInstance\Db\QueuedFriendship;
 use \OCA\MultiInstance\Db\QueuedUser;
@@ -37,7 +38,7 @@ use \OCA\MultiInstance\Lib\MILocation;
 use \OC\Files\Cache\Cache;
 use \OCA\MultiInstance\Db\QueuedFileCache;
 use \OCA\MultiInstance\Db\FilecacheUpdate;
-use \OCP\Share;
+//use \OCP\Share;
 use \OCA\MultiInstance\Db\QueuedShare;
 
 /* Methods for updating instance db rows based on received rows */
@@ -378,12 +379,15 @@ class UpdateReceived {
 			$centralServer = $this->api->getAppValue('centralServer');
 			$thisLocation = $this->api->getAppValue('location');
 			
-			/*try {
-				Share::shareItem($receivedShare->getItemType(), $receivedShare->getFileSourcePath(), $receivedShare->getShareType(), $receivedShare->getShareWith(), $receivedShare->getPermissions());
-			} catch (Exception $e) {
+			if (\OCP\Share::getShareByToken($receivedShare->getToken()) === null) {
+				try {
+					\OCP\Share::shareItem($receivedShare->getItemType(), $receivedShare->getFileSourcePath(), $receivedShare->getShareType(), $receivedShare->getShareWith(), $receivedShare->getPermissions());
+				} catch (Exception $e) {
+					continue;		
+				} 
+			} 
 				
-			}*/
-
+			
 			// If a user from a non-central instance is involved, push info to that instance
 			if ($receivedShare->getSendingLocation() !== $centralServer) {
 				if ($dest_location !== $centralServer && $dest_location !== $receivedShare->getSendingLocation()) {
@@ -391,52 +395,66 @@ class UpdateReceived {
 					// and queue them for sending out the updates
 					
 					// Handle share
-					$shareUpdate = $this->shareUpdateMapper->findWithIds($receivedShare->getUidOwner(), $receivedShare->getShareWith(), $receivedShare->getFileSourcePath());
+					try {
+						$shareUpdate = $this->shareUpdateMapper->findWithIds($receivedShare->getUidOwner(), $receivedShare->getShareWith(), $receivedShare->getFileSourcePath());
+					} catch (DoesNotExistException $e) {
+						$shareUpdate = new ShareUpdate();
+					} catch (MultipleObjectsReturnedException $e) {
+						$shareUpdate = new ShareUpdate();
+					}
 					$queuedShare = new QueuedShare($receivedShare->getShareType(), $receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getItemType(), $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), $receivedShare->getFileTarget(), $receivedShare->getPermissions(), $receivedShare->getStime(), $receivedShare->getAccepted(), $receivedShare->getExpiration(), $receivedShare->getToken(), $dest_location, $thisLocation, $receivedShare->getQueueType());
 			
 					// Handle FileCache
-                        		/*$cache = new Cache($storagePath);
+                        		$cache = new Cache($storagePath);
                        		 	$fileid = $cache->getId($receivedPermission->getPath());
 					$fileCacheUpdate = $this->filecacheUpdateMapper->find(md5($receivedShare->getFileSourcePath()), $receivedShare->getFileSourceStorage());
 					$queuedFilecache = new QueuedFileCache($fileid);
-					*/
-					$this->api->beginTransfer();
+					
+					$this->api->beginTransaction();
 					$this->queuedShareMapper->save($queuedShare);
 					$this->queuedFilecacheMapper->save($queuedFilecache);
 					$this->api->commit();
-				}
+				
+			 	}
 				if ($orig_location !== $centralServer && $orig_location !== $receivedShare->getSendingLocation()) {
                                         // We need to update both the shareUpdate and the filecacheUpdate
                                         // and queue them for sending out the updates
                                         
                                         // Handle share
-                                        $shareUpdate = $this->shareUpdateMapper->findWithIds($receivedShare->getUidOwner(), $receivedShare->getShareWith(), $receivedShare->getFileSourcePath());
+                                        $shareUpdate = $this->shareUpdateMapper->findWithIds($receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getFileSourcePath());
                                         $queuedShare = new QueuedShare($receivedShare->getShareType(), $receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getItemType(), $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), $receivedShare->getFileTarget(), $receivedShare->getPermissions(), $receivedShare->getStime(), $receivedShare->getAccepted(), $receivedShare->getExpiration(), $receivedShare->getToken(), $orig_location, $thisLocation, $receivedShare->getQueueType());
                         
                                         // Handle FileCache
-                                        /*$cache = new Cache($storagePath);
+                                        $cache = new Cache($storagePath);
                                         $fileid = $cache->getId($receivedPermission->getPath());
                                         $fileCacheUpdate = $this->filecacheUpdateMapper->find(md5($receivedShare->getFileSourcePath()), $receivedShare->getFileSourceStorage());
                                         $queuedFilecache = new QueuedFileCache($fileid);
-					*/
-                                        $this->api->beginTransfer();
+					
+                                        $this->api->beginTransaction();
                                         $this->queuedShareMapper->save($queuedShare);
                                         $this->queuedFilecacheMapper->save($queuedFilecache);
                                         $this->api->commit();
 
 				}
 			}
-			$this->api->beginTransaction();
+			//$this->api->beginTransaction();
 			try{
-				$shareUpdate = $this->shareUpdateMapper->findWithIds($receivedShare->getUidOwner(), $receivedShare->getShareWith(), $receivedShare->getFileSourcePath());
-				if ($receivedShare->getStime() > $shareUpdate->getUpdatedAt()) {
+				//$shareUpdate = $this->shareUpdateMapper->find($receivedShare->getId());
+
+				/*if ($receivedShare->getStime() > $shareUpdate->getUpdatedAt()) {
 					$shareUpdate->setStatus($receivedShare->getStatus());
 					$shareUpdate->setUpdatedAt($receivedShare->getStime());
 					$this->shareUpdateMapper->update($shareUpdate);
-				}
+				}*/
 			} catch (DoesNotExistException $e) {
-				$shareUpdate = new ShareUpdate();
+			/*	$shareUpdate = new ShareUpdate();
+				$shareUpdate->setStatus($receivedShare->getStatus());
+                                $shareUpdate->setUpdatedAt($receivedShare->getStime());
+                                $this->shareUpdateMapper->update($shareUpdate);*/
 			}
+			/*$this->api->beginTransaction();
+			$this->receivedShareMapper->delete($receivedShare);
+                        $this->api->commit();*/
 		}
 	}
 }
