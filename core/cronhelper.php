@@ -45,6 +45,44 @@ class CronHelper {
 		$this->requestResponse = $requestResponse;
 	}
 
+	private function getFileList($dir, $recurse=false) {
+                // array to hold return value
+                $retval = array();
+
+                // add trailing slash if missing
+                if(substr($dir, -1) != "/") $dir .= "/";
+
+                // open pointer to directory and read list of files
+                $d = @dir($dir) or die("getFileList: Failed opening directory $dir for reading");
+                while(false !== ($entry = $d->read())) {
+                        // skip hidden files
+                        if($entry[0] == ".") continue;
+                        if(is_dir("$dir$entry")) {
+                                $retval[] = array(
+                                        "name" => "$dir$entry/",
+                                        "type" => filetype("$dir$entry"),
+                                        "size" => 0,
+                                        "lastmod" => filemtime("$dir$entry")
+                                );
+                        if($recurse && is_readable("$dir$entry/")) {
+                                $retval = array_merge($retval, $this->getFileList("$dir$entry/", true));
+                        }
+                        } elseif(is_readable("$dir$entry")) {
+                                $retval[] = array(
+                                        "name" => "$dir$entry",
+                                        "type" => mime_content_type("$dir$entry"),
+                                        "size" => filesize("$dir$entry"),
+                                        "lastmod" => filemtime("$dir$entry")
+                                );
+                        }
+                }
+                $d->close();
+
+                return $retval;
+        }
+
+
+
 	public function sync() {
 		$thisLocation = $this->api->getAppValue('location');
 		$centralServerName = $this->api->getAppValue('centralServer');
@@ -58,12 +96,13 @@ class CronHelper {
 		$rsyncPort = $this->api->getAppValue('rsyncPort');
 
 		$locationList = $this->locationMapper->findAll();
-
+		date_default_timezone_set($this->api->getAppValue('timezone'));
+		$hour = date('H');
 		//Note: we cannot use option --inplace.  We do not want incomplete files to be processed!
 		//We can consider using the bandwidth limit option (--bwlimit) instead of tc
 		$cmdPrefix = "rsync --verbose --compress --rsh='ssh -p{$rsyncPort}' \
 				      --recursive --times --perms --copy-links --delete \
-				      --group --partial \
+				      --group --partial --log-file=/tmp/rsynclog \
 				      --exclude \"last_read.txt\"";
 
 		if ($centralServerName === $thisLocation) {
@@ -76,23 +115,73 @@ class CronHelper {
 				$cmd = "echo {$microTime} > {$dbSyncPath}{$locationName}/last_updated.txt";
 				$this->api->exec($cmd);
 
-				$cmd =  "{$cmdPrefix} \
-				      db_sync/{$locationName}/ {$user}@{$location->getIP()}:{$dbSyncRecvPath}/{$thisLocation} >>{$output} 2>&1";
+				//Run a full backup if after hours
+	                        if ($hour === $this->api->getAppValue('backuphour')) {
 
-				#$safe_cmd = escapeshellcmd($cmd);
-				exec($cmd);
+                        	        $cmd = "{$cmdPrefix} \
+					     db_sync/{$locationName}/ {$user}@{$location->getIP()}:{$dbSyncRecvPath}/{$thisLocation} >>{$output} 2>&1";
+                                	     #db_sync/{$centralServerName}/ {$user}@{$server}:{$dbSyncRecvPath}/{$thisLocation} >>{$output} 2>&1";
+
+                                	exec($cmd);
+        	                }
+                	        else {
+
+      	        	                $dirlist = $this->getFileList($dbSyncPath."/".$locationName, true);
+        	                        foreach ($dirlist as $file) {
+                                        	if ($file['size'] < $this->api->getAppValue('filesizecutoff')) {
+                                                	$filename = str_replace($dbSyncPath."/".$locationName."/","",$file['name']);
+                                                	chdir($dbSyncPath."/".$locationName);
+                                                	$cmd =  "{$cmdPrefix} -R \
+                                                        	{$filename} {$user}@{$location->getIP()}:{$dbSyncRecvPath}/{$thisLocation} >>{$output} 2>&1";
+
+                                                	exec($cmd);
+                                        	}
+
+                                	}
+
+                        	}
+
+
+
+
+#				$cmd =  "{$cmdPrefix} \
+#				      db_sync/{$locationName}/ {$user}@{$location->getIP()}:{$dbSyncRecvPath}/{$thisLocation} >>{$output} 2>&1";
+#
+#				#$safe_cmd = escapeshellcmd($cmd);
+#				exec($cmd);
 			}
 		}
 		else { //not-central server
+
 			$microTime = $this->api->microTime();
 			$cmd = "echo {$microTime} > {$dbSyncPath}{$centralServerName}/last_updated.txt";
 			$this->api->exec($cmd);
 
-			$cmd = "{$cmdPrefix} \
-			      db_sync/{$centralServerName}/ {$user}@{$server}:{$dbSyncRecvPath}/{$thisLocation} >>{$output} 2>&1";
 
-			#$safe_cmd = escapeshellcmd($cmd);
-			exec($cmd);
+			//Run a full backup if after hours
+			if ($hour === $this->api->getAppValue('backuphour')) {
+
+                        	$cmd = "{$cmdPrefix} \
+ 	                             db_sync/{$centralServerName}/ {$user}@{$server}:{$dbSyncRecvPath}/{$thisLocation} >>{$output} 2>&1";
+
+                                exec($cmd);
+                      	}
+                        else {
+
+                        	$dirlist = $this->getFileList($dbSyncPath."/".$locationName, true);
+                                foreach ($dirlist as $file) {
+                                	if ($file['size'] < $this->api->getAppValue('filesizecutoff')) {
+                                        	$filename = str_replace($dbSyncPath."/".$centralServerName."/","",$file['name']);
+                                                chdir($dbSyncPath."/".$centralServerName);
+                                                $cmd =  "{$cmdPrefix} -R \
+                                                	{$filename} {$user}@{$server}:{$dbSyncRecvPath}/{$thisLocation} >>{$output} 2>&1";
+
+                                              	exec($cmd);
+                                        } 
+					
+                               	}
+
+                    	}
 
 		}
 	}

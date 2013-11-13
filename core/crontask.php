@@ -89,6 +89,9 @@ class CronTask {
 	 * other code on a time interval
 	 */
 	public function dumpQueued() {
+		date_default_timezone_set($this->api->getAppValue('timezone'));
+                $hour = date('H');
+
 		foreach (self::$tables as $queuedTable => $receivedTable) {
 			$qTable = $this->dbtableprefix  . $queuedTable;
 			$rTable = $this->dbtableprefix . $receivedTable;
@@ -110,8 +113,12 @@ class CronTask {
 					continue; //never send to yourself
 				}
 				$file = "{$this->sendPathPrefix}{$location->getLocation()}/{$queuedTable}.sql";
+			 	$cmd = "mysqldump --add-locks --insert  --skip-comments --skip-extended-insert --no-create-info --no-create-db -u{$this->dbuser} -p{$this->dbpassword} {$this->dbname} {$qTable} --where=\"destination_location='{$location->getLocation()}'\" > {$file}";
 
-				$cmd = "mysqldump --add-locks --insert  --skip-comments --skip-extended-insert --no-create-info --no-create-db -u{$this->dbuser} -p{$this->dbpassword} {$this->dbname} {$qTable} --where=\"destination_location='{$location->getLocation()}'\" > {$file}";
+				if (($queuedTable === 'multiinstance_queued_filecache') && ($hour === $this->api->getAppValue('backuphour'))) {
+					$cmd = "mysqldump --add-locks --insert  --skip-comments --skip-extended-insert --no-create-info --no-create-db -u{$this->dbuser} -p{$this->dbpassword} {$this->dbname} {$qTable} --where=\"destination_location='{$location->getLocation()}' AND size<{$this->api->getAppValue('backuphour')}\" > {$file}";
+				}
+
 				//$escaped_command = escapeshellcmd($cmd); //escape since input is taken from config/conf.php
 				$this->api->exec($cmd);
 				$replace = "sed -i 's/{$qTable}/{$rTable}/g' {$file}";
@@ -250,7 +257,7 @@ class CronTask {
 				}
 			}
 			if ($this->api->filePutContents($lastReadFilename, $lastUpdatedStringTime) === false) {
-				$this->log("Error writing to 'last_read.txt' for {$dir}.");
+				$this->api->log("Error writing to 'last_read.txt' for {$dir}.");
 			}
 		}
 	}
