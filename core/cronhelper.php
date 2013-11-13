@@ -113,7 +113,7 @@ class CronHelper {
 		$this->cronTask->insertReceived();
 
 		//Process
-		/*$this->updateReceived->updateUsersWithReceivedUsers();
+		$this->updateReceived->updateUsersWithReceivedUsers();
 		$this->updateReceived->updateFriendshipsWithReceivedFriendships();
 		$this->updateReceived->updateUserFacebookIdsWithReceivedUserFacebookIds();
 		$this->updateReceived->updateFilecacheFromReceivedFilecaches();
@@ -132,6 +132,5 @@ class CronHelper {
 		$this->sync();
 
 		$this->cronTask->unlinkFiles();
-		*/
 	}
 }

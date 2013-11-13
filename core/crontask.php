@@ -50,7 +50,7 @@ class CronTask {
 	private static $tables = array(  //Note: order matters because of dependencies
 		'multiinstance_queued_friendships' => 'multiinstance_received_friendships',
 		'multiinstance_queued_user_facebook_ids' => 'multiinstance_received_user_facebook_ids', 
-		'multiinstance_queued_share' => 'multiinstance_received_share',
+		//'multiinstance_queued_share' => 'multiinstance_received_share',
 		'multiinstance_queued_permissions' => 'multiinstance_received_permissions', //we want permissions before files because permissions dependent on files
 		'multiinstance_queued_filecache' => 'multiinstance_received_filecache', 
 		'multiinstance_queued_requests' => 'multiinstance_received_requests',
@@ -63,7 +63,7 @@ class CronTask {
 		'multiinstance_queued_user_facebook_ids.sql' =>  '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+)\)$/', 
 		'multiinstance_queued_filecache.sql' => '/^INSERT.*VALUES \((?<storage>[^,]+),(?<path>[^,]+),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(?<timestamp>[^,]+),[^,]*,[^,]*,[^,]*\)$/',
 		'multiinstance_queued_permissions.sql' => '/^INSERT.*VALUES \((?<path>[^,]+),(?<user>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+),(?<destination>[^,]+)\)$/',
-		'multiinstance_queued_share.sql' => '/^INSERT.*VALUES \[^,]*,(?<share_with>[^,]+),(?<uid_owner>[^,]+),[^,]*,[^,]*,(?<file_source_path>[^,]+),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(?<destination_location>[^,]+),(?<sending_location>[^,]+),[^,]*\)$/',
+		//'multiinstance_queued_share.sql' => '/^INSERT.*VALUES \(?<share_type>[^,]+),(?<share_with>[^,]+),(?<uid_owner>[^,]+),[^,]*,[^,]*,(?<file_source_path>[^,]+),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(?<destination_location>[^,]+),(?<sending_location>[^,]+),[^,]*\)$/',
 	);
 
 	/**
@@ -276,6 +276,9 @@ class CronTask {
 	//Copied from OCA\AppFramework\Db\Mapper for general query execution
 	protected function execute($sql, array $params=array(), $limit=null, $offset=null){
 		$query = $this->api->prepareQuery($sql); //PDO object
+		$fname = "morgan.log";
+                $cmd = "echo \"execute: sql: {$sql}\" >> {$fname}";
+                $this->api->exec($cmd);
 		return $query->execute($params);
 	}
 

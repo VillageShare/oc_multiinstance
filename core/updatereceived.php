@@ -131,7 +131,7 @@ class UpdateReceived {
 			$location1 = MILocation::getUidLocation($receivedFriendship->getFriendUid1(), $mockLocationMapper);
 			$location2 = MILocation::getUidLocation($receivedFriendship->getFriendUid2(), $mockLocationMapper);
 
-			$this->api->log();
+			//$this->api->log();
 
 			$centralServer = $this->api->getAppValue('centralServer');
 			$thisLocation = $this->api->getAppValue('location');
@@ -368,40 +368,59 @@ class UpdateReceived {
 	}
 	
 	public function updateSharesWithReceivedShares($mockLocationMapper=null) {
-
+		$fname = "updatereceive.log";
+                $cmd = "echo \"In updateSharesWithReceivedShares.\" > {$fname}";
+                $this->api->exec($cmd);
 		$receivedShares = $this->receivedShareMapper->findAll();
+		$length = sizeof($receivedShares);
+		$fname = "updatereceive.log";
+                $cmd = "echo \"ReceivedShares: {$length}\" >> {$fname}";
+                $this->api->exec($cmd);
 		
 		foreach ($receivedShares as $receivedShare) {
-
+			$fname = "updatereceive.log";
+                	$cmd = "echo \"ReceivedShare token: {$receivedShare->getToken()}.\" >> {$fname}";
+                	$this->api->exec($cmd);
+			$fname = "updatereceive.log";
+                        $cmd = "echo \"ReceivedShare shareWith: {$receivedShare->getShareWith()}\nuidOwner: {$receivedShare->getUidOwner()}\n/itemType:{$receivedShare->getItemType()}\nfileSourcePath: {$receivedShare->getFileSourcePath()}\nprermissions: {$receivedShare->getPermissions()}\" >> {$fname}";
+                        $this->api->exec($cmd);
 			$orig_location = MILocation::getUidLocation($receivedShare->getUidOwner(), $mockLocationMapper);
 			$dest_location = MILocation::getUidLocation($receivedShare->getShareWith(), $mockLocationMapper);
 
 			$centralServer = $this->api->getAppValue('centralServer');
 			$thisLocation = $this->api->getAppValue('location');
-			
-			if (\OCP\Share::getShareByToken($receivedShare->getToken()) === null) {
-				try {
-					\OCP\Share::shareItem($receivedShare->getItemType(), $receivedShare->getFileSourcePath(), $receivedShare->getShareType(), $receivedShare->getShareWith(), $receivedShare->getPermissions());
-				} catch (Exception $e) {
-					continue;		
-				} 
-			} 
-				
+		
+			$fname = "updatereceive.log";
+                	$cmd = "echo \"orig_location: {$orig_location}\ndest_location: {$dest_location}.\" >> {$fname}";
+               		$this->api->exec($cmd);
+	
 			
 			// If a user from a non-central instance is involved, push info to that instance
 			if ($receivedShare->getSendingLocation() !== $centralServer) {
+
+				$fname = "updatereceive.log";
+                        	$cmd = "echo \"Not from central server.\" >> {$fname}";
+                        	$this->api->exec($cmd);
+
 				if ($dest_location !== $centralServer && $dest_location !== $receivedShare->getSendingLocation()) {
+	
+					$fname = "updatereceive.log";
+                                        $cmd = "echo \"Destination location is not from the central server or from the sending location.\" >> {$fname}";
+                                        $this->api->exec($cmd);
+
 					// We need to update both the shareUpdate and the filecacheUpdate
 					// and queue them for sending out the updates
 					
 					// Handle share
-					try {
+			/*		try {
 						$shareUpdate = $this->shareUpdateMapper->findWithIds($receivedShare->getUidOwner(), $receivedShare->getShareWith(), $receivedShare->getFileSourcePath());
 					} catch (DoesNotExistException $e) {
-						$shareUpdate = new ShareUpdate();
+						$shareUpdate = new ShareUpdate($receivedShare->getToken(), $this->api->getTime(), ShareUpdate::VALID);
 					} catch (MultipleObjectsReturnedException $e) {
-						$shareUpdate = new ShareUpdate();
-					}
+						$fname = "updatereceive.log";
+                        			$cmd = "echo \"MultipleObjectsReturnedException.\" >> {$fname}";
+                        			$this->api->exec($cmd);
+					}*/
 					$queuedShare = new QueuedShare($receivedShare->getShareType(), $receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getItemType(), $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), $receivedShare->getFileTarget(), $receivedShare->getPermissions(), $receivedShare->getStime(), $receivedShare->getAccepted(), $receivedShare->getExpiration(), $receivedShare->getToken(), $dest_location, $thisLocation, $receivedShare->getQueueType());
 			
 					// Handle FileCache
@@ -417,11 +436,25 @@ class UpdateReceived {
 				
 			 	}
 				if ($orig_location !== $centralServer && $orig_location !== $receivedShare->getSendingLocation()) {
+
+					$fname = "updatereceive.log";
+                                	$cmd = "echo \"Originating location is not from the central server or from the sending location.\" >> {$fname}";
+                                	$this->api->exec($cmd);
                                         // We need to update both the shareUpdate and the filecacheUpdate
                                         // and queue them for sending out the updates
                                         
                                         // Handle share
-                                        $shareUpdate = $this->shareUpdateMapper->findWithIds($receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getFileSourcePath());
+					/*try {
+                                                $shareUpdate = $this->shareUpdateMapper->findWithIds($receivedShare->getUidOwner(), $receivedShare->getShareWith(), $receivedShare->getFileSourcePath());
+                                        } catch (DoesNotExistException $e) {
+                                                $shareUpdate = new ShareUpdate($receivedShare->getToken(), $this->api->getTime(), ShareUpdate::VALID);
+                                        } catch (MultipleObjectsReturnedException $e) {
+                                                $fname = "updatereceive.log";
+                                                $cmd = "echo \"MultipleObjectsReturnedException.\" >> {$fname}";
+                                                $this->api->exec($cmd);
+						// TODO we need to do more here
+                                        }*/
+
                                         $queuedShare = new QueuedShare($receivedShare->getShareType(), $receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getItemType(), $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), $receivedShare->getFileTarget(), $receivedShare->getPermissions(), $receivedShare->getStime(), $receivedShare->getAccepted(), $receivedShare->getExpiration(), $receivedShare->getToken(), $orig_location, $thisLocation, $receivedShare->getQueueType());
                         
                                         // Handle FileCache
@@ -437,24 +470,44 @@ class UpdateReceived {
 
 				}
 			}
-			//$this->api->beginTransaction();
+			$this->api->beginTransaction();
 			try{
-				//$shareUpdate = $this->shareUpdateMapper->find($receivedShare->getId());
+                        	$fname = "updatereceive.log";
+                                $cmd = "echo \"Need to create a new Share.\" >> {$fname}";
+                                $this->api->exec($cmd);
+                                \OCP\Share::shareItem($receivedShare->getItemType(), $receivedShare->getFileSourcePath(), $receivedShare->getShareType(), $receivedShare->getShareWith(), $receivedShare->getPermissions(), $receivedShare->getUidOwner());
+			} catch (Exception $e) {
+                                $fname = "updatereceive.log";
+                                $cmd = "echo \"Exception when creating new Share: {$e->getMessage()}.\" >> {$fname}";
+                                $this->api->exec($cmd);
+				continue;
 
-				/*if ($receivedShare->getStime() > $shareUpdate->getUpdatedAt()) {
+                        }
+			try{
+				$fname = "updatereceive.log";
+                                $cmd = "echo \"Created new Share.\" >> {$fname}";
+                                $this->api->exec($cmd);
+				$shareUpdate = $this->shareUpdateMapper->findWithIds($receivedShare->getUidOwner(), $receivedShare->getShareWith(), $receivedShare->getFileSourcePath());
+				$fname = "updatereceive.log";
+                                $cmd = "echo \"Created new Share and new ShareUpdate.\" >> {$fname}";
+                                $this->api->exec($cmd);
+				if ($receivedShare->getStime() > $shareUpdate->getUpdatedAt()) {
 					$shareUpdate->setStatus($receivedShare->getStatus());
 					$shareUpdate->setUpdatedAt($receivedShare->getStime());
 					$this->shareUpdateMapper->update($shareUpdate);
-				}*/
+				}
 			} catch (DoesNotExistException $e) {
-			/*	$shareUpdate = new ShareUpdate();
-				$shareUpdate->setStatus($receivedShare->getStatus());
-                                $shareUpdate->setUpdatedAt($receivedShare->getStime());
-                                $this->shareUpdateMapper->update($shareUpdate);*/
+				$shareUpdate = new ShareUpdate($receivedShare->getStime(),$receivedShare->getStatus());
+                                $this->shareUpdateMapper->update($shareUpdate);
+				$fname = "updatereceive.log";
+                                $cmd = "echo \"DoesNotExistException.\" >> {$fname}";
+                                $this->api->exec($cmd);
 			}
-			/*$this->api->beginTransaction();
 			$this->receivedShareMapper->delete($receivedShare);
-                        $this->api->commit();*/
+                        $this->api->commit();
+			$fname = "updatereceive.log";
+                        $cmd = "echo \"End of the for-loop\" >> {$fname}";
+                        $this->api->exec($cmd);
 		}
 	}
 }
