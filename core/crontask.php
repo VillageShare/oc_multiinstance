@@ -28,6 +28,7 @@ use OCA\MultiInstance\Db\Request;
 use OCA\MultiInstance\Db\QueuedResponse;
 use OCA\MultiInstance\Db\QueuedUser;
 use OCA\MultiInstance\Db\QueuedFileCache;
+use OCA\MultiInstance\Db\QueuedShare;
 
 use OCA\MultiInstance\Lib\MILocation;
 
@@ -48,6 +49,7 @@ class CronTask {
 	private $sendPathPrefix;
 	
 	private static $tables = array(  //Note: order matters because of dependencies
+		//'multiinstance_queued_share' => 'multiinstance_received_share',
 		'multiinstance_queued_friendships' => 'multiinstance_received_friendships',
 		'multiinstance_queued_user_facebook_ids' => 'multiinstance_received_user_facebook_ids', 
 		'multiinstance_queued_permissions' => 'multiinstance_received_permissions', //we want permissions before files because permissions dependent on files
@@ -62,6 +64,7 @@ class CronTask {
 		'multiinstance_queued_user_facebook_ids.sql' =>  '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+)\)$/', 
 		'multiinstance_queued_filecache.sql' => '/^INSERT.*VALUES \((?<storage>[^,]+),(?<path>[^,]+),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(?<timestamp>[^,]+),[^,]*,[^,]*,[^,]*\)$/',
 		'multiinstance_queued_permissions.sql' => '/^INSERT.*VALUES \((?<path>[^,]+),(?<user>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+),(?<destination>[^,]+)\)$/'
+		 //'multiinstance_queued_share.sql' => '/^INSERT.*VALUES \(?<share_type>[^,]+),(?<share_with>[^,]+),(?<uid_owner>[^,]+),[^,]*,[^,]*,(?<file_source_path>[^,]+),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(?<destination_location>[^,]+),(?<sending_location>[^,]+),[^,]*\)$/',
 	);
 
 	/**
@@ -115,8 +118,8 @@ class CronTask {
 				$file = "{$this->sendPathPrefix}{$location->getLocation()}/{$queuedTable}.sql";
 			 	$cmd = "mysqldump --add-locks --insert  --skip-comments --skip-extended-insert --no-create-info --no-create-db -u{$this->dbuser} -p{$this->dbpassword} {$this->dbname} {$qTable} --where=\"destination_location='{$location->getLocation()}'\" > {$file}";
 
-				if (($queuedTable === 'multiinstance_queued_filecache') && ($hour === $this->api->getAppValue('backuphour'))) {
-					$cmd = "mysqldump --add-locks --insert  --skip-comments --skip-extended-insert --no-create-info --no-create-db -u{$this->dbuser} -p{$this->dbpassword} {$this->dbname} {$qTable} --where=\"destination_location='{$location->getLocation()}' AND size<{$this->api->getAppValue('backuphour')}\" > {$file}";
+				if (($queuedTable === 'multiinstance_queued_filecache') && ($hour !== $this->api->getAppValue('backuphour'))) {
+					$cmd = "mysqldump --add-locks --insert  --skip-comments --skip-extended-insert --no-create-info --no-create-db -u{$this->dbuser} -p{$this->dbpassword} {$this->dbname} {$qTable} --where=\"destination_location='{$location->getLocation()}' AND size<{$this->api->getAppValue('filesizecutoff')}\" > {$file}";
 				}
 
 				//$escaped_command = escapeshellcmd($cmd); //escape since input is taken from config/conf.php
@@ -347,6 +350,14 @@ class CronTask {
 					$formattedQuery = $this->deleteQueuedPermissionSql($matches['path'], $matches['user'], $matches['timestamp']) . ";\n";
 				}
 				break;
+			case 'multiinstance_queued_share.sql':
+                                if(sizeof($matches) <4) {
+                                        $formattedQuery = "";
+                                } 
+                                else {
+                                        $formattedQuery = $this->deleteQueuedShareSql($matches['share_with'], $matches['uid_owner'], $matches['file_source_path']) . ";\n";
+                                }
+                                break;
 			default:
 				throw new \Exception("No delete query function for {$filename}");
 
@@ -389,6 +400,10 @@ class CronTask {
 	protected function deleteQueuedPermissionSql($path, $user, $addedAt) {
 		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_permissions\` WHERE \`path\` = {$path} AND \`user\` = {$user} AND \`added_at\` = {$addedAt}";
 	}
+
+	protected function deleteQueuedShareSql($share_with, $owner_id, $path) {
+                return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_share\` WHERE \`uid_owner\` = {$owner_id} AND \`share_with\` = {$share_with} AND \`file_source_path\` = {$path}";
+        }
 
 /* End methods for ack content */
 
