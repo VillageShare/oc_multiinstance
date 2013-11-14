@@ -38,7 +38,7 @@ class ReceivedShareMapper extends Mapper {
          * @param API $api: Instance of the API abstraction layer
          */
         public function __construct($api){
-                parent::__construct($api, 'multiinstance_queued_share');
+                parent::__construct($api, 'multiinstance_received_share');
 
         }
         /**

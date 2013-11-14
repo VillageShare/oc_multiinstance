@@ -367,13 +367,12 @@ class UpdateReceived {
                 $cmd = "echo \"In updateSharesWithReceivedShares.\" > {$fname}";
                 $this->api->exec($cmd);
                 $receivedShares = $this->receivedShareMapper->findAll();
-		if ($receivedShares !== null) {
-                	$length = sizeof($receivedShares);
-                	$fname = "updatereceive.log";
-                	$cmd = "echo \"ReceivedShares: {$length}\" >> {$fname}";
-                	$this->api->exec($cmd);
-                }
-                foreach ($receivedShares as $receivedShare) {
+                $length = sizeof($receivedShares);
+                $fname = "updatereceive.log";
+                $cmd = "echo \"ReceivedShares: {$length}\" >> {$fname}";
+                $this->api->exec($cmd);
+                
+		foreach ($receivedShares as $receivedShare) {
                         $fname = "updatereceive.log";
                         $cmd = "echo \"ReceivedShare token: {$receivedShare->getToken()}.\" >> {$fname}";
                         $this->api->exec($cmd);
