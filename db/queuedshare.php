@@ -50,22 +50,26 @@ class QueuedShare extends Entity {
 	const DELETE = 3;
 
 	//also need parent information
-	public function __construct($shareType, $shareWith, $uidOwner, $itemType, $fileSourceStorage, $fileSourcePath, $fileTarget, $permissions, $stime, $token, $destinationLocation, $sendingLocation, $queueType){
+	public function __construct($shareType, $shareWith=null, $uidOwner=null, $itemType=null, $fileSourceStorage=null, $fileSourcePath=null, $fileTarget=null, $permissions=null, $stime=null, $token=null, $destinationLocation=null, $sendingLocation=null, $queueType=null){
 		$this->addType('queueType', 'int');
 
-		$this->setShareType($shareType);
-		$this->setShareWith($shareWith);
-		$this->setUidOwner($uidOwner);
-		$this->setItemType($itemType);
-		$this->setFileSourceStorage($fileSourceStorage);
-		$this->setFileSourcePath($fileSourcePath);
-		$this->setFileTarget($fileTarget);
-		$this->setPermissions($permissions);
-		$this->setStime($stime);
-		$this->setToken($token);
-		$this->setDestinationLocation($destinationLocation);
-		$this->setSendingLocation($sendingLocation);
-		$this->setQueueType($queueType);
+		if ($shareWith !== null) {
+			$this->setShareType($shareType);
+			$this->setShareWith($shareWith);
+			$this->setUidOwner($uidOwner);
+			$this->setItemType($itemType);
+			$this->setFileSourceStorage($fileSourceStorage);
+			$this->setFileSourcePath($fileSourcePath);
+			$this->setFileTarget($fileTarget);
+			$this->setPermissions($permissions);
+			$this->setStime($stime);
+			$this->setToken($token);
+			$this->setDestinationLocation($destinationLocation);
+			$this->setSendingLocation($sendingLocation);
+			$this->setQueueType($queueType);
+		} else {
+			$this->fromRow($shareType);
+		}
 	}
 
 }

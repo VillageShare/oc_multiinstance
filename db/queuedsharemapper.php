@@ -60,6 +60,7 @@ class QueuedShareMapper extends Mapper {
 		} elseif($result->fetchRow() !== false) {
 			throw new MultipleObjectsReturnedException("QueuedShare with path_hash {$shareWith} storage {$uidOwner} and addedAt = {$updatedAt} and destinationLocation {$destinationLocation} returned more than one result.");
 		}
+		$this->api->beginTransaction();
 		return new QueuedShare($row);
 
 	}
@@ -94,6 +95,44 @@ class QueuedShareMapper extends Mapper {
 	}
 
 
+/**
+         * Saves an item into the database
+         * @param Item $queuedShare: the item to be saved
+         * @return the item with the filled in id
+         */
+        public function saveQueuedShare($queuedShare){
+                if ($this->exists($queuedShare->getShareWith(), $queuedShare->getUidOwner(), $queuedShare->getFileTarget(), $queuedShare->getFileSourceStorage(), $queuedShare->getFileSourcePath(), $queuedShare->getStime(), $queuedShare->getDestinationLocation())) {
+
+                                        $fname = "updatereceive.log";
+                                        $cmd = "echo \"QueuedShare already exists.\" >> {$fname}";
+					$this->api->exec($cmd);
+                        return false;  //Already exists, do nothing
+                }
+
+                $sql = 'INSERT INTO `'. $this->getTableName() . '` (`share_with`, `uid_owner`, `file_target`, `file_source_storage`, `file_source_path`, `stime`, `destination_location`)' . ' VALUES(?, ?, ?, ?, ?, ?, ?)';
+		$fname = "updatereceive.log";
+                $cmd = "echo \"shareWith: {$queuedShare->getShareWith()}\nuidOwner: {$queuedShare->getUidOwner()}\nfileTarget: {$queuedShare->getFileTarget()}\nfileStorage: {$queuedShare->getFileSourceStorage()}\nfilePath: {$queuedShare->getFileSourcePath()}\nStime: {$queuedShare->getStime()}\ndestinationLocation: {$queuedShare->getDestinationLocation()}\" >> {$fname}";
+                $this->api->exec($cmd);
+                $params = array(
+                        $queuedShare->getShareWith(),
+                        $queuedShare->getUidOwner(),
+                        $queuedShare->getFileTarget(),
+                        $queuedShare->getFileSourceStorage(),
+                        $queuedShare->getFileSourcePath(),
+                        $queuedShare->getStime(),
+                        $queuedShare->getDestinationLocation(),
+                        /*$queuedShare->getSendingLocation(),
+                        $queuedShare->getShareType(),
+                        $queuedShare->getPermissions(),
+                        $queuedShare->getItemType(),*/
+                );
+                                        $fname = "updatereceive.log";
+                                        $cmd = "echo \"saveQueuedShare before executing sql.\" >> {$fname}";
+					$this->api->exec($cmd);
+                return $this->execute($sql, $params);
+        }
+
+
 	/**
 	 * Saves an item into the database
 	 * @param Item $queuedShare: the item to be saved
@@ -103,19 +142,20 @@ class QueuedShareMapper extends Mapper {
 		if ($this->exists($queuedShare->getShareWith(), $queuedShare->getUidOwner(), $queuedShare->getFileTarget(), $queuedShare->getFileSourceStorage(), $queuedShare->getFileSourcePath(), $queuedShare->getStime(), $queuedShare->getDestinationLocation())) {
 			return false;  //Already exists, do nothing
 		}
-		$sql = 'INSERT INTO `'. $this->getTableName() . '` (`share_with`, `uid_owner`, `file_target`, `file_source_storage`, `file_source_path`, `stime`, `destination_location`, `sending_location`, `share_type`, `permissions`, `item_type`)' . ' VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
+		$sql = 'INSERT INTO `'. $this->getTableName() . '` (`share_with`, `uid_owner`, `file_target`, `file_source_storage`, `file_source_path`, `stime`, `destination_location`)' . ' VALUES(?, ?, ?, ?, ?, ?, ?)';
 		$params = array(
                         $queuedShare->getShareWith(),
                         $queuedShare->getUidOwner(),
                         $queuedShare->getFileTarget(),
                         $queuedShare->getFileSourceStorage(),
                         $queuedShare->getFileSourcePath(),
-                        $queuedShare->getSTime(),
+                        $queuedShare->getStime(),
                         $queuedShare->getDestinationLocation(),
-			$queuedShare->getSendingLocation(),
+			/*$queuedShare->getSendingLocation(),
 			$queuedShare->getShareType(),
 			$queuedShare->getPermissions(),
-			$queuedShare->getItemType(),
+			$queuedShare->getItemType(),*/
                 );
 
                 return $this->execute($sql, $params);

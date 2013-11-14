@@ -420,7 +420,7 @@ class UpdateReceived {
                                                 $cmd = "echo \"MultipleObjectsReturnedException.\" >> {$fname}";
                                                 $this->api->exec($cmd);
                                         }*/
-                                        $queuedShare = new QueuedShare($receivedShare->getShareType(), $receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getItemType(), $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), $receivedShare->getFileTarget(), $receivedShare->getPermissions(), $receivedShare->getStime(), $receivedShare->getAccepted(), $receivedShare->getExpiration(), $receivedShare->getToken(), $dest_location, $thisLocation, $receivedShare->getQueueType());
+                                        $queuedShare = new QueuedShare($receivedShare->getShareType(), $receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getItemType(), $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), $receivedShare->getFileTarget(), $receivedShare->getPermissions(), $receivedShare->getStime(), $receivedShare->getToken(), $dest_location, $receivedShare->getSendingLocation(), $receivedShare->getQueueType());
 					$fname = "updatereceive.log";
                                         $cmd = "echo \"Created QueuedShare.\" >> {$fname}";
                                         $this->api->exec($cmd);
@@ -439,7 +439,7 @@ class UpdateReceived {
 					$fname = "updatereceive.log";
                                         $cmd = "echo \"In beginTransaction().\" >> {$fname}";
                                         $this->api->exec($cmd);
-                                        $this->queuedShareMapper->save($queuedShare);
+                                        $this->queuedShareMapper->saveQueuedShare($queuedShare);
 					$fname = "updatereceive.log";
                                         $cmd = "echo \"Saved QueuedShare.\" >> {$fname}";
                                         $this->api->exec($cmd);
