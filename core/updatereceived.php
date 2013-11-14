@@ -27,11 +27,14 @@ use \OCA\AppFramework\Db\DoesNotExistException;
 
 use \OCA\MultiInstance\Db\UserUpdate;
 use \OC_User;
+use \OCP\Share;
 use \OCA\Friends\Db\Friendship;
 use \OCA\MultiInstance\Db\QueuedFriendship;
 use \OCA\MultiInstance\Db\QueuedUser;
 use \OCA\MultiInstance\Db\QueuedPermission;
 use \OCA\MultiInstance\Db\PermissionUpdate;
+use \OCA\MultiInstance\Db\QueuedShare;
+use \OCA\MultiInstance\Db\ShareUpdate;
 
 use \OCA\MultiInstance\Lib\MILocation;
 use \OC\Files\Cache\Cache;
@@ -56,12 +59,13 @@ class UpdateReceived {
 	private $filecacheUpdateMapper;
 	private $receivedPermissionMapper;
 	private $permissionUpdateMapper;
-
+	private $shareUpdateMapper;
+        private $recievedShareMapper;
 
 	/**
 	 * @param API $api: an api wrapper instance
 	 */
-	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $queuedUserMapper, $locationMapper, $receivedFilecacheMapper, $filecacheUpdateMapper, $receivedPermissionMapper, $permissionUpdateMapper){
+	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $queuedUserMapper, $locationMapper, $receivedFilecacheMapper, $filecacheUpdateMapper, $receivedPermissionMapper, $permissionUpdateMapper, $receivedShareMapper, $shareUpdateMapper){
 		$this->api = $api;
 		$this->receivedUserMapper = $receivedUserMapper;
 		$this->userUpdateMapper = $userUpdateMapper;
@@ -76,6 +80,8 @@ class UpdateReceived {
 		$this->filecacheUpdateMapper = $filecacheUpdateMapper;
 		$this->receivedPermissionMapper = $receivedPermissionMapper;
 		$this->permissionUpdateMapper = $permissionUpdateMapper;
+		$this->shareUpdateMapper = $shareUpdateMapper;
+                $this->receivedShareMapper = $receivedShareMapper;
 	}
 
 
@@ -361,11 +367,12 @@ class UpdateReceived {
                 $cmd = "echo \"In updateSharesWithReceivedShares.\" > {$fname}";
                 $this->api->exec($cmd);
                 $receivedShares = $this->receivedShareMapper->findAll();
-                $length = sizeof($receivedShares);
-                $fname = "updatereceive.log";
-                $cmd = "echo \"ReceivedShares: {$length}\" >> {$fname}";
-                $this->api->exec($cmd);
-                
+		if ($receivedShares !== null) {
+                	$length = sizeof($receivedShares);
+                	$fname = "updatereceive.log";
+                	$cmd = "echo \"ReceivedShares: {$length}\" >> {$fname}";
+                	$this->api->exec($cmd);
+                }
                 foreach ($receivedShares as $receivedShare) {
                         $fname = "updatereceive.log";
                         $cmd = "echo \"ReceivedShare token: {$receivedShare->getToken()}.\" >> {$fname}";
