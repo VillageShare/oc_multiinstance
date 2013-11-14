@@ -56,16 +56,18 @@ class UpdateReceived {
 	private $queuedUserMapper;
 	private $locationMapper;
 	private $receivedFilecacheMapper;
+	private $queuedFilecacheMapper;
 	private $filecacheUpdateMapper;
 	private $receivedPermissionMapper;
 	private $permissionUpdateMapper;
 	private $shareUpdateMapper;
         private $recievedShareMapper;
+	private $queuedShareMapper;
 
 	/**
 	 * @param API $api: an api wrapper instance
 	 */
-	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $queuedUserMapper, $locationMapper, $receivedFilecacheMapper, $filecacheUpdateMapper, $receivedPermissionMapper, $permissionUpdateMapper, $receivedShareMapper, $shareUpdateMapper){
+	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $queuedUserMapper, $locationMapper, $receivedFilecacheMapper, $filecacheUpdateMapper, $queuedFilecacheMapper, $receivedPermissionMapper, $permissionUpdateMapper, $receivedShareMapper, $shareUpdateMapper, $queuedShareMapper){
 		$this->api = $api;
 		$this->receivedUserMapper = $receivedUserMapper;
 		$this->userUpdateMapper = $userUpdateMapper;
@@ -78,10 +80,12 @@ class UpdateReceived {
 		$this->locationMapper = $locationMapper;
 		$this->receivedFilecacheMapper = $receivedFilecacheMapper;
 		$this->filecacheUpdateMapper = $filecacheUpdateMapper;
+		$this->queuedFilecacheMapper = $queuedFilecacheMapper;
 		$this->receivedPermissionMapper = $receivedPermissionMapper;
 		$this->permissionUpdateMapper = $permissionUpdateMapper;
 		$this->shareUpdateMapper = $shareUpdateMapper;
                 $this->receivedShareMapper = $receivedShareMapper;
+		$this->queuedShareMapper = $queuedShareMapper;
 	}
 
 
@@ -417,17 +421,36 @@ class UpdateReceived {
                                                 $this->api->exec($cmd);
                                         }*/
                                         $queuedShare = new QueuedShare($receivedShare->getShareType(), $receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getItemType(), $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), $receivedShare->getFileTarget(), $receivedShare->getPermissions(), $receivedShare->getStime(), $receivedShare->getAccepted(), $receivedShare->getExpiration(), $receivedShare->getToken(), $dest_location, $thisLocation, $receivedShare->getQueueType());
+					$fname = "updatereceive.log";
+                                        $cmd = "echo \"Created QueuedShare.\" >> {$fname}";
+                                        $this->api->exec($cmd);
                         
                                         // Handle FileCache
-                                        $cache = new Cache($storagePath);
-                                                $fileid = $cache->getId($receivedPermission->getPath());
-                                        $fileCacheUpdate = $this->filecacheUpdateMapper->find(md5($receivedShare->getFileSourcePath()), $receivedShare->getFileSourceStorage());
+                                     	$cache = new Cache($receivedShare->getFileSourceStorage());
+                                        $fileid = $cache->getId($receivedShare->getFileSourcePath());
+                                        //$fileCacheUpdate = $this->filecacheUpdateMapper->find(md5($receivedShare->getFileSourcePath()), $receivedShare->getFileSourceStorage());
                                         $queuedFilecache = new QueuedFileCache($fileid);
                                         
+					$fname = "updatereceive.log";
+                                        $cmd = "echo \"Created new QueuedFileCache.\" >> {$fname}";
+                                        $this->api->exec($cmd);
+
                                         $this->api->beginTransaction();
+					$fname = "updatereceive.log";
+                                        $cmd = "echo \"In beginTransaction().\" >> {$fname}";
+                                        $this->api->exec($cmd);
                                         $this->queuedShareMapper->save($queuedShare);
+					$fname = "updatereceive.log";
+                                        $cmd = "echo \"Saved QueuedShare.\" >> {$fname}";
+                                        $this->api->exec($cmd);
                                         $this->queuedFilecacheMapper->save($queuedFilecache);
+					$fname = "updatereceive.log";
+                                        $cmd = "echo \"Saved QueuedFileCache.\" >> {$fname}";
+                                        $this->api->exec($cmd);
                                         $this->api->commit();
+					$fname = "updatereceive.log";
+                                        $cmd = "echo \"Finished Commit()\" >> {$fname}";
+                                        $this->api->exec($cmd);
                                 
                                  }
                                 if ($orig_location !== $centralServer && $orig_location !== $receivedShare->getSendingLocation()) {

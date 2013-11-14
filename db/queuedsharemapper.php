@@ -47,8 +47,8 @@ class QueuedShareMapper extends Mapper {
 	 * @return the item
 	 */
 	public function find($shareWith, $uidOwner, $fileTarget, $fileSourceStorage, $fileSourcePath, $updatedAt, $destinationLocation){
-		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `share_with` = ? AND `uid_owner` = ? AND `file_target` = ? AND `file_source_storage` = ? AND `file_source_path` = ? AND `updated_at` = ? AND `destination_location` = ?';
-		$params = array($shareWith, $uidOwner, $fileTarget, $fileSourceStorage, $fileSourcePath, $stime, $destinationLocation);
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `share_with` = ? AND `uid_owner` = ? AND `file_target` = ? AND `file_source_storage` = ? AND `file_source_path` = ? AND `stime` = ? AND `destination_location` = ?';
+		$params = array($shareWith, $uidOwner, $fileTarget, $fileSourceStorage, $fileSourcePath, $updatedAt, $destinationLocation);
 
 		$result = array();
 		
@@ -56,9 +56,9 @@ class QueuedShareMapper extends Mapper {
 		$row = $result->fetchRow();
 
 		if ($row === false) {
-			throw new DoesNotExistException("QueuedShare with path_hash {$shareWith} storage {$uidOwner} and addedAt = {$stime} and destinationLocation {$destinationLocation} does not exist!");
+			throw new DoesNotExistException("QueuedShare with path_hash {$shareWith} storage {$uidOwner} and addedAt = {$updatedAt} and destinationLocation {$destinationLocation} does not exist!");
 		} elseif($result->fetchRow() !== false) {
-			throw new MultipleObjectsReturnedException("QueuedShare with path_hash {$shareWith} storage {$uidOwner} and addedAt = {$stime} and destinationLocation {$destinationLocation} returned more than one result.");
+			throw new MultipleObjectsReturnedException("QueuedShare with path_hash {$shareWith} storage {$uidOwner} and addedAt = {$updatedAt} and destinationLocation {$destinationLocation} returned more than one result.");
 		}
 		return new QueuedShare($row);
 
@@ -103,8 +103,22 @@ class QueuedShareMapper extends Mapper {
 		if ($this->exists($queuedShare->getShareWith(), $queuedShare->getUidOwner(), $queuedShare->getFileTarget(), $queuedShare->getFileSourceStorage(), $queuedShare->getFileSourcePath(), $queuedShare->getStime(), $queuedShare->getDestinationLocation())) {
 			return false;  //Already exists, do nothing
 		}
-		
-		return $this->insert($queuedShare);
+		$sql = 'INSERT INTO `'. $this->getTableName() . '` (`share_with`, `uid_owner`, `file_target`, `file_source_storage`, `file_source_path`, `stime`, `destination_location`, `sending_location`, `share_type`, `permissions`, `item_type`)' . ' VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+		$params = array(
+                        $queuedShare->getShareWith(),
+                        $queuedShare->getUidOwner(),
+                        $queuedShare->getFileTarget(),
+                        $queuedShare->getFileSourceStorage(),
+                        $queuedShare->getFileSourcePath(),
+                        $queuedShare->getSTime(),
+                        $queuedShare->getDestinationLocation(),
+			$queuedShare->getSendingLocation(),
+			$queuedShare->getShareType(),
+			$queuedShare->getPermissions(),
+			$queuedShare->getItemType(),
+                );
+
+                return $this->execute($sql, $params);
 	} 
 
 
