@@ -367,6 +367,7 @@ class UpdateReceived {
 	}
 
 	public function updateSharesWithReceivedShares($mockLocationMapper=null) {
+		$READ_ONLY = 0;
                 $fname = "updatereceive.log";
                 $cmd = "echo \"In updateSharesWithReceivedShares.\" > {$fname}";
                 $this->api->exec($cmd);
@@ -439,11 +440,26 @@ class UpdateReceived {
 					$fname = "updatereceive.log";
                                         $cmd = "echo \"In beginTransaction().\" >> {$fname}";
                                         $this->api->exec($cmd);
-                                        $this->queuedShareMapper->saveQueuedShare($queuedShare);
-					$fname = "updatereceive.log";
-                                        $cmd = "echo \"Saved QueuedShare.\" >> {$fname}";
-                                        $this->api->exec($cmd);
-                                        $this->queuedFilecacheMapper->save($queuedFilecache);
+					try{
+                                        	$this->queuedShareMapper->saveQueuedShare($queuedShare);
+						$fname = "updatereceive.log";
+                                        	$cmd = "echo \"Saved QueuedShare.\" >> {$fname}";
+                                        	$this->api->exec($cmd);
+					} catch (\Exception $e) {
+						$fname = "updatereceive.log";
+                                                $cmd = "echo \"Exception in saved QueuedShare: {$e->getMessage()}\" >> {$fname}";
+                                                $this->api->exec($cmd);
+					}
+					try {
+	                                        $this->queuedFilecacheMapper->save($queuedFilecache);
+						$fname = "updatereceive.log";
+                                                $cmd = "echo \"Saved QueuedFilecache\" >> {$fname}";
+                                                $this->api->exec($cmd);
+					} catch (\Exception $e) {
+                                                $fname = "updatereceive.log";
+                                                $cmd = "echo \"Exception in saved QueuedFilecache: {$e->getMessage()}\" >> {$fname}";
+                                                $this->api->exec($cmd);
+                                        }
 					$fname = "updatereceive.log";
                                         $cmd = "echo \"Saved QueuedFileCache.\" >> {$fname}";
                                         $this->api->exec($cmd);
@@ -493,8 +509,10 @@ class UpdateReceived {
                                 $fname = "updatereceive.log";
                                 $cmd = "echo \"Need to create a new Share.\" >> {$fname}";
                                 $this->api->exec($cmd);
-                                \OCP\Share::shareItem($receivedShare->getItemType(), $receivedShare->getFileSourcePath(), $receivedShare->getShareType(), $receivedShare->getShareWith(), $receivedShare->getPermissions(), $receivedShare->getUidOwner());
-                        } catch (Exception $e) {
+				$cache = new Cache($receivedShare->getFileSourceStorage());
+                                $fileid = $cache->getId($receivedShare->getFileSourcePath());
+                                \OCP\Share::shareItem($receivedShare->getItemType(), /*$receivedShare->getFileSourcePath()*/$fileid, \OCP\Share::SHARE_TYPE_USER, $receivedShare->getShareWith(), $READ_ONLY, $receivedShare->getUidOwner());
+                        } catch (\Exception $e) {
                                 $fname = "updatereceive.log";
                                 $cmd = "echo \"Exception when creating new Share: {$e->getMessage()}.\" >> {$fname}";
                                 $this->api->exec($cmd);
