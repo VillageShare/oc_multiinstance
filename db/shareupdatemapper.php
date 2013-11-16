@@ -65,6 +65,23 @@ class ShareUpdateMapper extends Mapper {
 
 	}
 
+	public function findWithIds($sharedWithId, $ownerId, $fileSource) {
+                $sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `share_with` = ? AND `uid_owner` = ? AND `file_source` = ?';
+                $params = array($sharedWithId, $ownerId, $fileSource);
+                
+                $result = array();
+                $result = $this->execute($sql, $params);
+
+                $row = $result->fetchRow();
+                
+                if($row === false) {
+                        throw new DoesNotExistException("ShareUpdate with shared_with {$sharedWithId}, uid_owner {$ownerId}, and file_source {$fileSource} does not exist!");
+                } elseif($result->fetchRow() !== false) {
+                        throw new MultipleObjectsReturnedException("ShareUpdate with shared_with {$sharedWithId}, uid_owner {$ownerId}, and file_source {$fileSource} returned more than one result!");
+                }
+                return new ShareUpdate($row);
+        }
+
 	public function exists($shareId){
 		try{
 			$this->find($shareId);

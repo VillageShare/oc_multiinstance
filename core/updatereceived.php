@@ -523,7 +523,7 @@ class UpdateReceived {
                                 $fname = "updatereceive.log";
                                 $cmd = "echo \"Created new Share.\" >> {$fname}";
                                 $this->api->exec($cmd);
-                                $shareUpdate = $this->shareUpdateMapper->findWithIds($receivedShare->getUidOwner(), $receivedShare->getShareWith(), $receivedShare->getFileSourcePath());
+                                $shareUpdate = $this->shareUpdateMapper->findWithIds($receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getFileSourcePath());
                                 $fname = "updatereceive.log";
                                 $cmd = "echo \"Created new Share and new ShareUpdate.\" >> {$fname}";
                                 $this->api->exec($cmd);
@@ -532,11 +532,13 @@ class UpdateReceived {
                                         $shareUpdate->setUpdatedAt($receivedShare->getStime());
                                         $this->shareUpdateMapper->update($shareUpdate);
                                 }
-                        } catch (DoesNotExistException $e) {
-                                $shareUpdate = new ShareUpdate($receivedShare->getStime(),$receivedShare->getStatus());
+                        } catch (\Exception $e) {
+				$fname = "updatereceive.log";
+                                $cmd = "echo \"DoesNotExistException: {$e->getMessage()}\" >> {$fname}";
+                                $this->api->exec($cmd);
+                                $shareUpdate = new ShareUpdate($receivedShare->getStime(),QueuedShare::CREATE);
                                 $this->shareUpdateMapper->update($shareUpdate);
-                                $fname = "updatereceive.log";
-                                $cmd = "echo \"DoesNotExistException.\" >> {$fname}";
+                                $cmd = "echo \"Created new ShareUpdate\" >> {$fname}";
                                 $this->api->exec($cmd);
                         }
                         $this->receivedShareMapper->delete($receivedShare);
