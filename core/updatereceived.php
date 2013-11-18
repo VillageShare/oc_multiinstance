@@ -511,7 +511,12 @@ class UpdateReceived {
                                 $this->api->exec($cmd);
 				$cache = new Cache($receivedShare->getFileSourceStorage());
                                 $fileid = $cache->getId($receivedShare->getFileSourcePath());
-                                \OCP\Share::shareItem($receivedShare->getItemType(), /*$receivedShare->getFileSourcePath()*/$fileid, \OCP\Share::SHARE_TYPE_USER, $receivedShare->getShareWith(), $READ_ONLY, $receivedShare->getUidOwner());
+                                $bool = \OCP\Share::shareItem($receivedShare->getItemType(), /*$receivedShare->getFileSourcePath()*/$fileid, \OCP\Share::SHARE_TYPE_USER, $receivedShare->getShareWith(), $READ_ONLY, $receivedShare->getUidOwner());
+				if($bool) {
+				$fname = "updatereceive.log";
+                                $cmd = "echo \"New Share successful.\" >> {$fname}";
+                                $this->api->exec($cmd);
+				}
                         } catch (\Exception $e) {
                                 $fname = "updatereceive.log";
                                 $cmd = "echo \"Exception when creating new Share: {$e->getMessage()}.\" >> {$fname}";
@@ -519,11 +524,10 @@ class UpdateReceived {
                                 continue;
 
                         }
+			$this->api->commit();
+			$this->api->beginTransaction();
                         try{
-                                $fname = "updatereceive.log";
-                                $cmd = "echo \"Created new Share.\" >> {$fname}";
-                                $this->api->exec($cmd);
-                                $shareUpdate = $this->shareUpdateMapper->findWithIds($receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getFileSourcePath());
+                                $shareUpdate = $this->shareUpdateMapper->find(\OCP\Share::getShareId($receivedShare->getUidOwner(), $receivedShare->getShareWith(), $receivedShare->getFileTarget()));
                                 $fname = "updatereceive.log";
                                 $cmd = "echo \"Created new Share and new ShareUpdate.\" >> {$fname}";
                                 $this->api->exec($cmd);
@@ -532,7 +536,7 @@ class UpdateReceived {
                                         $shareUpdate->setUpdatedAt($receivedShare->getStime());
                                         $this->shareUpdateMapper->update($shareUpdate);
                                 }
-                        } catch (\Exception $e) {
+                        } catch (DoesNotExistException $e) {
 				$fname = "updatereceive.log";
                                 $cmd = "echo \"DoesNotExistException: {$e->getMessage()}\" >> {$fname}";
                                 $this->api->exec($cmd);
@@ -540,7 +544,11 @@ class UpdateReceived {
                                 $this->shareUpdateMapper->update($shareUpdate);
                                 $cmd = "echo \"Created new ShareUpdate\" >> {$fname}";
                                 $this->api->exec($cmd);
-                        }
+                        } catch (\Exception $e) {
+				$fname = "updatereceive.log";
+                                $cmd = "echo \"Exception: {$e->getMessage()}\" >> {$fname}";
+                                $this->api->exec($cmd);
+			}
                         $this->receivedShareMapper->delete($receivedShare);
                         $this->api->commit();
                         $fname = "updatereceive.log";
