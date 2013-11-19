@@ -3,7 +3,7 @@
 # ownCloud - Multi Instance
 #
 # @author Sarah Jones
-# @copyright 2013 Sarah Jones sarah.e.p.jones@gmail.com
+# @copyright 2013 Sarah Jones owncloud.e.p.jones@gmail.com
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU AFFERO GENERAL PUBLIC LICENSE
@@ -19,13 +19,13 @@
 # License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #
 ###
-
+cd /home/owncloud/public_html/apps/multiinstance
 
 if ps -ef | grep -v grep | grep processAndSyncAll.php ; then
-	echo "processAndSyncAll.php is not starting because it is already running." >> /home/sarah/public_html/apps/multiinstance/cron/error.txt 
+	echo "processAndSyncAll.php is not starting because it is already running." >> /home/owncloud/public_html/apps/multiinstance/cron/error.txt 
         exit 0
 else
 	#Change this path to be the path to multiinstance/cron/processAndSyncAll.php
-	php5 /home/sarah/public_html/apps/multiinstance/cron/processAndSyncAll.php >> /home/sarah/public_html/apps/multiinstance/cron/error.txt &
+	php5 /home/owncloud/public_html/apps/multiinstance/cron/processAndSyncAll.php >> /home/owncloud/public_html/apps/multiinstance/cron/error.txt &
         exit 0
 fi
