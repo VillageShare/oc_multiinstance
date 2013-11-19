@@ -115,8 +115,8 @@ class CronTask {
 				$file = "{$this->sendPathPrefix}{$location->getLocation()}/{$queuedTable}.sql";
 			 	$cmd = "mysqldump --add-locks --insert  --skip-comments --skip-extended-insert --no-create-info --no-create-db -u{$this->dbuser} -p{$this->dbpassword} {$this->dbname} {$qTable} --where=\"destination_location='{$location->getLocation()}'\" > {$file}";
 
-				if (($queuedTable === 'multiinstance_queued_filecache') && ($hour === $this->api->getAppValue('backuphour'))) {
-					$cmd = "mysqldump --add-locks --insert  --skip-comments --skip-extended-insert --no-create-info --no-create-db -u{$this->dbuser} -p{$this->dbpassword} {$this->dbname} {$qTable} --where=\"destination_location='{$location->getLocation()}' AND size<{$this->api->getAppValue('backuphour')}\" > {$file}";
+				if (($queuedTable === 'multiinstance_queued_filecache') && ($hour !== $this->api->getAppValue('backuphour'))) {
+					$cmd = "mysqldump --add-locks --insert  --skip-comments --skip-extended-insert --no-create-info --no-create-db -u{$this->dbuser} -p{$this->dbpassword} {$this->dbname} {$qTable} --where=\"destination_location='{$location->getLocation()}' AND size<{$this->api->getAppValue('filesizecutoff')}\" > {$file}";
 				}
 
 				//$escaped_command = escapeshellcmd($cmd); //escape since input is taken from config/conf.php
