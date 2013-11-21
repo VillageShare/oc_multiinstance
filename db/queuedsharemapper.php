@@ -109,7 +109,7 @@ class QueuedShareMapper extends Mapper {
                         return false;  //Already exists, do nothing
                 }
 
-                $sql = 'INSERT INTO `'. $this->getTableName() . '` (`share_with`, `uid_owner`, `file_target`, `file_source_storage`, `file_source_path`, `stime`, `destination_location`)' . ' VALUES(?, ?, ?, ?, ?, ?, ?)';
+                $sql = 'INSERT INTO `'. $this->getTableName() . '` (`share_with`, `uid_owner`, `file_target`, `file_source_storage`, `file_source_path`, `stime`, `destination_location`, `sending_location`, `share_type`, `permissions`, `item_type`)' . ' VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 		$fname = "updatereceive.log";
                 $cmd = "echo \"shareWith: {$queuedShare->getShareWith()}\nuidOwner: {$queuedShare->getUidOwner()}\nfileTarget: {$queuedShare->getFileTarget()}\nfileStorage: {$queuedShare->getFileSourceStorage()}\nfilePath: {$queuedShare->getFileSourcePath()}\nStime: {$queuedShare->getStime()}\ndestinationLocation: {$queuedShare->getDestinationLocation()}\" >> {$fname}";
                 $this->api->exec($cmd);

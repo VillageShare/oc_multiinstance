@@ -397,15 +397,10 @@ class UpdateReceived {
                         
                         // If a user from a non-central instance is involved, push info to that instance
                         if ($receivedShare->getSendingLocation() !== $centralServer) {
-
-                                $fname = "updatereceive.log";
-                                $cmd = "echo \"Not from central server.\" >> {$fname}";
-                                $this->api->exec($cmd);
-
                                 if ($dest_location !== $centralServer && $dest_location !== $receivedShare->getSendingLocation()) {
         
                                         $fname = "updatereceive.log";
-                                        $cmd = "echo \"Destination location is not from the central server or from the sending location.\" >> {$fname}";
+                                        $cmd = "echo \"Share recipient is not from the central server or from the sending location.\" >> {$fname}";
                                         $this->api->exec($cmd);
 
                                         // We need to update both the shareUpdate and the filecacheUpdate
@@ -421,7 +416,7 @@ class UpdateReceived {
                                                 $cmd = "echo \"MultipleObjectsReturnedException.\" >> {$fname}";
                                                 $this->api->exec($cmd);
                                         }*/
-                                        $queuedShare = new QueuedShare($receivedShare->getShareType(), $receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getItemType(), $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), $receivedShare->getFileTarget(), $receivedShare->getPermissions(), $receivedShare->getStime(), $receivedShare->getToken(), $dest_location, $receivedShare->getDestinationLocation(), $receivedShare->getQueueType());
+                                        $queuedShare = new QueuedShare($receivedShare->getShareType(), $receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getItemType(), $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), $receivedShare->getFileTarget(), $receivedShare->getPermissions(), $receivedShare->getStime(), $receivedShare->getToken(), $dest_location, $thisLocation, $receivedShare->getQueueType());
 					$fname = "updatereceive.log";
                                         $cmd = "echo \"Created QueuedShare.\" >> {$fname}";
                                         $this->api->exec($cmd);
@@ -472,7 +467,7 @@ class UpdateReceived {
                                 if ($orig_location !== $centralServer && $orig_location !== $receivedShare->getSendingLocation()) {
 
 					$fname = "updatereceive.log";
-                                        $cmd = "echo \"Destination location is not from the central server or from the sending location.\" >> {$fname}";
+                                        $cmd = "echo \"Share initiator  is not from the central server or from the sending location.\" >> {$fname}";
                                         $this->api->exec($cmd);
 
                                         // We need to update both the shareUpdate and the filecacheUpdate
@@ -488,7 +483,7 @@ class UpdateReceived {
                                                 $cmd = "echo \"MultipleObjectsReturnedException.\" >> {$fname}";
                                                 $this->api->exec($cmd);
                                         }*/
-                                        $queuedShare = new QueuedShare($receivedShare->getShareType(), $receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getItemType(), $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), $receivedShare->getFileTarget(), $receivedShare->getPermissions(), $receivedShare->getStime(), $receivedShare->getToken(), $orig_location, $receivedShare->getDestinationLocation(), $receivedShare->getQueueType());
+                                        $queuedShare = new QueuedShare($receivedShare->getShareType(), $receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getItemType(), $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), $receivedShare->getFileTarget(), $receivedShare->getPermissions(), $receivedShare->getStime(), $receivedShare->getToken(), $orig_location, $thisLocation, $receivedShare->getQueueType());
                                         $fname = "updatereceive.log";
                                         $cmd = "echo \"Created QueuedShare.\" >> {$fname}";
                                         $this->api->exec($cmd);
