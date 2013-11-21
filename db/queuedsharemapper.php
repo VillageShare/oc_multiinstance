@@ -121,10 +121,10 @@ class QueuedShareMapper extends Mapper {
                         $queuedShare->getFileSourcePath(),
                         $queuedShare->getStime(),
                         $queuedShare->getDestinationLocation(),
-                        /*$queuedShare->getSendingLocation(),
+                        $queuedShare->getSendingLocation(),
                         $queuedShare->getShareType(),
                         $queuedShare->getPermissions(),
-                        $queuedShare->getItemType(),*/
+                        $queuedShare->getItemType(),
                 );
                                         $fname = "updatereceive.log";
                                         $cmd = "echo \"saveQueuedShare before executing sql.\" >> {$fname}";
