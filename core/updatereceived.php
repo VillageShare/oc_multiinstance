@@ -37,6 +37,7 @@ use \OCA\MultiInstance\Db\QueuedShare;
 use \OCA\MultiInstance\Db\ShareUpdate;
 
 use \OCA\MultiInstance\Lib\MILocation;
+use \OCA\MultiInstance\Lib\ShareSupport;
 use \OC\Files\Cache\Cache;
 use \OCA\MultiInstance\Db\QueuedFileCache;
 use \OCA\MultiInstance\Db\FilecacheUpdate;
@@ -394,7 +395,10 @@ class UpdateReceived {
                         $cmd = "echo \"orig_location: {$orig_location}\ndest_location: {$dest_location}.\" >> {$fname}";
                                $this->api->exec($cmd);
         
-                        
+                        if ($dest_location == $thisLocation &&  $dest_location !== $centralServer && $dest_location !== $orig_location) {
+				MILocation::copyFileToDataFolder($this->api, $receivedShare->getFileSourcePath(), $receivedShare->getUidOwner()."/", $receivedShare->getSendingLocation(), $receivedShare->slugify('file_target'));
+			}
+
                         // If a user from a non-central instance is involved, push info to that instance
                         if ($receivedShare->getSendingLocation() !== $centralServer) {
                                 if ($dest_location !== $centralServer && $dest_location !== $receivedShare->getSendingLocation()) {
@@ -532,6 +536,7 @@ class UpdateReceived {
                                 }
                         }
                         $this->api->beginTransaction();
+			ShareSupport::pushSharedFile($this->api, $this->locationMapper, $receivedShare);
                         try{
                                 $fname = "updatereceive.log";
                                 $cmd = "echo \"Need to create a new Share.\" >> {$fname}";
