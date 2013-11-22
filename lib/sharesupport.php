@@ -27,7 +27,8 @@ namespace OCA\MultiInstance\Lib;
 use \OCA\AppFramework\Db\Entity;
 use \OCA\MultiInstance\Db\QueuedShare;
 use \OCA\MultiInstance\Db\ShareUpdate;
-
+use \OCA\MultiInstance\Db\LocationMapper;
+use \OCA\MultiIntance\Core\MuliInstanceAPI;
 use \OCA\MultiInstance\Lib\MILocation;
 use \OC\Files\Cache\Cache;
 use \OCA\MultiInstance\Db\QueuedFileCache;
@@ -39,7 +40,11 @@ class ShareSupport {
 	 * server and push them
 	 *
 	 */
-	static public function pushSharedFile($api, $locationMapper, $receivedShare) {
+	static public function pushSharedFile($receivedShare) {
+
+		$di = new DIContainer();
+                $locationMapper = $di['LocationMapper'];
+		$api = $di['API'];
 
 		$thisLocation = $api->getAppValue('location');
 		$centralServer = $api->getAppValue('centralServer');
