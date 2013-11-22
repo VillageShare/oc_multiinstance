@@ -46,12 +46,12 @@ class ShareSupport {
 		$dest_location = MILocation::getUidLocation($receivedShare->getShareWith(), $mockLocationMapper);
 		$orig_location = MILocation::getUidLocation($receivedShare->getUidOwner(), $mockLocationMapper);
 
-                $output = $this->api->getAppValue('cronErrorLog');
+                $output = $api->getAppValue('cronErrorLog');
 
-                $dbSyncPath = $this->api->getAppValue('dbSyncPath');
-                $dbSyncRecvPath = $this->api->getAppValue('dbSyncRecvPath');
-		$user = $this->api->getAppValue('user');
-                $rsyncPort = $this->api->getAppValue('rsyncPort');
+                $dbSyncPath = $api->getAppValue('dbSyncPath');
+                $dbSyncRecvPath = $api->getAppValue('dbSyncRecvPath');
+		$user = $api->getAppValue('user');
+                $rsyncPort = $api->getAppValue('rsyncPort');
 
 		$cmdPrefix = "rsync --verbose --compress --rsh='ssh -p{$rsyncPort}' \
                                       --recursive --times --perms --copy-links --delete \
@@ -83,5 +83,4 @@ class ShareSupport {
 		return false;
 	}
 
-
-]
+}
