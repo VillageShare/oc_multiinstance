@@ -396,7 +396,20 @@ class UpdateReceived {
                                $this->api->exec($cmd);
         
                         if ($dest_location == $thisLocation &&  $dest_location !== $centralServer && $dest_location !== $orig_location) {
-				MILocation::copyFileToDataFolder($this->api, $receivedShare->getFileSourcePath(), $receivedShare->getUidOwner()."/", $receivedShare->getSendingLocation(), $receivedShare->slugify('file_target'));
+				if(!file_exists($this->api->getSystemValue('datadirectory')."/".$receivedShare->getUidOwner()."/files/")) {
+					$fname = "updatereceive.log";
+                                        $cmd = "echo \"Share initiator file does not exist, so make one in the data directory.\n{$this->api->getSystemValue('datadirectory')}/{$receivedShare->getUidOwner()}/files/\" >> {$fname}";
+                                        $this->api->exec($cmd);
+					if(mkdir($this->api->getSystemValue('datadirectory')."/".$receivedShare->getUidOwner()."/files/",0755,true)){
+						$fname = "updatereceive.log";
+                                        	$cmd = "echo \"Share initiator file made.\" >> {$fname}";
+                                	        $this->api->exec($cmd);
+					}
+				}
+				MILocation::copyFileToDataFolder($receivedShare->getFileSourcePath(), "/".$receivedShare->getUidOwner()."/", $receivedShare->getSendingLocation(), $receivedShare->slugify('file_target'));
+				$fname = "updatereceive.log";
+                                $cmd = "echo \"Share initiator file made in the data directory.\" >> {$fname}";
+                                $this->api->exec($cmd);
 			}
 
                         // If a user from a non-central instance is involved, push info to that instance

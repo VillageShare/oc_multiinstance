@@ -161,10 +161,18 @@ class MILocation{
 	 * Helper function
 	 * @brief Copy a file from db_sync to its appropriate path
 	 */
-	static public function copyFileToDataFolder($api, $path, $subStorage, $serverName, $fileid) {
+	static public function copyFileToDataFolder($path, $subStorage, $serverName, $fileid, $api=null) {
+		if ($api == null ) {
+			$api = new MultiInstanceAPI('multiinstance');
+		}
+		$fname = "/home/owncloud/public_html/apps/multiinstance/updatereceive.log";
+                $cmd = "echo copyFileToDataFolder >> {$fname}";
+                $api->exec($cmd);
 		$rsyncPath = escapeshellarg($api->getAppValue('dbSyncRecvPath') . $serverName . '/' . (string)$fileid);
 		$fullLocalPath = escapeshellarg($api->getSystemValue('datadirectory').$subStorage.$path);
-
+		$fname = "/home/owncloud/public_html/apps/multiinstance/updatereceive.log";
+                $cmd = "echo copyFileToDataFolder: \nrsyncPath: {$rsyncPath}\nfullLocalPath: {$fullLocalPath} >> {$fname}";
+                $api->exec($cmd);
 		$cmd = "cp --preserve {$rsyncPath} {$fullLocalPath}";
 		$api->exec(escapeshellcmd($cmd));
 	} 
