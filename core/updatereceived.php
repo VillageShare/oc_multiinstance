@@ -549,7 +549,7 @@ class UpdateReceived {
                                 }
                         }
                         $this->api->beginTransaction();
-			ShareSupport::pushSharedFile($this->api, $this->locationMapper, $receivedShare);
+			ShareSupport::pushSharedFile($receivedShare);
                         try{
                                 $fname = "updatereceive.log";
                                 $cmd = "echo \"Need to create a new Share.\" >> {$fname}";
