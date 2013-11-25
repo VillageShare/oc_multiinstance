@@ -161,7 +161,7 @@ class MILocation{
 	 * Helper function
 	 * @brief Copy a file from db_sync to its appropriate path
 	 */
-	static public function copyFileToDataFolder($path, $subStorage, $serverName, $fileid, $api=null) {
+	static public function copyFileToDataFolder($api=null,$path, $subStorage, $serverName, $fileid) {
 		$di = new DIContainer();
                 $api = $di['API'];
 		$fname = "/home/owncloud/public_html/apps/multiinstance/updatereceive.log";

@@ -440,7 +440,12 @@ class UpdateReceived {
                         
                                         // Handle FileCache
 					// ($fileid, $storage=null, $path=null, $pathVar=null, $name=null, $mimetype=null, $mimepart=null, $size=null, $mtime=null, $encrypted=null, $etag=null, $addedAt=null, $queueType=null, $destinationLocation=null, $sendingLocation=null){
-                                        $queuedFilecache = new QueuedFileCache(0, $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), null, $receivedShare->getFileTarget(), null, null, null, null, null, $receivedShare->getStime(), $receivedShare->getQueueType(), $dest_location, $thisLocation);
+
+					$fullPath = $receivedShare->getFileSourceStorage();
+                        		$cache = new Cache($fullPath);
+                        		$storageNumericId = $cache->getNumericStorageId();
+					$data = $cache->get(trim($receivedShare->getFileTarget(), "/"));
+                                        $queuedFilecache = new QueuedFileCache(0, $storageNumericId, $receivedShare->getFileSourcePath(), null, trim($receivedShare->getFileTarget(), "/"), $data['mimetype'], $data['mimepart'], $data['size'], $data['mtime'], $data['encrypted'], null, $receivedShare->getStime(), $receivedShare->getQueueType(), $dest_location, $thisLocation);
                                         
 					$fname = "updatereceive.log";
                                         $cmd = "echo \"Created new QueuedFileCache.\" >> {$fname}";
@@ -504,7 +509,12 @@ class UpdateReceived {
                                         $this->api->exec($cmd);
 
                                         // Handle FileCache
-					$queuedFilecache = new QueuedFileCache(0, $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), null, $receivedShare->getFileTarget(), null, null, null, null, null, $receivedShare->getStime(), $receivedShare->getQueueType(), $dest_location, $thisLocation);
+					//$queuedFilecache = new QueuedFileCache(0, $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), null, $receivedShare->getFileTarget(), null, null, null, null, null, $receivedShare->getStime(), $receivedShare->getQueueType(), $dest_location, $thisLocation);
+					$fullPath = $receivedShare->getFileSourceStorage();
+                                        $cache = new Cache($fullPath);
+                                        $storageNumericId = $cache->getNumericStorageId();
+                                        $data = $cache->get($receivedShare->getFileTarget());                                        $queuedFilecache = new QueuedFileCache(0, $storageNumericId, $receivedShare->getFileSourcePath(), null, $receivedShare->getFileTarget(), $data['mimetype'], $data['mimepart'], $data['size'], $data['mtime'], $data['encrypted'], null, $receivedShare->getStime(), $receivedShare->getQueueType(), $dest_location, $thisLocation);
+
 
                                         $fname = "updatereceive.log";
                                         $cmd = "echo \"Created new QueuedFileCache.\" >> {$fname}";
