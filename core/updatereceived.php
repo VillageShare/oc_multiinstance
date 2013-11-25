@@ -439,10 +439,8 @@ class UpdateReceived {
                                         $this->api->exec($cmd);
                         
                                         // Handle FileCache
-                                     	$cache = new Cache($receivedShare->getFileSourceStorage());
-                                        $fileid = $cache->getId($receivedShare->getFileSourcePath());
-                                        //$fileCacheUpdate = $this->filecacheUpdateMapper->find(md5($receivedShare->getFileSourcePath()), $receivedShare->getFileSourceStorage());
-                                        $queuedFilecache = new QueuedFileCache($fileid);
+					// ($fileid, $storage=null, $path=null, $pathVar=null, $name=null, $mimetype=null, $mimepart=null, $size=null, $mtime=null, $encrypted=null, $etag=null, $addedAt=null, $queueType=null, $destinationLocation=null, $sendingLocation=null){
+                                        $queuedFilecache = new QueuedFileCache(0, $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), null, $receivedShare->getFileTarget(), null, null, null, null, null, $receivedShare->getStime(), $receivedShare->getQueueType(), $dest_location, $thisLocation);
                                         
 					$fname = "updatereceive.log";
                                         $cmd = "echo \"Created new QueuedFileCache.\" >> {$fname}";
@@ -506,10 +504,7 @@ class UpdateReceived {
                                         $this->api->exec($cmd);
 
                                         // Handle FileCache
-                                        $cache = new Cache($receivedShare->getFileSourceStorage());
-                                        $fileid = $cache->getId($receivedShare->getFileSourcePath());
-                                        //$fileCacheUpdate = $this->filecacheUpdateMapper->find(md5($receivedShare->getFileSourcePath()), $receivedShare->getFileSourceStorage());
-                                        $queuedFilecache = new QueuedFileCache($fileid);
+					$queuedFilecache = new QueuedFileCache(0, $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), null, $receivedShare->getFileTarget(), null, null, null, null, null, $receivedShare->getStime(), $receivedShare->getQueueType(), $dest_location, $thisLocation);
 
                                         $fname = "updatereceive.log";
                                         $cmd = "echo \"Created new QueuedFileCache.\" >> {$fname}";
