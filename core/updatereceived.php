@@ -513,7 +513,8 @@ class UpdateReceived {
 					$fullPath = $receivedShare->getFileSourceStorage();
                                         $cache = new Cache($fullPath);
                                         $storageNumericId = $cache->getNumericStorageId();
-                                        $data = $cache->get($receivedShare->getFileTarget());                                        $queuedFilecache = new QueuedFileCache(0, $storageNumericId, $receivedShare->getFileSourcePath(), null, $receivedShare->getFileTarget(), $data['mimetype'], $data['mimepart'], $data['size'], $data['mtime'], $data['encrypted'], null, $receivedShare->getStime(), $receivedShare->getQueueType(), $dest_location, $thisLocation);
+                                        $data = $cache->get($receivedShare->getFileTarget());
+	                                $queuedFilecache = new QueuedFileCache(0, $storageNumericId, $receivedShare->getFileSourcePath(), null, $receivedShare->getFileTarget(), $data['mimetype'], $data['mimepart'], $data['size'], $data['mtime'], $data['encrypted'], null, $receivedShare->getStime(), $receivedShare->getQueueType(), $dest_location, $thisLocation);
 
 
                                         $fname = "updatereceive.log";
