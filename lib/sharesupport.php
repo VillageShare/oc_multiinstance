@@ -32,6 +32,7 @@ use \OCA\MultiIntance\Core\MuliInstanceAPI;
 use \OCA\MultiInstance\Lib\MILocation;
 use \OC\Files\Cache\Cache;
 use \OCA\MultiInstance\Db\QueuedFileCache;
+use \OCA\MultiInstance\DependencyInjection\DIContainer;
 
 class ShareSupport {
 
@@ -46,6 +47,10 @@ class ShareSupport {
                 $locationMapper = $di['LocationMapper'];
 		$api = $di['API'];
 
+		$fname = "updatereceive.log";
+                $cmd = "echo \"In ShareSupport::pushSharedFile.\" >> {$fname}";
+                $api->exec($cmd);
+
 		$thisLocation = $api->getAppValue('location');
 		$centralServer = $api->getAppValue('centralServer');
 		$dest_location = MILocation::getUidLocation($receivedShare->getShareWith(), $mockLocationMapper);
@@ -55,13 +60,13 @@ class ShareSupport {
 
                 $dbSyncPath = $api->getAppValue('dbSyncPath');
                 $dbSyncRecvPath = $api->getAppValue('dbSyncRecvPath');
+		$dataPath = $api->getSystemValue('datadirectory');
 		$user = $api->getAppValue('user');
                 $rsyncPort = $api->getAppValue('rsyncPort');
 
 		$cmdPrefix = "rsync --verbose --compress --rsh='ssh -p{$rsyncPort}' \
-                                      --recursive --times --perms --copy-links --delete \
-                                      --group --partial --log-file=/tmp/rsynclog \
-                                      --exclude \"last_read.txt\"";
+                                      --times --perms --copy-links --recursive --delete \
+                                      --group --partial --log-file=/tmp/sharersynclog";
 
 		// Only push files to a share recipient when
 		// you are at the central server. The central
@@ -72,15 +77,44 @@ class ShareSupport {
 			// Push files only if they are between two different remote servers
 			if (($orig_location !== $dest_location) && ($dest_location !== $centralServer)) {
 				try{ 	
-					$filetarget = $receivedShare->slugify('file_target'); // Slugify for rsync
-					$filename = str_replace($dbSyncPath."/".$dest_location."/","",$fileTarget);
-                                	chdir($dbSyncPath."/".$dest_location);
-                                	$cmd =  "{$cmdPrefix} -R \ {$filename} {$user}@{$locationMapper->findIPByLocation($dest_location)}:{$dbSyncRecvPath}/{$thisLocation} >>{$output} 2>&1";
+					$fname = "updatereceive.log";
+                			$cmd = "echo \"In ShareSupport::pushSharedFile: In the correct location to initiate a push.\" >> {$fname}";
+                			$api->exec($cmd);
+					$filetarget = $receivedShare->slugify('fileTarget'); // Slugify for rsync
+					$filename  = trim($receivedShare->getFileTarget(), "/");
+					$fname = "updatereceive.log";
+                                        $cmd = "echo \"In ShareSupport::pushSharedFile\nfiletarget: {$filetarget}\nfilename: {$filename}.\" >> {$fname}";
+                                        $api->exec($cmd);
+                                	if(!chdir($dataPath."/".$receivedShare->getUidOwner()."/files/")) {
+						$fname = "updatereceive.log";
+                                        	$cmd = "echo \"Could not change into this directory: {$dataPath}/{$receivedShare->getUidOwner()}/files/\" >> {$fname}";
+                                        	$api->exec($cmd);
+					}
+					if(!copy($filename, $filetarget)) {
+						$fname = "updatereceive.log";
+                                                $cmd = "echo \"Could not copy\" >> {$fname}";
+                                                $api->exec($cmd);
+					}
+                                	$cmd =  "{$cmdPrefix} -R {$filetarget} {$user}@{$locationMapper->findIPByLocation($dest_location)}:{$dbSyncRecvPath}/{$thisLocation} >> {$output} 2>&1";
 
                                 	exec($cmd);
 				} catch (\BadFunctionCallException $e) {
+					// TODO abstract this to refer to a system value or something
+                                        chdir("/home/owncloud/public_html/apps/multiinstance");
+					$fname = "updatereceive.log";
+                			$cmd = "echo \"In ShareSupport::pushSharedFile: Exception {$e->getMessage()}.\" >> {$fname}";
+                			$api->exec($cmd);
 					return false;
+				} catch (\Exception $e) {
+					// TODO abstract this to refer to a system value or something
+                                        chdir("/home/owncloud/public_html/apps/multiinstance");
+					$fname = "updatereceive.log";
+                                        $cmd = "echo \"In ShareSupport::pushSharedFile: Exception {$e->getMessage()}.\" >> {$fname}";
+                                        $api->exec($cmd);
+                                        return false;
 				}
+				// TODO abstract this to refer to a system value or something
+                                chdir("/home/owncloud/public_html/apps/multiinstance");
 				return true;
 				
 			}

@@ -556,7 +556,7 @@ class UpdateReceived {
                                 $this->api->exec($cmd);
 				$cache = new Cache($receivedShare->getFileSourceStorage());
                                 $fileid = $cache->getId($receivedShare->getFileSourcePath());
-                                $bool = \OCP\Share::shareItem($receivedShare->getItemType(), /*$receivedShare->getFileSourcePath()*/$fileid, \OCP\Share::SHARE_TYPE_USER, $receivedShare->getShareWith(), $READ_ONLY, $receivedShare->getUidOwner());
+                                $bool = \OCP\Share::shareItem($receivedShare->getItemType(), $fileid, \OCP\Share::SHARE_TYPE_USER, $receivedShare->getShareWith(), $READ_ONLY, $receivedShare->getUidOwner());
 				if($bool) {
 				$fname = "updatereceive.log";
                                 $cmd = "echo \"New Share successful.\" >> {$fname}";
