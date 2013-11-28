@@ -169,7 +169,7 @@ class MILocation{
 		$rsyncPathString = $api->getAppValue('dbSyncRecvPath') . $serverName . '/' . (string)$fileid;
 		$fullLocalPathString = $api->getSystemValue('datadirectory') . $subStorage . $path;
 	        $fname = "updatereceive.log";
-                                $cmd = "echo \"copyFile:\nrsyncPath: {$rsyncPathString}\nfullLocalPath: {$fullLocalPathString}\" >> {$fname}";
+                $cmd = "echo \"copyFile:\nrsyncPath: {$rsyncPathString}\nfullLocalPath: {$fullLocalPathString}\" >> {$fname}";
                 $api->exec($cmd);
 	
 		$rsyncPath = escapeshellarg($api->getAppValue('dbSyncRecvPath') . $serverName . '/' . (string)$fileid);

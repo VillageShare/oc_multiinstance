@@ -318,7 +318,6 @@ class UpdateReceived {
 	//TODO create everything for this
 	public function updatePermissionsFromReceivedPermissions() {
 		$receivedPermissions = $this->receivedPermissionMapper->findAll();
-
 		foreach ($receivedPermissions as $receivedPermission) {
 			$dataPath = $this->api->getSystemValue('datadirectory');
 			$storagePath = "local::" . $dataPath . '/' . $receivedPermission->getUser() . '/';
@@ -348,9 +347,13 @@ class UpdateReceived {
 					$this->permissionUpdateMapper->update($permissionUpdate);
 				}
 			} 
-			catch (DoesNotExistException $e) {
+			catch (DoesNotExistException $e) {	
+				shell_exec("echo {$e->getMessage()} >> updatereceived.log");	
 					$permissionUpdate = new PermissionUpdate($fileid, $receivedPermission->getUser(), $receivedPermission->getAddedAt(), $receivedPermission->getState());
 					$this->permissionUpdateMapper->insert($permissionUpdate);
+			} catch (\Exception $e) {
+
+				shell_exec("echo {$e->getMessage()} >> updatereceived.log");	
 			}
 
 			//new event
@@ -444,8 +447,23 @@ class UpdateReceived {
 					$fullPath = $receivedShare->getFileSourceStorage();
                         		$cache = new Cache($fullPath);
                         		$storageNumericId = $cache->getNumericStorageId();
-					$data = $cache->get(trim($receivedShare->getFileTarget(), "/"));
-                                        $queuedFilecache = new QueuedFileCache(0, $storageNumericId, $receivedShare->getFileSourcePath(), null, trim($receivedShare->getFileTarget(), "/"), $data['mimetype'], $data['mimepart'], $data['size'], $data['mtime'], $data['encrypted'], null, $receivedShare->getStime(), $receivedShare->getQueueType(), $dest_location, $thisLocation);
+					$fname = "updatereceive.log";
+                                        $cmd = "echo \"Prepping QueuedFileCache. storageNumericId: {$storageNumericId}\nfileTarget: {$receivedShare->getFileTarget()}\" >> {$fname}";
+                                        $this->api->exec($cmd);
+					$hash = md5($receivedShare->getFileSourcePath());
+					$fname = "updatereceive.log";
+                                        $cmd = "echo \"path_hash: {$hash}\" >> {$fname}";
+                                        $this->api->exec($cmd);
+					$fileid = $cache->getId($receivedShare->getFileSourcePath());
+					$fname = "updatereceive.log";
+                                        $cmd = "echo \"FileId: {$fileid}\" >> {$fname}";
+                                        $this->api->exec($cmd);
+					$data = $cache->get((int)$fileid);
+					$var = var_dump($data);
+					$fname = "updatereceive.log";
+                                        $cmd = "echo \"Data: {$var}\" >> {$fname}";
+                                        $this->api->exec($cmd);
+                                        $queuedFilecache = new QueuedFileCache($fileid, $storageNumericId, $receivedShare->getFileSourcePath(), null, trim($receivedShare->getFileTarget(), "/"), $data['mimetype'], $data['mimepart'], $data['size'], $data['mtime'], $data['encrypted'], null, $receivedShare->getStime(), $receivedShare->getQueueType(), $dest_location, $thisLocation);
                                         
 					$fname = "updatereceive.log";
                                         $cmd = "echo \"Created new QueuedFileCache.\" >> {$fname}";
@@ -507,14 +525,27 @@ class UpdateReceived {
                                         $fname = "updatereceive.log";
                                         $cmd = "echo \"Created QueuedShare.\" >> {$fname}";
                                         $this->api->exec($cmd);
-
-                                        // Handle FileCache
-					//$queuedFilecache = new QueuedFileCache(0, $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), null, $receivedShare->getFileTarget(), null, null, null, null, null, $receivedShare->getStime(), $receivedShare->getQueueType(), $dest_location, $thisLocation);
+					
 					$fullPath = $receivedShare->getFileSourceStorage();
                                         $cache = new Cache($fullPath);
                                         $storageNumericId = $cache->getNumericStorageId();
-                                        $data = $cache->get($receivedShare->getFileTarget());
-	                                $queuedFilecache = new QueuedFileCache(0, $storageNumericId, $receivedShare->getFileSourcePath(), null, $receivedShare->getFileTarget(), $data['mimetype'], $data['mimepart'], $data['size'], $data['mtime'], $data['encrypted'], null, $receivedShare->getStime(), $receivedShare->getQueueType(), $dest_location, $thisLocation);
+                                        $fname = "updatereceive.log";
+                                        $cmd = "echo \"Prepping QueuedFileCache. storageNumericId: {$storageNumericId}\nfileTarget: {$receivedShare->getFileTarget()}\" >> {$fname}";
+                                        $this->api->exec($cmd);
+                                        $hash = md5($receivedShare->getFileSourcePath());
+                                        $fname = "updatereceive.log";
+                                        $cmd = "echo \"path_hash: {$hash}\" >> {$fname}";
+                                        $this->api->exec($cmd);
+                                        $fileid = $cache->getId($receivedShare->getFileSourcePath());
+                                        $fname = "updatereceive.log";
+                                        $cmd = "echo \"FileId: {$fileid}\" >> {$fname}";
+                                        $this->api->exec($cmd);
+                                        $data = $cache->get((int)$fileid);
+                                        $var = var_dump($data);
+                                        $fname = "updatereceive.log";
+                                        $cmd = "echo \"Data: {$var}\" >> {$fname}";
+                                        $this->api->exec($cmd);
+                                        $queuedFilecache = new QueuedFileCache($fileid, $storageNumericId, $receivedShare->getFileSourcePath(), null, trim($receivedShare->getFileTarget(), "/"), $data['mimetype'], $data['mimepart'], $data['size'], $data['mtime'], $data['encrypted'], null, $receivedShare->getStime(), $receivedShare->getQueueType(), $dest_location, $thisLocation);
 
 
                                         $fname = "updatereceive.log";
