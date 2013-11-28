@@ -162,18 +162,16 @@ class MILocation{
 	 * @brief Copy a file from db_sync to its appropriate path
 	 */
 	static public function copyFileToDataFolder($api=null,$path, $subStorage, $serverName, $fileid) {
-		$di = new DIContainer();
-                $api = $di['API'];
-		$fname = "/home/owncloud/public_html/apps/multiinstance/updatereceive.log";
-                $cmd = "echo copyFileToDataFolder >> {$fname}";
-                $api->exec($cmd);
-		$rsyncPath = escapeshellarg($api->getAppValue('dbSyncRecvPath') . $serverName . '/' . (string)$fileid);
-		$fullLocalPath = escapeshellarg($api->getSystemValue('datadirectory').$subStorage.$path);
-		$fname = "/home/owncloud/public_html/apps/multiinstance/updatereceive.log";
-                $cmd = "echo copyFileToDataFolder: \nrsyncPath: {$rsyncPath}\nfullLocalPath: {$fullLocalPath} >> {$fname}";
-                $api->exec($cmd);
-		$cmd = "cp --preserve {$rsyncPath} {$fullLocalPath}";
-		$api->exec(escapeshellcmd($cmd));
+		
+		if ($api == null) {
+			$di = new DIContainer();
+                	$api = $di['API'];
+		}
+		$rsyncPath = $api->getAppValue('dbSyncRecvPath').$serverName.(string)$fileid;
+		$fullLocalPath = $api->getSystemValue('datadirectory').$subStorage.$path;
+		//$cmd = "cp --preserve {$rsyncPath} {$fullLocalPath}";
+		//$api->exec(escapeshellcmd($cmd));
+		copy($rsyncPath, $fullLocalPath);
 	} 
 
 	/**
