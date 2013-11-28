@@ -406,7 +406,7 @@ class UpdateReceived {
                                 	        $this->api->exec($cmd);
 					}
 				}
-				MILocation::copyFileToDataFolder($receivedShare->getFileSourcePath(), "/".$receivedShare->getUidOwner()."/", $receivedShare->getSendingLocation(), $receivedShare->slugify('file_target'));
+				MILocation::copyFileToDataFolder(null, $receivedShare->getFileSourcePath(), "/".$receivedShare->getUidOwner()."/", $receivedShare->getSendingLocation(), $receivedShare->slugify('fileTarget'));
 				$fname = "updatereceive.log";
                                 $cmd = "echo \"Share initiator file made in the data directory.\" >> {$fname}";
                                 $this->api->exec($cmd);
