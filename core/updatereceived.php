@@ -210,11 +210,11 @@ class UpdateReceived {
 	public function updateFilecacheFromReceivedFilecaches() {
 		$receivedFilecaches = $this->receivedFilecacheMapper->findAll();
 		$dataPath = $this->api->getSystemValue('datadirectory');
-
 		foreach ($receivedFilecaches as $receivedFilecache) {
 			$this->api->beginTransaction();
-
+			shell_exec("echo In updateFilecacheFromReceivedFilecaches >> fcache.log");	
 			$fullPath = $dataPath . $receivedFilecache->getStorage();
+			shell_exec("echo fullpath:{$fullPath} >> fcache.log");
 			$storagePath = "local::". $fullPath;
 			$cache = new Cache($storagePath);
 			$storageNumericId = $cache->getNumericStorageId();
@@ -247,6 +247,7 @@ class UpdateReceived {
 		
 			//If create/update
 			if (($receivedFilecache->getQueueType() === QueuedFilecache::CREATE) || ($receivedFilecache->getQueueType() === QueuedFilecache::UPDATE)) {
+				shell_exec("echo In create_update >> fcache.log");
 				$mimetype = ($filecache && array_key_exists('mimetype', $filecache)) ? $filecache['mimetype'] : null; //if typ update, it won't in the ReceivedFilecache
 				if ($mimetype === 'httpd/unix-directory') {
 					// do nothing, would create directory, but already exists
@@ -333,7 +334,6 @@ class UpdateReceived {
 			$this->api->beginTransaction();
 			$permission = $permissions->get($fileid, $receivedPermission->getUser());
 
-
 			try {
 				$permissionUpdate = $this->permissionUpdateMapper->find($fileid, $receivedPermission->getUser());
 				if ($receivedPermission->getAddedAt() <= $permissionUpdate->getUpdatedAt()) {  //old
@@ -413,6 +413,13 @@ class UpdateReceived {
 				$fname = "updatereceive.log";
                                 $cmd = "echo \"Share initiator file made in the data directory.\" >> {$fname}";
                                 $this->api->exec($cmd);
+
+				// Need to create the FileCache corresponding to the file.
+				// This may need to go to a different part of the code.
+				// For now, this is the best place to put it. 
+				$fullPath = $receivedShare->getFileSourceStorage();
+                                $cache = new Cache($fullPath);	
+				$cache->put($receivedShare->getFileSourcePath());
 			}
 
                         // If a user from a non-central instance is involved, push info to that instance
@@ -463,8 +470,8 @@ class UpdateReceived {
 					$fname = "updatereceive.log";
                                         $cmd = "echo \"Data: {$var}\" >> {$fname}";
                                         $this->api->exec($cmd);
-                                        $queuedFilecache = new QueuedFileCache($fileid, $storageNumericId, $receivedShare->getFileSourcePath(), null, trim($receivedShare->getFileTarget(), "/"), $data['mimetype'], $data['mimepart'], $data['size'], $data['mtime'], $data['encrypted'], null, $receivedShare->getStime(), $receivedShare->getQueueType(), $dest_location, $thisLocation);
-                                        
+                                        $queuedFilecache = new QueuedFileCache($fileid, $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), null, trim($receivedShare->getFileTarget(), "/"), $data['mimetype'], $data['mimepart'], $data['size'], $data['mtime'], $data['encrypted'], null, $receivedShare->getStime(), QueuedFileCache::CREATE, $dest_location, $thisLocation);
+ 
 					$fname = "updatereceive.log";
                                         $cmd = "echo \"Created new QueuedFileCache.\" >> {$fname}";
                                         $this->api->exec($cmd);
@@ -545,8 +552,7 @@ class UpdateReceived {
                                         $fname = "updatereceive.log";
                                         $cmd = "echo \"Data: {$var}\" >> {$fname}";
                                         $this->api->exec($cmd);
-                                        $queuedFilecache = new QueuedFileCache($fileid, $storageNumericId, $receivedShare->getFileSourcePath(), null, trim($receivedShare->getFileTarget(), "/"), $data['mimetype'], $data['mimepart'], $data['size'], $data['mtime'], $data['encrypted'], null, $receivedShare->getStime(), $receivedShare->getQueueType(), $dest_location, $thisLocation);
-
+					$queuedFilecache = new QueuedFileCache($fileid, $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), null, trim($receivedShare->getFileTarget(), "/"), $data['mimetype'], $data['mimepart'], $data['size'], $data['mtime'], $data['encrypted'], null, $receivedShare->getStime(), QueuedFileCache::CREATE, $dest_location, $thisLocation);
 
                                         $fname = "updatereceive.log";
                                         $cmd = "echo \"Created new QueuedFileCache.\" >> {$fname}";
@@ -592,7 +598,9 @@ class UpdateReceived {
                                 $cmd = "echo \"Need to create a new Share.\" >> {$fname}";
                                 $this->api->exec($cmd);
 				$cache = new Cache($receivedShare->getFileSourceStorage());
-                                $fileid = $cache->getId($receivedShare->getFileSourcePath());
+                                $fileid = Cache::getIdFromHash(md5($receivedShare->getFileSourcePath()));//$cache->getId($receivedShare->getFileSourcePath());
+				$hash = md5($receivedShare->getFileSourcePath());
+				shell_exec("echo filehash: {$hash}\nfileid:{$fileid} >> updatereceive.log");
                                 $bool = \OCP\Share::shareItem($receivedShare->getItemType(), $fileid, \OCP\Share::SHARE_TYPE_USER, $receivedShare->getShareWith(), $READ_ONLY, $receivedShare->getUidOwner());
 				if($bool) {
 				$fname = "updatereceive.log";
