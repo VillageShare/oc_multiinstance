@@ -25,7 +25,6 @@ if ps -ef | grep -v grep | grep processAndSyncAll.php ; then
 	echo "processAndSyncAll.php is not starting because it is already running." >> /home/owncloud/public_html/apps/multiinstance/cron/error.txt 
         exit 0
 else
-	#Change this path to be the path to multiinstance/cron/processAndSyncAll.php
 	php5 /home/owncloud/public_html/apps/multiinstance/cron/processAndSyncAll.php >> /home/owncloud/public_html/apps/multiinstance/cron/error.txt &
         exit 0
 fi

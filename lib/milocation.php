@@ -144,8 +144,8 @@ class MILocation{
 	 */
 	static public function linkFileForSyncing($api, $path, $subStorage, $serverName, $fileid) {
 		
-
-		$fullLocalPath = escapeshellarg($api->getSystemValue('datadirectory').$subStorage.$path);
+		$subsubstorage = end(explode("::", $subStorage));
+		$fullLocalPath = escapeshellarg($api->getSystemValue('datadirectory')."/".$subsubstorage."/".$path);
 		$rsyncPath = escapeshellarg($api->getAppValue('dbSyncPath') . $serverName . '/' .(string)$fileid);
 		$cmd = "ln -s {$fullLocalPath} {$rsyncPath}";
 		$api->exec(escapeshellcmd($cmd));
@@ -198,5 +198,30 @@ class MILocation{
 			$api->log("Storage without '/data/' in it.  Implementation depends on that.  storage = {$storage}");
 			return false;
 		}
+	}
+
+	/**
+	 *@brief Helper function for queueFile
+	 *@param $storageId string
+	 */
+	static public function getStoragePathFromId($storageId, $mockAPI=null) {
+		if ($mockAPI) {
+			$api = $mockAPI;
+		} else {
+			$di = new DIContainer();
+			$api = $di['API'];
+		}
+		$storagePath = null;
+		$sql = 'SELECT id as fullStorageId FROM `oc_storages` WHERE `numeric_id` = ?';
+		$params = array($storageId);
+		$retval = array();
+		$retval = \OC_DB::executeAudited(\OC_DB::prepare($sql), $params);
+		$result = $retval->fetchRow();
+		if ($result !== null) {
+			$storagePath = $result['fullStorageId'];
+		} else {
+			$api->log("Failed to procure full storage path for storageId = {$storageId}");
+		}
+		return $storagePath;
 	}
 }

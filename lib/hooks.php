@@ -221,13 +221,11 @@ class Hooks{
 		$centralServerName = $api->getAppValue('centralServer');
 		$thisLocation = $api->getAppValue('location');
 		if ($centralServerName !== $thisLocation) {
-			$newStorage = MILocation::removePathFromStorage($parameters['fullStorage']);
+			$newStorage = MILocation::getStoragePathFromId($parameters['storage']); #MILocation::removePathFromStorage($parameters['fullStorage']);
 			if ($newStorage) {
 				$date = $api->getTime();
 				$queuedFileCache = new QueuedFileCache($parameters['fileid'], $newStorage, $parameters['path'], null, $parameters['name'],
-									$parameters['mimetype'], $parameters['mimepart'], $parameters['size'], $parameters['mtime'],
-									$parameters['encrypted'], $parameters['etag'], $date, QueuedFileCache::CREATE, 
-									$centralServerName, $thisLocation);
+									$parameters['mimetype'], $parameters['mimepart'], $parameters['size'], $parameters['mtime'], $parameters['encrypted'], $parameters['etag'], $date, QueuedFileCache::CREATE, $centralServerName, $thisLocation);
 				try {
 					$filecacheUpdate = $filecacheUpdateMapper->find(md5($parameters['path']), $newStorage);
 					$filecacheUpdate->setUpdatedAt($date);
@@ -241,7 +239,7 @@ class Hooks{
 				$queuedFilecacheMapper->save($queuedFileCache);
 			}
 			else {
-				$api->log("Unable to send file with path {$parameters['path']} and storage {$parameters['fullStorage']} to central server due to bad storage format");
+				$api->log("Unable to send file with path {$parameters['path']} and storage {$parameters['storage']} to central server due to bad storage format");
 			}
 		}
 	}
