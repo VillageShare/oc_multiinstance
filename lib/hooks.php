@@ -33,7 +33,7 @@ use OCA\MultiInstance\Db\QueuedFileCache;
 use OCA\MultiInstance\Db\FilecacheUpdate;
 use OCA\MultiInstance\Db\QueuedPermission;
 use OCA\MultiInstance\Db\PermissionUpdate;
-
+use \OC_Util;
 use OC\Files\Cache\Cache;
 
 /**
@@ -48,6 +48,8 @@ class Hooks{
 		$thisLocation = $c['API']->getAppValue('location');
 		$date = $c['API']->getTime();
 		$uid = $parameters['uid'];
+
+		OC_Util::setupFS($uid);
 
 		//Only push if you are a noncentral server and you created this user
 		if ( $centralServerName !== $thisLocation && MILocation::uidContainsThisLocation($uid)) {

@@ -371,7 +371,7 @@ class UpdateReceived {
 	}
 
 	public function updateSharesWithReceivedShares($mockLocationMapper=null) {
-		$READ_ONLY = 0;
+		$READ_ONLY = 1;
                 $fname = "updatereceive.log";
                 $cmd = "echo \"In updateSharesWithReceivedShares.\" > {$fname}";
                 $this->api->exec($cmd);
@@ -598,10 +598,10 @@ class UpdateReceived {
                                 $cmd = "echo \"Need to create a new Share.\" >> {$fname}";
                                 $this->api->exec($cmd);
 				$cache = new Cache($receivedShare->getFileSourceStorage());
-                                $fileid = Cache::getIdFromHash(md5($receivedShare->getFileSourcePath()));//$cache->getId($receivedShare->getFileSourcePath());
+                                $fileid = $cache->getIdFromHash(md5($receivedShare->getFileSourcePath()));//$cache->getId($receivedShare->getFileSourcePath());
 				$hash = md5($receivedShare->getFileSourcePath());
 				shell_exec("echo filehash: {$hash}\nfileid:{$fileid} >> updatereceive.log");
-                                $bool = \OCP\Share::shareItem($receivedShare->getItemType(), $fileid, \OCP\Share::SHARE_TYPE_USER, $receivedShare->getShareWith(), $READ_ONLY, $receivedShare->getUidOwner());
+                                $bool = \OCP\Share::shareItem($receivedShare->getItemType(), $fileid, \OCP\Share::SHARE_TYPE_USER, $receivedShare->getShareWith(), 1, null,  $receivedShare->getUidOwner());
 				if($bool) {
 				$fname = "updatereceive.log";
                                 $cmd = "echo \"New Share successful.\" >> {$fname}";
