@@ -30,13 +30,13 @@ namespace OCA\MultiInstance;
 
 //This instance's location settings
 //location name should be in Linux file format (no spaces, etc), as it will be used as a folder name
-\OCP\Config::setAppValue('multiinstance', 'location', 'Kalene');
+\OCP\Config::setAppValue('multiinstance', 'location', 'School1');
 //IP address
-\OCP\Config::setAppValue('multiinstance', 'ip', '128.111.52.185');
+\OCP\Config::setAppValue('multiinstance', 'ip', '128.111.52.151');
 
 //ip or domain name of UCSB server (or whatever the central server is)
-\OCP\Config::setAppValue('multiinstance', 'centralServerIP', '128.111.52.220');
-\OCP\Config::setAppValue('multiinstance', 'centralServer', 'UCSB');
+\OCP\Config::setAppValue('multiinstance', 'centralServerIP', '128.111.52.186');
+\OCP\Config::setAppValue('multiinstance', 'centralServer', 'CSIR');
 
 
 //path to apps/multiinstance/cron/error.txt
@@ -64,7 +64,8 @@ $rsyncPort = 10001;
 \OCP\Util::connectHook('FriendshipMapper', 'post_accept', 'OCA\MultiInstance\Lib\Hooks', 'updateFriendship');
 \OCP\Util::connectHook('FriendshipMapper', 'post_create', 'OCA\MultiInstance\Lib\Hooks', 'updateFriendship');
 \OCP\Util::connectHook('FriendshipMapper', 'post_delete', 'OCA\MultiInstance\Lib\Hooks', 'updateFriendship');
-\OCP\Util::connectHook('Cache', 'post_put', 'OCA\MultiInstance\Lib\Hooks', 'queueFile');
+\OCP\Util::connectHook('OC_Filesystem', 'post_filecache', 'OCA\MultiInstance\Lib\Hooks', 'queueFile');
+#\OCP\Util::connectHook('Cache', 'post_put', 'OCA\MultiInstance\Lib\Hooks', 'queueFile');
 \OCP\Util::connectHook('Cache', 'post_update', 'OCA\MultiInstance\Lib\Hooks', 'queueFileUpdate');
 \OCP\Util::connectHook('Cache', 'post_delete', 'OCA\MultiInstance\Lib\Hooks', 'queueFileDelete');
 \OCP\Util::connectHook('Permissions', 'post_set', 'OCA\MultiInstance\Lib\Hooks', 'queuePermissionUpdate');

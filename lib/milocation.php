@@ -144,8 +144,8 @@ class MILocation{
 	 */
 	static public function linkFileForSyncing($api, $path, $subStorage, $serverName, $fileid) {
 		
-		$subsubstorage = end(explode($subStorage, "::"));
-		$fullLocalPath = escapeshellarg($api->getSystemValue('datadirectory').$subsubstorage.$path);
+		$subsubstorage = end(explode("::", $subStorage));
+		$fullLocalPath = escapeshellarg($api->getSystemValue('datadirectory')."/".$subsubstorage."/".$path);
 		$rsyncPath = escapeshellarg($api->getAppValue('dbSyncPath') . $serverName . '/' .(string)$fileid);
 		$cmd = "ln -s {$fullLocalPath} {$rsyncPath}";
 		$api->exec(escapeshellcmd($cmd));

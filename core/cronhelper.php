@@ -128,14 +128,14 @@ class CronHelper {
 
       	        	                $dirlist = $this->getFileList($dbSyncPath."/".$locationName, true);
         	                        foreach ($dirlist as $file) {
-                                        	if ($file['size'] < $this->api->getAppValue('filesizecutoff')) {
+                                        	#if ($file['size'] < $this->api->getAppValue('filesizecutoff')) {
                                                 	$filename = str_replace($dbSyncPath."/".$locationName."/","",$file['name']);
                                                 	chdir($dbSyncPath."/".$locationName);
                                                 	$cmd =  "{$cmdPrefix} -R \
                                                         	{$filename} {$user}@{$location->getIP()}:{$dbSyncRecvPath}/{$thisLocation} >>{$output} 2>&1";
 
                                                 	exec($cmd);
-                                        	}
+                                        	#}
 
                                 	}
 
@@ -152,7 +152,7 @@ class CronHelper {
 			}
 		}
 		else { //not-central server
-
+			$locationName = $centralServerName;
 			$microTime = $this->api->microTime();
 			$cmd = "echo {$microTime} > {$dbSyncPath}{$centralServerName}/last_updated.txt";
 			$this->api->exec($cmd);
@@ -170,14 +170,14 @@ class CronHelper {
 
                         	$dirlist = $this->getFileList($dbSyncPath."/".$locationName, true);
                                 foreach ($dirlist as $file) {
-                                	if ($file['size'] < $this->api->getAppValue('filesizecutoff')) {
+                                	#if ($file['size'] < $this->api->getAppValue('filesizecutoff')) {
                                         	$filename = str_replace($dbSyncPath."/".$centralServerName."/","",$file['name']);
                                                 chdir($dbSyncPath."/".$centralServerName);
                                                 $cmd =  "{$cmdPrefix} -R \
                                                 	{$filename} {$user}@{$server}:{$dbSyncRecvPath}/{$thisLocation} >>{$output} 2>&1";
 
                                               	exec($cmd);
-                                        } 
+                                        #} 
 					
                                	}
 
