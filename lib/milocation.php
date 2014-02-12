@@ -166,16 +166,22 @@ class MILocation{
 			$di = new DIContainer();
                 	$api = $di['API'];
 		}
+		//$newStorage = self::getStoragePathFromId($subStorage);
+		$subStorage = end(explode("::", $subStorage));
 		$rsyncPathString = $api->getAppValue('dbSyncRecvPath') . $serverName . '/' . (string)$fileid;
-		$fullLocalPathString = $api->getSystemValue('datadirectory') . $subStorage . $path;
-	        $fname = "updatereceive.log";
+		$fullLocalPathString = $api->getSystemValue('datadirectory') . "/" . $subStorage; #. "/" . $path;
+	        $fname = "fcache.log";
                 $cmd = "echo \"copyFile:\nrsyncPath: {$rsyncPathString}\nfullLocalPath: {$fullLocalPathString}\" >> {$fname}";
                 $api->exec($cmd);
 	
 		$rsyncPath = escapeshellarg($api->getAppValue('dbSyncRecvPath') . $serverName . '/' . (string)$fileid);
-		$fullLocalPath = escapeshellarg($api->getSystemValue('datadirectory').$subStorage.$path);
+		$fullLocalPath = escapeshellarg($fullLocalPathString."/".$path);
 		$cmd = "cp --preserve {$rsyncPath} {$fullLocalPath}";
 		$api->exec(escapeshellcmd($cmd));
+
+		$fname = "fcache.log";
+                $cmd = "echo \"cp --preserve {$rsyncPathString} {$fullLocalPathString}\" >> {$fname}";
+                $api->exec($cmd);
 	} 
 
 	/**

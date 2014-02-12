@@ -212,10 +212,11 @@ class UpdateReceived {
 		$dataPath = $this->api->getSystemValue('datadirectory');
 		foreach ($receivedFilecaches as $receivedFilecache) {
 			$this->api->beginTransaction();
-			shell_exec("echo In updateFilecacheFromReceivedFilecaches >> fcache.log");	
-			$fullPath = $dataPath . $receivedFilecache->getStorage();
-			shell_exec("echo fullpath:{$fullPath} >> fcache.log");
-			$storagePath = "local::". $fullPath;
+			shell_exec("echo In updateFilecacheFromReceivedFilecaches >> fcache.log");
+			$userpath = end(explode("::",$receivedFilecache->getStorage()));
+			$fullPath = $dataPath . "/" . $userpath;
+			shell_exec("echo updateFilecache fullpath:{$fullPath} >> fcache.log");
+			$storagePath = $receivedFilecache->getStorage();//"local::". $fullPath;
 			$cache = new Cache($storagePath);
 			$storageNumericId = $cache->getNumericStorageId();
 	
