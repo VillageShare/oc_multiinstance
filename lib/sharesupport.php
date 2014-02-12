@@ -53,8 +53,8 @@ class ShareSupport {
 
 		$thisLocation = $api->getAppValue('location');
 		$centralServer = $api->getAppValue('centralServer');
-		$dest_location = MILocation::getUidLocation($receivedShare->getShareWith(), $mockLocationMapper);
-		$orig_location = MILocation::getUidLocation($receivedShare->getUidOwner(), $mockLocationMapper);
+		$dest_location = MILocation::getUidLocation($receivedShare->getShareWith(), $locationMapper);
+		$orig_location = MILocation::getUidLocation($receivedShare->getUidOwner(), $locationMapper);
 
                 $output = $api->getAppValue('cronErrorLog');
 
