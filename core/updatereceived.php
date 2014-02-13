@@ -410,7 +410,8 @@ class UpdateReceived {
                                 	        $this->api->exec($cmd);
 					}
 				}
-				MILocation::copyFileToDataFolder(null, $receivedShare->getFileSourcePath(), "/".$receivedShare->getUidOwner()."/", $receivedShare->getSendingLocation(), $receivedShare->slugify('fileTarget'));
+				// Copy file into the Share Owner's datafile directory
+				MILocation::copyFileToDataFolder(null, $receivedShare->getFileSourcePath(), "/".$receivedShare->getUidOwner()."/", $receivedShare->getSendingLocation(), ShareSupport::getOriginalFileIdFromReceivedShare($receivedShare->getDestinationLocation(), $receivedShare->getSendingLocation(), $receivedShare->getFileSourcePath()));#$receivedShare->slugify('fileTarget'));
 				$fname = "updatereceive.log";
                                 $cmd = "echo \"Share initiator file made in the data directory.\" >> {$fname}";
                                 $this->api->exec($cmd);
@@ -419,8 +420,13 @@ class UpdateReceived {
 				// This may need to go to a different part of the code.
 				// For now, this is the best place to put it. 
 				$fullPath = $receivedShare->getFileSourceStorage();
-                                $cache = new Cache($fullPath);	
-				$cache->put($receivedShare->getFileSourcePath());
+                                $cache = new Cache($fullPath);
+				$fileid = $cache->getId($receivedShare->getFileSourcePath());
+				$data = array();
+				$data = $cache->get((int)$fileid);
+				shell_exec("echo \"cache->get() has been executed.\" >> {$fname}");
+				$cache->put($receivedShare->getFileSourcePath(), $data);
+				shell_exec("echo \"cache->put() has been executed.\" >> {$fname}");
 			}
 
                         // If a user from a non-central instance is involved, push info to that instance

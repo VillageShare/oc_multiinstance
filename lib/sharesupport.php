@@ -122,4 +122,18 @@ class ShareSupport {
 		return false;
 	}
 
+	public static function getOriginalFileIdFromReceivedShare($recvDest, $sendDest, $fileSourcePath) {
+		
+		$sql = 'SELECT fileid as originalId FROM `oc_multiinstance_received_filecache` WHERE `sending_location` = ? AND `destination_location` = ? AND `path` = ?';
+                $params = array($sendDest, $recvDest, $fileSourcePath);
+                $retval = array();
+                $retval = \OC_DB::executeAudited(\OC_DB::prepare($sql), $params);
+                $result = $retval->fetchRow();
+		 if ($result !== null) {
+                        $originalId = $result['originalId'];
+                } else {
+                        $api->log("Failed to procure original file ID for sending_location = {$sendDest} destination_location = {$recvDest} path = {$fileSourcePath}");
+                }
+                return $originalId;		
+	}
 }
