@@ -64,7 +64,7 @@ class CronTask {
 		'multiinstance_queued_user_facebook_ids.sql' =>  '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+)\)$/', 
 		'multiinstance_queued_filecache.sql' => '/^INSERT.*VALUES \((?<storage>[^,]+),(?<path>[^,]+),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(?<timestamp>[^,]+),[^,]*,[^,]*,[^,]*\)$/',
 		'multiinstance_queued_permissions.sql' => '/^INSERT.*VALUES \((?<path>[^,]+),(?<user>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+),(?<destination>[^,]+)\)$/',
-		'multiinstance_queued_share.sql' => '/^INSERT.*VALUES \(?<share_type>[^,]+),(?<share_with>[^,]+),(?<uid_owner>[^,]+),[^,]*,[^,]*,(?<file_source_path>[^,]+),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(?<destination_location>[^,]+),(?<sending_location>[^,]+),[^,]*\)$/',
+		'multiinstance_queued_share.sql' => '/^INSERT.*VALUES \((?<share_type>[^,]+),(?<share_with>[^,]+),(?<uid_owner>[^,]+),[^,]*,[^,]*,(?<file_source_path>[^,]+),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(?<destination_location>[^,]+),(?<sending_location>[^,]+),[^,]*\)$/',
 	);
 
 	/**
