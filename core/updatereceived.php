@@ -255,7 +255,7 @@ class UpdateReceived {
 				}
 				else if ($receivedFilecache->getMimetype() === 'httpd/unix-directory' ) {
 					//make directory
-					$this->api->mkdir($this->api->getSystemValue('datadirectory').$receivedFilecache->getStorage().$receivedFilecache->getPath());
+					$this->api->mkdir($this->api->getSystemValue('datadirectory')."/".end(explode($receivedFilecache->getStorage()))."/".$receivedFilecache->getPath());
 				}
 				else {
 					MILocation::copyFileToDataFolder($this->api, $receivedFilecache->getPath(), $receivedFilecache->getStorage(), $receivedFilecache->getSendingLocation(), $receivedFilecache->getFileid());
