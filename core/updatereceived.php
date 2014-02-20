@@ -112,7 +112,8 @@ class UpdateReceived {
 				}
 			}
 			else {
-				//TODO: createUser will cause the user to be sent back to UCSB, maybe add another parameter?
+				//TODO: createUser will cause the user to be sent back to UCSB, maybe add another parameter?				
+				shell_exec("echo \"before createUser(); uid = {$uid} \" >> updateUsers.log");
 				$this->api->createUser($uid, 'dummy');  //create user with dummy password; this will create a UserUpdate with current time, not with received time
 				$this->api->setPassword($uid, $receivedUser->getPassword());
 				$userUpdate = $this->userUpdateMapper->find($uid);
