@@ -24,6 +24,10 @@ namespace OCA\MultiInstance\Lib;
 
 use OCA\AppFramework\Db\DoesNotExistException;
 use OCA\MultiInstance\Db\QueuedUser;
+use OCA\MultiInstance\Db\QueuedGroup;
+use OCA\MultiInstance\Db\GroupUpdate;
+use OCA\MultiInstance\Db\QueuedGroupAdmin;
+use OCA\MultiInstance\Db\QueuedGroupUser;
 use OCA\MultiInstance\Db\QueuedFriendship;
 use OCA\MultiInstance\Db\UserUpdate;
 use OCA\MultiInstance\Db\QueuedShare;
@@ -40,6 +44,51 @@ use OC\Files\Cache\Cache;
  * This class contains all hooks.
  */
 class Hooks{
+
+	static public function createGroup($parameters) {
+		$c = new DIContainer();
+                $centralServerName = $c['API']->getAppValue('centralServer');
+                $thisLocation = $c['API']->getAppValue('location');
+                $date = $c['API']->getTime();
+                $gid = $parameters['gid'];
+
+                //If you are at the central server, push to remote servers
+
+		//If you are not the central server push to central server
+                if ( $centralServerName !== $thisLocation) {
+                        $displayname = '';
+                        $queuedGroup = new QueuedUser($gid, $date, $centralServerName);
+                        $c['QueuedGroupMapper']->save($queuedGroup);
+                }
+                $groupUpdate = new GroupUpdate($gid, $date, $centralServerName);
+                $c['GroupUpdateMapper']->insert($groupUpdate);
+		
+	}
+
+	static public function queueGroupDelete($parameters) {
+		$c = new DIContainer();
+                $centralServerName = $c['API']->getAppValue('centralServer');
+                $thisLocation = $c['API']->getAppValue('location');
+                $date = $c['API']->getTime();
+                $gid = $parameters['gid'];
+
+                //Only push if you are a noncentral server and you created this group
+                if ( $centralServerName !== $thisLocation) {
+                        $displayname = '';
+                        $queuedGroup = new QueuedGroup($gid, $date, $centralServerName);
+                        $c['QueuedGroupMapper']->save($queuedGroup);
+                }
+                $groupUpdate = new GroupUpdate($gid, $date, $centralServerName);
+                $c['GroupUpdateMapper']->insert($groupUpdate);
+	}
+
+	static public function addToGroup($parameters) {
+		// TODO
+	}
+
+	static public function removeFromGroup($parameters) {
+		// TODO
+	}
 
 	//TODO: try catch with rollback
 	static public function createUser($parameters) {
@@ -220,9 +269,17 @@ class Hooks{
 
 		$centralServerName = $api->getAppValue('centralServer');
 		$thisLocation = $api->getAppValue('location');
+
+		$matches = array();
+
 		if ($centralServerName !== $thisLocation) {
 			$newStorage = MILocation::getStoragePathFromId($parameters['storage']); #MILocation::removePathFromStorage($parameters['fullStorage']);
 			if ($newStorage) {
+				$istrash = preg_match($newStorage, 'files_trashbin', $matches);
+				if ($istrash !== 0) {
+					$api->log("Unable to send file with path {$parameters['path']} and storage {$parameters['storage']} to central server because we do not support files in files_trashbin");
+					return;
+				}
 				$date = $api->getTime();
 				$queuedFileCache = new QueuedFileCache($parameters['fileid'], $newStorage, $parameters['path'], null, $parameters['name'],
 									$parameters['mimetype'], $parameters['mimepart'], $parameters['size'], $parameters['mtime'], $parameters['encrypted'], $parameters['etag'], $date, QueuedFileCache::CREATE, $centralServerName, $thisLocation);
@@ -302,7 +359,7 @@ class Hooks{
 		$centralServerName = $api->getAppValue('centralServer');
 		$thisLocation = $api->getAppValue('location');
 		if ($centralServerName !== $thisLocation) {
-			$newStorage = MILocation::removePathFromStorage($parameters['fullStorage']);
+			$newStorage = MILocation::getStoragePathFromId($parameters['storage']); # MILocation::removePathFromStorage($parameters['fullStorage']);
 			if ($newStorage) {
 				$date = $api->getTime();
 				$queuedFileCache = new QueuedFileCache(null, $newStorage, $parameters['path'], null, null,

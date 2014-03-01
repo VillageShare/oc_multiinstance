@@ -39,6 +39,14 @@ use OCA\Friends\Db\UserFacebookIdMapper;
 use OCA\MultiInstance\Db\QueuedUserFacebookIdMapper;
 use OCA\MultiInstance\Db\ReceivedUserFacebookIdMapper;
 
+use OCA\MultiInstance\Db\QueuedGroupMapper;
+use OCA\MultiInstance\Db\ReceivedGroupMapper;
+use OCA\MultiInstance\Db\QueuedGroupAdminMapper;
+use OCA\MultiInstance\Db\ReceivedGroupAdminMapper;
+use OCA\MultiInstance\Db\QueuedGroupUserMapper;
+use OCA\MultiInstance\Db\ReceivedGroupUserMapper;
+use OCA\MultiInstance\Db\GroupUpdateMapper;
+
 use OCA\MultiInstance\Db\QueuedRequestMapper;
 use OCA\MultiInstance\Db\ReceivedRequestMapper;
 use OCA\MultiInstance\Db\QueuedResponseMapper;
@@ -102,6 +110,35 @@ class DIContainer extends BaseContainer {
 		/**
 		 * MAPPERS
 		 */
+		$this['QueuedGroupMapper'] = $this->share(function($c){
+			return new QueuedGroupMapper($c['API']);
+		});
+
+		$this['ReceivedGroupMapper'] = $this->share(function($c){
+                        return new ReceivedGroupMapper($c['API']);
+                });
+
+		$this['QueuedGroupAdminMapper'] = $this->share(function($c){
+                        return new QueuedGroupAdminMapper($c['API']);
+                });
+
+		$this['ReceivedGroupAdminMapper'] = $this->share(function($c){
+                        return new ReceivedGroupAdminMapper($c['API']);
+                });
+
+		$this['QueuedGroupUserMapper'] = $this->share(function($c){
+                        return new QueuedGroupUserMapper($c['API']);
+                });
+
+                $this['ReceivedGroupUserMapper'] = $this->share(function($c){
+                        return new ReceivedGroupUserMapper($c['API']);
+                });
+
+		$this['GroupUpdateMapper'] = $this->share(function($c){
+                        return new GroupUpdateMapper($c['API']);
+                });
+
+
 		$this['LocationMapper'] = $this->share(function($c){
 			return new LocationMapper($c['API']);
 			
@@ -193,7 +230,7 @@ class DIContainer extends BaseContainer {
 			
 		});
 		$this['UpdateReceived'] = $this->share(function($c){
-			return new UpdateReceived($c['API'], $c['ReceivedUserMapper'], $c['UserUpdateMapper'], $c['ReceivedFriendshipMapper'], $c['UserFacebookIdMapper'], $c['ReceivedUserFacebookIdMapper'], $c['FriendshipMapper'], $c['QueuedFriendshipMapper'], $c['QueuedUserMapper'], $c['LocationMapper'], $c['ReceivedFileCacheMapper'], $c['FilecacheUpdateMapper'], $c['QueuedFileCacheMapper'], $c['ReceivedPermissionMapper'], $c['PermissionUpdateMapper'], $c['ReceivedShareMapper'], $c['ShareUpdateMapper'], $c['QueuedShareMapper']);
+			return new UpdateReceived($c['API'], $c['ReceivedUserMapper'], $c['UserUpdateMapper'],$c['ReceivedFriendshipMapper'], $c['UserFacebookIdMapper'], $c['ReceivedUserFacebookIdMapper'], $c['FriendshipMapper'], $c['QueuedFriendshipMapper'], $c['QueuedUserMapper'], $c['LocationMapper'], $c['ReceivedFileCacheMapper'], $c['FilecacheUpdateMapper'], $c['QueuedFileCacheMapper'], $c['ReceivedPermissionMapper'], $c['PermissionUpdateMapper'], $c['ReceivedShareMapper'], $c['ShareUpdateMapper'], $c['QueuedShareMapper'], $c['QueuedGroupMapper'], $c['ReceivedGroupMapper'], $c['QueuedGroupAdminMapper'], $c['ReceivedGroupAdminMapper'], $c['QueuedGroupUserMapper'], $c['ReceivedGroupUserMapper'], $c['GroupUpdateMapper']);
 			
 		});
 		$this['RequestResponse'] = $this->share(function($c){

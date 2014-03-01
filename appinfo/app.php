@@ -64,10 +64,13 @@ $rsyncPort = 10001;
 \OCP\Util::connectHook('FriendshipMapper', 'post_accept', 'OCA\MultiInstance\Lib\Hooks', 'updateFriendship');
 \OCP\Util::connectHook('FriendshipMapper', 'post_create', 'OCA\MultiInstance\Lib\Hooks', 'updateFriendship');
 \OCP\Util::connectHook('FriendshipMapper', 'post_delete', 'OCA\MultiInstance\Lib\Hooks', 'updateFriendship');
-\OCP\Util::connectHook('OC_Filesystem', 'post_filecache', 'OCA\MultiInstance\Lib\Hooks', 'queueFile');
+\OCP\Util::connectHook('Cache', 'post_create', 'OCA\MultiInstance\Lib\Hooks', 'queueFile');
 #\OCP\Util::connectHook('Cache', 'post_put', 'OCA\MultiInstance\Lib\Hooks', 'queueFile');
 \OCP\Util::connectHook('Cache', 'post_update', 'OCA\MultiInstance\Lib\Hooks', 'queueFileUpdate');
 \OCP\Util::connectHook('Cache', 'post_delete', 'OCA\MultiInstance\Lib\Hooks', 'queueFileDelete');
 \OCP\Util::connectHook('Permissions', 'post_set', 'OCA\MultiInstance\Lib\Hooks', 'queuePermissionUpdate');
 \OCP\Util::connectHook('Permissions', 'post_remove', 'OCA\MultiInstance\Lib\Hooks', 'queuePermissionDelete');
-
+\OCP\Util::connectHook('OC_Group', 'post_createGroup', 'OCA\MultiInstance\Lib\Hooks', 'createGroup');
+\OCP\Util::connectHook('OC_Group', 'post_deleteGroup', 'OCA\MultiInstance\Lib\Hooks', 'deleteGroup');
+\OCP\Util::connectHook('OC_Group', 'post_addToGroup', 'OCA\MultiInstance\Lib\Hooks', 'addToGroup');
+\OCP\Util::connectHook('OC_Group', 'post_removeFromGroup', 'OCA\MultiInstance\Lib\Hooks', 'removeFromGroup');
