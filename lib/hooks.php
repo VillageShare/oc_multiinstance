@@ -24,6 +24,8 @@ namespace OCA\MultiInstance\Lib;
 
 use OCA\AppFramework\Db\DoesNotExistException;
 use OCA\MultiInstance\Db\QueuedUser;
+use OCA\MultiInstance\Db\DeactivatedUser;
+use OCA\MultiInstance\Db\QueuedDeactivatedUser;
 use OCA\MultiInstance\Db\QueuedGroup;
 use OCA\MultiInstance\Db\GroupUpdate;
 use OCA\MultiInstance\Db\QueuedGroupAdmin;
@@ -57,7 +59,7 @@ class Hooks{
 		//If you are not the central server push to central server
                 if ( $centralServerName !== $thisLocation) {
                         $displayname = '';
-                        $queuedGroup = new QueuedUser($gid, $date, $centralServerName);
+                        $queuedGroup = new QueuedGroup($gid, $date, $centralServerName);
                         $c['QueuedGroupMapper']->save($queuedGroup);
                 }
                 $groupUpdate = new GroupUpdate($gid, $date, $centralServerName);
@@ -128,6 +130,27 @@ class Hooks{
 		$userUpdate = $c['UserUpdateMapper']->find($uid);
 		$userUpdate->setUpdatedAt($date);
 		$c['UserUpdateMapper']->update($userUpdate);
+	}
+
+	static public function deactivateUser($parameters) {
+		$c = new DIContainer();
+                $centralServerName = $c['API']->getAppValue('centralServer');
+                $date = $c['API']->getTime();
+                $uid = $parameters['uid'];
+
+		if ($centralServerName !== $c['API']->getAppValue('location')) {
+                        $displayname = '';
+                        $password = $c['API']->getPassword($uid); //Queue hashed password
+
+                        $deactivateUser = new DeactivatedUser($uid, $date);
+                        $c['DeactivatedUserMapper']->save($deactivatedUser);
+
+			$queuedDeactivateUser = new QueuedDeactivatedUser($uid, $date, $centralServerName);
+                        $c['QueuedDeactivatedUserMapper']->save($queuededDeactivatedUser);
+                }
+                $userUpdate = $c['UserUpdateMapper']->find($uid);
+                $userUpdate->setUpdatedAt($date);
+                $c['UserUpdateMapper']->update($userUpdate);
 	}
 
 	static public function updateFriendship($parameters, $mockAPI=null) { 

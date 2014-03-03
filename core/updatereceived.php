@@ -31,6 +31,8 @@ use \OCP\Share;
 use \OCA\Friends\Db\Friendship;
 use \OCA\MultiInstance\Db\QueuedFriendship;
 use \OCA\MultiInstance\Db\QueuedUser;
+use \OCA\MultiInstance\Db\QueuedDeactivatedUser;
+use \OCA\MultiInstance\Db\DeactivatedUser;
 use \OCA\MultiInstance\Db\QueuedPermission;
 use \OCA\MultiInstance\Db\PermissionUpdate;
 use \OCA\MultiInstance\Db\QueuedShare;
@@ -64,11 +66,13 @@ class UpdateReceived {
 	private $shareUpdateMapper;
         private $recievedShareMapper;
 	private $queuedShareMapper;
-
+	private $receivedDeactivatedUser;
+	private $queuedDeactivatedUser;
+	private $deactivatedUser;
 	/**
 	 * @param API $api: an api wrapper instance
 	 */
-	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $queuedUserMapper, $locationMapper, $receivedFilecacheMapper, $filecacheUpdateMapper, $queuedFilecacheMapper, $receivedPermissionMapper, $permissionUpdateMapper, $receivedShareMapper, $shareUpdateMapper, $queuedShareMapper){
+	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $queuedUserMapper, $locationMapper, $receivedFilecacheMapper, $filecacheUpdateMapper, $queuedFilecacheMapper, $receivedPermissionMapper, $permissionUpdateMapper, $receivedShareMapper, $shareUpdateMapper, $queuedShareMapper, $receivedDeactivatedUserMapper, $queuedDeactivatedUserMapper, $deactivatedUserMapper){
 		$this->api = $api;
 		$this->receivedUserMapper = $receivedUserMapper;
 		$this->userUpdateMapper = $userUpdateMapper;
@@ -87,6 +91,9 @@ class UpdateReceived {
 		$this->shareUpdateMapper = $shareUpdateMapper;
                 $this->receivedShareMapper = $receivedShareMapper;
 		$this->queuedShareMapper = $queuedShareMapper;
+		$this->receivedDeactivatedUserMapper = $receivedDeactivatedUserMapper;
+		$this->queuedDeactivatedUserMapper = $queuedDeactivatedUserMapper;
+		$this->deactivatedUserMapper = $deactivatedUserMapper;
 	}
 
 
@@ -110,7 +117,7 @@ class UpdateReceived {
 					//OC_User::setDisplayName($uid, $receivedUser->getDisplayname()); //display name has no hook at this time
 					
 				}
-			}
+			} 
 			else {
 				//TODO: createUser will cause the user to be sent back to UCSB, maybe add another parameter?				
 				shell_exec("echo \"before createUser(); uid = {$uid} \" >> updateUsers.log");
@@ -125,6 +132,47 @@ class UpdateReceived {
 
 		}
 
+	}
+
+	public function updateDeactivatedUsersWithReceivedDeactivatedUsers($mockLocationMapper=null) {
+		$receivedDeactivatedUsers = $this->receivedDeactivatedUsersMapper->findAll();
+		
+		foreach ($receivedDeactivatedUsers as $receivedDU) {
+			$this->api->beginTransaction();
+			$origin = MILocation::getUidLocation($receivedDU->getUid(), $mockLocationMapper);
+			$centralServer = $this->api->getAppValue('centralServer');
+                        $thisLocation = $this->api->getAppValue('location');
+			$status = $receivedDU->getStatus();
+			$allLocations = MILocation::getLocations();
+
+			if ($receivedDU->getDestination() == $centralServer && $thisLocation == $centralServer) {
+				//Queue to all other locations except the origin
+				for ($allLocations as $location) {
+					if ($location !== $thisLocation && $location != $origin) {
+						// Create queuedDU to send to location
+						$queuedDU = new QueuedDeactivatedUser($receivedDU->getUID(), $receivedDU->getAddedAt(), $location);
+						$this->queuedDeactivatedUserMapper->save($queuedDU);
+					}
+				}
+			}
+
+			if ($status == QueuedDeactivatedUser::DEACTIVATED) {
+				if(!$this->deactivatedUserMapper->exists($receivedDU->getUid())) {
+					// If it does not exist, create it
+					$deactivatedUser = new DeactivatedUser($receivedDU->getUid(), $receivedDU->getAddedAt());
+					$this->deactivatedUserMapper->save($deactivatedUser);
+				}
+			} else if ($status == QueuedDeactivatedUser::ACTIVATED) {
+				// Remove entry from DeactivatedUsers table
+				if($this->deactivatedUserMapper->exists($receivedDU->getUid())) {
+                                        // If it does not exist, create it
+                                        $deactivatedUser = new DeactivatedUser($receivedDU->getUid(), $receivedDU->getAddedAt());
+                                        $this->deactivatedUserMapper->delete($deactivatedUser);
+                                }
+			}
+			$this->receivedDeactivatedUserMapper->delete($receivedDU);
+			$this->api->commit();
+		}
 	}
 
 	public function updateFriendshipsWithReceivedFriendships($mockLocationMapper=null) {
@@ -622,33 +670,8 @@ class UpdateReceived {
                                 continue;
 
                         }
+			$this->receivedShareMapper->delete($receivedShare);
 			$this->api->commit();
-/*			$this->api->beginTransaction();
-                        try{
-                                $shareUpdate = $this->shareUpdateMapper->find(\OCP\Share::getShareId($receivedShare->getUidOwner(), $receivedShare->getShareWith(), $receivedShare->getFileTarget()));
-                                $fname = "updatereceive.log";
-                                $cmd = "echo \"Created new Share and new ShareUpdate.\" >> {$fname}";
-                                $this->api->exec($cmd);
-                                if ($receivedShare->getStime() > $shareUpdate->getUpdatedAt()) {
-                                        $shareUpdate->setStatus($receivedShare->getStatus());
-                                        $shareUpdate->setUpdatedAt($receivedShare->getStime());
-                                        $this->shareUpdateMapper->update($shareUpdate);
-                                }
-                        } catch (DoesNotExistException $e) {
-				$fname = "updatereceive.log";
-                                $cmd = "echo \"DoesNotExistException: {$e->getMessage()}\" >> {$fname}";
-                                $this->api->exec($cmd);
-                                $shareUpdate = new ShareUpdate($receivedShare->getStime(),QueuedShare::CREATE);
-                                $this->shareUpdateMapper->update($shareUpdate);
-                                $cmd = "echo \"Created new ShareUpdate\" >> {$fname}";
-                                $this->api->exec($cmd);
-                        } catch (\Exception $e) {
-				$fname = "updatereceive.log";
-                                $cmd = "echo \"Exception: {$e->getMessage()}\" >> {$fname}";
-                                $this->api->exec($cmd);
-			}
-                        $this->receivedShareMapper->delete($receivedShare);
-                        $this->api->commit();*/
                         $fname = "updatereceive.log";
                         $cmd = "echo \"End of the for-loop\" >> {$fname}";
                         $this->api->exec($cmd);

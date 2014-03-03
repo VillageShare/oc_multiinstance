@@ -55,11 +55,13 @@ class CronTask {
 		'multiinstance_queued_permissions' => 'multiinstance_received_permissions', //we want permissions before files because permissions dependent on files
 		'multiinstance_queued_filecache' => 'multiinstance_received_filecache', 
 		'multiinstance_queued_requests' => 'multiinstance_received_requests',
+		'multiinstance_queued_deactivatedusers' => 'multiinstance_received_deactivatedusers',
 		'multiinstance_queued_users' => 'multiinstance_received_users' //we want users to be last since other types are dependent on users
 	);
 	
 	private static $patterns = array(
 		'multiinstance_queued_users.sql' => '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+),[^,]*\)$/',
+		'multiinstance_queued_deactivatedusers.sql' => '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*, [^,]*\)$/',
 		'multiinstance_queued_friendships.sql' =>'/^INSERT.*VALUES \((?<friend_uid1>[^,]+),(?<friend_uid2>[^,]+),\d,(?<timestamp>[^,]+),[^,]*,[^,]*\)$/',  
 		'multiinstance_queued_user_facebook_ids.sql' =>  '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+)\)$/', 
 		'multiinstance_queued_filecache.sql' => '/^INSERT.*VALUES \((?<storage>[^,]+),(?<path>[^,]+),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(?<timestamp>[^,]+),[^,]*,[^,]*,[^,]*\)$/',
@@ -364,6 +366,14 @@ class CronTask {
 					$formattedQuery = $this->deleteQueuedShareSql($matches['share_with'], $matches['uid_owner'], $matches['file_source_path']) . ";\n";
                                 }
                                 break;
+			case 'multiinstance_queued_deactivatedusers.sql':
+				if(sizeof($matches) <2) {
+                                        $formattedQuery = "";
+                                }
+                                else {
+                                        $formattedQuery = $this->deleteQueuedShareSql($matches['uid'], $matches['added_at']) . ";\n";
+                                }
+                                break;
 			default:
 				throw new \Exception("No delete query function for {$filename}");
 
@@ -389,6 +399,10 @@ class CronTask {
 	protected function deleteQueuedUserSql($uid, $addedAt) {
 		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_users\` WHERE \`uid\` = {$uid} AND \`added_at\` = {$addedAt}";
 	} 
+
+	protected function deleteQueuedDeactivatedUserSql($uid, $addedAt) {
+		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_deactivatedusers\` WHERE \`uid\` = {$uid} AND \`added_at\` = {$addedAt}";
+	}
 
 	protected function deleteQueuedFriendshipSql($uid1, $uid2, $updatedAt) {
 		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_friendships\` WHERE \`friend_uid1\` = {$uid1} AND \`friend_uid2\` = {$uid2} AND \`updated_at\` = {$updatedAt}";
