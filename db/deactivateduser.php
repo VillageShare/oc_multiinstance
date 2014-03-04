@@ -32,7 +32,7 @@ class DeactivatedUser extends Entity{
 	public function __construct($uid, $addedAt=null){
 		if ($addedAt) {
 			$this->setUid($uid);
-			$this->addedAt($addedAt);
+			$this->setAddedAt($addedAt);
 		}
 		else {
 			$this->fromRow($uid);

@@ -142,15 +142,12 @@ class Hooks{
                         $displayname = '';
                         $password = $c['API']->getPassword($uid); //Queue hashed password
 
-                        $deactivateUser = new DeactivatedUser($uid, $date);
+                        $deactivatedUser = new DeactivatedUser($uid, $date);
                         $c['DeactivatedUserMapper']->save($deactivatedUser);
 
-			$queuedDeactivateUser = new QueuedDeactivatedUser($uid, $date, $centralServerName);
-                        $c['QueuedDeactivatedUserMapper']->save($queuededDeactivatedUser);
+			$queuedDeactivatedUser = new QueuedDeactivatedUser($uid, $date, $centralServerName, QueuedDeactivatedUser::DEACTIVATE);
+                        $c['QueuedDeactivatedUserMapper']->save($queuedDeactivatedUser);
                 }
-                $userUpdate = $c['UserUpdateMapper']->find($uid);
-                $userUpdate->setUpdatedAt($date);
-                $c['UserUpdateMapper']->update($userUpdate);
 	}
 
 	static public function updateFriendship($parameters, $mockAPI=null) { 
