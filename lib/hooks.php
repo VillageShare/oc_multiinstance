@@ -137,17 +137,29 @@ class Hooks{
                 $centralServerName = $c['API']->getAppValue('centralServer');
                 $date = $c['API']->getTime();
                 $uid = $parameters['uid'];
-
-		if ($centralServerName !== $c['API']->getAppValue('location')) {
-                        $displayname = '';
-                        $password = $c['API']->getPassword($uid); //Queue hashed password
-
-                        $deactivatedUser = new DeactivatedUser($uid, $date);
-                        $c['DeactivatedUserMapper']->save($deactivatedUser);
-
-			$queuedDeactivatedUser = new QueuedDeactivatedUser($uid, $date, $centralServerName, QueuedDeactivatedUser::DEACTIVATE);
-                        $c['QueuedDeactivatedUserMapper']->save($queuedDeactivatedUser);
-                }
+		$location = $c['API']->getAppValue('location');
+		
+		if ($centralServerName == $location) {
+			foreach(MILocations::getLocations() as $loc) {
+                        	if (!$c['QueuedDeactivatedUser']->exists($uid, $loc, QueuedDeactivatedUser::DEACTIVATE)) {
+                               		$queuedDeactivatedUser = new QueuedDeactivatedUser($uid, $date, $loc, QueuedDeactivatedUser::DEACTIVATE);
+					$c['QueuedDeactivatedUserMapper']->save($queuedDeactivatedUser);
+                       		}
+                	}
+			if (!$c['DeactivatedUserMapper']->exists($uid)) {
+                        	$deactivatedUser = new DeactivatedUser($uid, $date);
+                       		$c['DeactivatedUserMapper']->save($deactivatedUser);
+			}
+                } else {
+		 	if (!$c['QueuedDeactivatedUser']->exists($uid, $centralServerName, QueuedDeactivatedUser::DEACTIVATE)) {
+				 $queuedDeactivatedUser = new QueuedDeactivatedUser($uid, $date, $centralServerName, QueuedDeactivatedUser::DEACTIVATE);
+                                 $c['QueuedDeactivatedUserMapper']->save($queuedDeactivatedUser);
+			}
+			if (!$c['DeactivatedUserMapper']->exists($uid)) {
+				$deactivatedUser = new DeactivatedUser($uid, $date);
+                                $c['DeactivatedUserMapper']->save($deactivatedUser);
+			}
+		} 
 	}
 
 	static public function updateFriendship($parameters, $mockAPI=null) { 

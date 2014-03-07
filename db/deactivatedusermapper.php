@@ -44,9 +44,9 @@ class DeactivatedUserMapper extends Mapper {
 	 * @throws DoesNotExistException: if the item does not exist
 	 * @return the item
 	 */
-	public function find($uid, $addedAt){
-		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `uid` = ? AND `added_at` = ?';
-		$params = array($uid, $addedAt);
+	public function find($uid){
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `uid` = ?';
+		$params = array($uid);
 
 		$result = array();
 		
@@ -54,17 +54,17 @@ class DeactivatedUserMapper extends Mapper {
 		$row = $result->fetchRow();
 
 		if ($row === false) {
-			throw new DoesNotExistException("DeactivatedUser with uid {$uid} and addedAt = {$addedAt} does not exist!");
+			throw new DoesNotExistException("DeactivatedUser with uid {$uid} does not exist!");
 		} elseif($result->fetchRow() !== false) {
-			throw new MultipleObjectsReturnedException("QueuedUser with uid {$uid} and addedAt = {$addedAt} returned more than one result.");
+			throw new MultipleObjectsReturnedException("QueuedUser with uid {$uid}  returned more than one result.");
 		}
-		return new QueuedUser($row);
+		return new DeactivatedUser($row);
 
 	}
 
-	public function exists($uid, $addedAt){
+	public function exists($uid){
 		try{
-			$this->find($uid, $addedAt);
+			$this->find($uid);
 		}
 		catch (DoesNotExistException $e){
 			return false;

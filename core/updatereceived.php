@@ -145,10 +145,10 @@ class UpdateReceived {
 			$status = $receivedDU->getStatus();
 			$allLocations = MILocation::getLocations();
 
-			if ($receivedDU->getDestination() == $centralServer && $thisLocation == $centralServer) {
+			if (($receivedDU->getDestination() == $centralServer) && ($thisLocation == $centralServer)) {
 				//Queue to all other locations except the origin
-				for ($allLocations as $location) {
-					if ($location !== $thisLocation && $location != $origin) {
+				foreach ($allLocations as $location) {
+					if ($location !== $thisLocation && $location !== $origin) {
 						// Create queuedDU to send to location
 						$queuedDU = new QueuedDeactivatedUser($receivedDU->getUID(), $receivedDU->getAddedAt(), $location);
 						$this->queuedDeactivatedUserMapper->save($queuedDU);
