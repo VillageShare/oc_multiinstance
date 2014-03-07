@@ -80,15 +80,16 @@ class DeactivatedUserMapper extends Mapper {
 	 * @return array containing all items
 	 */
 	public function findAll(){
-		$result = $this->findAllQuery($this->getTableName());
+		$sql = "SELECT * FROM {$this->getTableName()}";
+                $result = $this->execute($sql);
 
-		$entityList = array();
-		while($row = $result->fetchRow()){
-			$entity = new DeactivatedUser($row);
-			array_push($entityList, $entity);
-		}
+                $entityList = array();
+                while($row = $result->fetchRow()){
+                        $entity = new DeactivatedUser($row);
+                        array_push($entityList, $entity);
+                }
 
-		return $entityList;
+                return $entityList;
 	}
 
 

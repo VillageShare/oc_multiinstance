@@ -203,6 +203,7 @@ class CronHelper {
 
 		//Process
 		$this->updateReceived->updateUsersWithReceivedUsers();
+		$this->updateReceived->updateDeactivatedUsersWithReceivedDeactivatedUsers();
 		$this->updateReceived->updateFriendshipsWithReceivedFriendships();
 		$this->updateReceived->updateUserFacebookIdsWithReceivedUserFacebookIds();
 		$this->updateReceived->updateFilecacheFromReceivedFilecaches();

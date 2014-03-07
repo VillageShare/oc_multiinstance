@@ -371,7 +371,7 @@ class CronTask {
                                         $formattedQuery = "";
                                 }
                                 else {
-                                        $formattedQuery = $this->deleteQueuedShareSql($matches['uid'], $matches['added_at']) . ";\n";
+                                        $formattedQuery = $this->deleteQueuedDeactivatedUserSql($matches['uid'], $matches['added_at']) . ";\n";
                                 }
                                 break;
 			default:
@@ -413,7 +413,7 @@ class CronTask {
 	}
 
 	protected function deleteQueuedFilecacheSql($storage, $path, $mtime) {
-		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_filecache\` WHERE \`storage\` = {$storage} AND \`path\` = {$path} AND \`added_at\` = {$mtime}";
+		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_filecache\` WHERE \`storage\` = {$path} AND \`added_at\` = {$mtime}";
 		
 	}
 

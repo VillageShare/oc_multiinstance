@@ -33,6 +33,10 @@ use \OCA\MultiInstance\Db\QueuedFriendship;
 use \OCA\MultiInstance\Db\QueuedUser;
 use \OCA\MultiInstance\Db\QueuedDeactivatedUser;
 use \OCA\MultiInstance\Db\DeactivatedUser;
+use \OCA\MultiInstance\Db\QueuedGroup;
+use \OCA\MultiInstance\Db\QueuedGroupAdmin;
+use \OCA\MultiInstance\Db\QueuedGroupUser;
+use \OCA\MultiInstance\Db\GroupUpdate;
 use \OCA\MultiInstance\Db\QueuedPermission;
 use \OCA\MultiInstance\Db\PermissionUpdate;
 use \OCA\MultiInstance\Db\QueuedShare;
@@ -66,13 +70,20 @@ class UpdateReceived {
 	private $shareUpdateMapper;
         private $recievedShareMapper;
 	private $queuedShareMapper;
-	private $receivedDeactivatedUser;
-	private $queuedDeactivatedUser;
-	private $deactivatedUser;
+	private $queuedGroupMapper;
+	private $receivedGroupMapper;
+	private $queuedGroupAdminMapper;
+	private $receivedGroupAdminMapper;
+	private $queuedGroupUserMapper;
+        private $receivedGroupUserMapper;
+	private $groupUpdateMapper;
+	private $receivedDeactivatedUserMapper;
+	private $queuedDeactivatedUserMapper;
+	private $deactivatedUserMapper;
 	/**
 	 * @param API $api: an api wrapper instance
 	 */
-	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $queuedUserMapper, $locationMapper, $receivedFilecacheMapper, $filecacheUpdateMapper, $queuedFilecacheMapper, $receivedPermissionMapper, $permissionUpdateMapper, $receivedShareMapper, $shareUpdateMapper, $queuedShareMapper, $receivedDeactivatedUserMapper, $queuedDeactivatedUserMapper, $deactivatedUserMapper){
+	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $queuedUserMapper, $locationMapper, $receivedFilecacheMapper, $filecacheUpdateMapper, $queuedFilecacheMapper, $receivedPermissionMapper, $permissionUpdateMapper, $receivedShareMapper, $shareUpdateMapper, $queuedShareMapper, $queuedDeactivatedUserMapper, $receivedDeactivatedUserMapper, $deactivatedUserMapper){
 		$this->api = $api;
 		$this->receivedUserMapper = $receivedUserMapper;
 		$this->userUpdateMapper = $userUpdateMapper;
@@ -91,6 +102,13 @@ class UpdateReceived {
 		$this->shareUpdateMapper = $shareUpdateMapper;
                 $this->receivedShareMapper = $receivedShareMapper;
 		$this->queuedShareMapper = $queuedShareMapper;
+		/*$this->queuedGroupMapper = $queuedGroupMapper;
+		$this->receivedGroupMapper = $receivedGroupMapper;
+		$this->queuedGroupAdminMapper = $queuedGroupAdminMapper;
+                $this->receivedGroupAdminMapper = $receivedGroupAdminMapper;
+		$this->queuedGroupUserMapper = $queuedGroupUserMapper;
+                $this->receivedGroupUserMapper = $receivedGroupUserMapper;
+		$this->groupUpdateMapper = $groupUpdateMapper;*/
 		$this->receivedDeactivatedUserMapper = $receivedDeactivatedUserMapper;
 		$this->queuedDeactivatedUserMapper = $queuedDeactivatedUserMapper;
 		$this->deactivatedUserMapper = $deactivatedUserMapper;
@@ -135,7 +153,7 @@ class UpdateReceived {
 	}
 
 	public function updateDeactivatedUsersWithReceivedDeactivatedUsers($mockLocationMapper=null) {
-		$receivedDeactivatedUsers = $this->receivedDeactivatedUsersMapper->findAll();
+		$receivedDeactivatedUsers = $this->receivedDeactivatedUserMapper->findAll();
 		
 		foreach ($receivedDeactivatedUsers as $receivedDU) {
 			$this->api->beginTransaction();
@@ -145,18 +163,18 @@ class UpdateReceived {
 			$status = $receivedDU->getStatus();
 			$allLocations = MILocation::getLocations();
 
-			if (($receivedDU->getDestination() == $centralServer) && ($thisLocation == $centralServer)) {
+			if (($receivedDU->getDestinationLocation() == $centralServer) && ($thisLocation == $centralServer)) {
 				//Queue to all other locations except the origin
 				foreach ($allLocations as $location) {
-					if ($location !== $thisLocation && $location !== $origin) {
+					if ($location->getLocation() !== $thisLocation && $location->getLocation() !== $origin) {
 						// Create queuedDU to send to location
-						$queuedDU = new QueuedDeactivatedUser($receivedDU->getUID(), $receivedDU->getAddedAt(), $location);
+						$queuedDU = new QueuedDeactivatedUser($receivedDU->getUid(), $receivedDU->getAddedAt(), $location->getLocation(), $receivedDU->getStatus());
 						$this->queuedDeactivatedUserMapper->save($queuedDU);
 					}
 				}
 			}
 
-			if ($status == QueuedDeactivatedUser::DEACTIVATED) {
+			if ($status == QueuedDeactivatedUser::DEACTIVATE) {
 				if(!$this->deactivatedUserMapper->exists($receivedDU->getUid())) {
 					// If it does not exist, create it
 					$deactivatedUser = new DeactivatedUser($receivedDU->getUid(), $receivedDU->getAddedAt());

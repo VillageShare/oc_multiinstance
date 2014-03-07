@@ -54,9 +54,9 @@ class QueuedDeactivatedUserMapper extends Mapper {
 		$row = $result->fetchRow();
 
 		if ($row === false) {
-			throw new DoesNotExistException("QueuedDeactivatedUser with uid {$uid} and addedAt = {$addedAt} and destinationLocation {$destinationLocation} does not exist!");
+			throw new DoesNotExistException("QueuedDeactivatedUser with uid {$uid} and addedAt = {$addedAt} and destinationLocation does not exist!");
 		} elseif($result->fetchRow() !== false) {
-			throw new MultipleObjectsReturnedException("QueuedDeactivatedUser with uid {$uid} and addedAt = {$addedAt} and destinationLocation {$destinationLocation} returned more than one result.");
+			throw new MultipleObjectsReturnedException("QueuedDeactivatedUser with uid {$uid} and addedAt = {$addedAt} and destinationLocation returned more than one result.");
 		}
 		return new QueuedDeactivatedUser($row);
 
@@ -80,15 +80,16 @@ class QueuedDeactivatedUserMapper extends Mapper {
 	 * @return array containing all items
 	 */
 	public function findAll(){
-		$result = $this->findAllQuery($this->getTableName());
+		$sql = "SELECT * FROM {$this->getTableName()}";
+                $result = $this->execute($sql);
 
-		$entityList = array();
-		while($row = $result->fetchRow()){
-			$entity = new QueuedDeactivatedUser($row);
-			array_push($entityList, $entity);
-		}
+                $entityList = array();
+                while($row = $result->fetchRow()){
+                        $entity = new QueuedDeactivatedUser($row);
+                        array_push($entityList, $entity);
+                }
 
-		return $entityList;
+                return $entityList;
 	}
 
 

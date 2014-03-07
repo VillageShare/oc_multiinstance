@@ -54,9 +54,9 @@ class ReceivedDeactivatedUserMapper extends Mapper {
 		$row = $result->fetchRow();
 
 		if ($row === false) {
-			throw new DoesNotExistException("ReceivedDeactivatedUser with uid {$uid} and addedAt = {$addedAt} and destinationLocation {$destinationLocation} does not exist!");
+			throw new DoesNotExistException("ReceivedDeactivatedUser with uid {$uid} and addedAt = {$addedAt} and destinationLocation does not exist!");
 		} elseif($result->fetchRow() !== false) {
-			throw new MultipleObjectsReturnedException("ReceivedDeactivatedUser with uid {$uid} and addedAt = {$addedAt} and destinationLocation {$destinationLocation} returned more than one result.");
+			throw new MultipleObjectsReturnedException("ReceivedDeactivatedUser with uid {$uid} and addedAt = {$addedAt} and destinationLocation returned more than one result.");
 		}
 		return new ReceivedDeactivatedUser($row);
 
@@ -80,15 +80,16 @@ class ReceivedDeactivatedUserMapper extends Mapper {
 	 * @return array containing all items
 	 */
 	public function findAll(){
-		$result = $this->findAllQuery($this->getTableName());
+		$sql = "SELECT * FROM {$this->getTableName()}";
+                $result = $this->execute($sql);
 
-		$entityList = array();
-		while($row = $result->fetchRow()){
-			$entity = new ReceivedDeactivatedUser($row);
-			array_push($entityList, $entity);
-		}
+                $entityList = array();
+                while($row = $result->fetchRow()){
+                        $entity = new ReceivedDeactivatedUser($row);
+                        array_push($entityList, $entity);
+                }
 
-		return $entityList;
+                return $entityList;
 	}
 
 
@@ -122,7 +123,7 @@ class ReceivedDeactivatedUserMapper extends Mapper {
 	 * @param string $uid: the uid of the ReceivedUser
 	 */
 	public function delete(Entity $receivedUser){
-		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `uid` = ?  AND `added_at` = ? AND `destination_location`';
+		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `uid` = ?  AND `added_at` = ? AND `destination_location` = ?';
 		$params = array(
 			$receivedUser->getUid(),
 			$receivedUser->getAddedAt(),

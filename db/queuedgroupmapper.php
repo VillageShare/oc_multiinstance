@@ -26,7 +26,7 @@ use \OCA\AppFramework\Core\API;
 use \OCA\AppFramework\Db\Mapper;
 use \OCA\AppFramework\Db\DoesNotExistException;
 use \OCA\AppFramework\Db\MultipleObjectsReturnedException;
-use OCA\AppFramework\Db\Entity;
+use \OCA\AppFramework\Db\Entity;
 
 class QueuedGroupMapper extends Mapper {
 

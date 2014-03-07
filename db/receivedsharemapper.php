@@ -114,16 +114,12 @@ class ReceivedShareMapper extends Mapper {
          * Deletes an item
          * @param string $shareWith: the path_hash of the QueuedShare
          */
-        public function delete(Entity $entity){
-                $queuedShare = $entity;
-                $sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `share_with` = ? AND `uid_owner` = ? AND `file_target` = ? AND `file_source_storage` = ? AND `file_source_path` = ? AND `stime` = ? AND `destination_location`';
+        public function delete(Entity $queuedShare){
+                $sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `share_with` = ? AND `uid_owner` = ? AND `file_target` = ? AND `destination_location` = ?';
                 $params = array(
                         $queuedShare->getShareWith(),
                         $queuedShare->getUidOwner(),
                         $queuedShare->getFileTarget(),
-                        $queuedShare->getFileSourceStorage(),
-                        $queuedShare->getFileSourcePath(),
-                        $queuedShare->getStime(),
                         $queuedShare->getDestinationLocation()
                 );
                 
