@@ -26,15 +26,20 @@ use OCA\AppFramework\Db\Entity;
 
 class QueuedGroup extends Entity{
 
+	const CREATED = 0;
+	const DELETED = 1;
+
 	public $gid;
 	public $addedAt;
 	public $destinationLocation;
+	public $status;
 
-	public function __construct($gid, $addedAt=null, $destinationLocation=null){
+	public function __construct($gid, $addedAt=null, $destinationLocation=null, $status=null){
 		if ($addedAt) {
 			$this->setGid($gid);
 			$this->setAddedAt($addedAt);
 			$this->setDestinationLocation($destinationLocation);
+			$this->setStatus($status);
 		}
 		else {
 			$this->fromRow($gid);

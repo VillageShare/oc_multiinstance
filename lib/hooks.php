@@ -48,38 +48,53 @@ use OC\Files\Cache\Cache;
 class Hooks{
 
 	static public function createGroup($parameters) {
+		shell_exec("echo \"In createGroup() hook\" >> /home/public_html/apps/multiinstance/debug.log");
 		$c = new DIContainer();
                 $centralServerName = $c['API']->getAppValue('centralServer');
                 $thisLocation = $c['API']->getAppValue('location');
                 $date = $c['API']->getTime();
                 $gid = $parameters['gid'];
 
-                //If you are at the central server, push to remote servers
-
-		//If you are not the central server push to central server
-                if ( $centralServerName !== $thisLocation) {
-                        $displayname = '';
-                        $queuedGroup = new QueuedGroup($gid, $date, $centralServerName);
-                        $c['QueuedGroupMapper']->save($queuedGroup);
+                if ($centralServerName == $thisLocation) {
+                        foreach(MILocations::getLocations() as $loc) {
+                                if (!$c['QueuedGroupMapper']->exists($gid, $date, $loc->getLocation(), QueuedGroup::CREATED)) {
+					$queuedGroup = new QueuedGroup($gid, $date, $loc->getLocation(), QueuedGroup::CREATED);
+                                        $c['QueuedGroupMapper']->save($queuedGroup);
+                                }
+                        }
+                } else {
+                        if (!$c['QueuedGroupMapper']->exists($gid, $date, $centralServerName, QueuedGroup::CREATED)) {
+                                $queuedGroup = new QueuedGroup($gid, $date, $centralServerName, QueuedGroup::CREATED);
+                                $c['QueuedGroupMapper']->save($queuedGroup);
+                        }
                 }
-                $groupUpdate = new GroupUpdate($gid, $date, $centralServerName);
+
+		$groupUpdate = new GroupUpdate($gid, $date, $centralServerName);
                 $c['GroupUpdateMapper']->insert($groupUpdate);
 		
 	}
 
-	static public function queueGroupDelete($parameters) {
+	static public function deleteGroup($parameters) {
 		$c = new DIContainer();
                 $centralServerName = $c['API']->getAppValue('centralServer');
                 $thisLocation = $c['API']->getAppValue('location');
                 $date = $c['API']->getTime();
                 $gid = $parameters['gid'];
 
-                //Only push if you are a noncentral server and you created this group
-                if ( $centralServerName !== $thisLocation) {
-                        $displayname = '';
-                        $queuedGroup = new QueuedGroup($gid, $date, $centralServerName);
-                        $c['QueuedGroupMapper']->save($queuedGroup);
+		if ($centralServerName == $thisLocation) {
+                        foreach(MILocations::getLocations() as $loc) {
+                                if (!$c['QueuedGroupMapper']->exists($gid, $date, $loc->getLocation(), QueuedGroup::DELETED)) {
+                                        $queuedGroup = new QueuedGroup($gid, $date, $loc->getLocation(), QueuedGroup::DELETED);
+                                        $c['QueuedGroupMapper']->save($queuedGroup);
+                                }
+                        }
+                } else {
+                        if (!$c['QueuedGroupMapper']->exists($gid, $date, $centralServerNae, QueuedGroup::DELETED)) {
+				$queuedGroup = new QueuedGroup($gid, $date, $centralServerNae, QueuedGroup::DELETED);
+                                $c['QueuedGroupMapper']->save($queuedGroup);
+                        }
                 }
+
                 $groupUpdate = new GroupUpdate($gid, $date, $centralServerName);
                 $c['GroupUpdateMapper']->insert($groupUpdate);
 	}

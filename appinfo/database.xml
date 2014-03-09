@@ -135,12 +135,12 @@
                                 <default></default>
                                 <notnull>false</notnull>
                         </field>
-                        <field> 
-                                <name>destination_location</name>
-                                <type>text</type>
+			<field>
+                                <name>status</name>
+                                <type>integer</type>
                                 <default></default>
                                 <notnull>true</notnull>
-                                <length>64</length>
+                                <length>2</length>
                         </field>
 		</declaration>
 	</table>
@@ -192,6 +192,13 @@
                                 <notnull>true</notnull>
                                 <length>64</length>
                         </field>
+			<field>
+                                <name>status</name>
+                                <type>integer</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>2</length>
+                        </field>
                         <index>
                                 <name>gid_added_at_destination_location_index</name>
                                 <unique>false</unique>
@@ -232,6 +239,13 @@
                                 <default></default>
                                 <notnull>true</notnull>
                                 <length>64</length>
+                        </field>
+			<field>
+                                <name>status</name>
+                                <type>integer</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>2</length>
                         </field>
                         <index>
                                 <name>gid_added_at_destination_location_index</name>

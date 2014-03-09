@@ -44,9 +44,9 @@ class QueuedGroupMapper extends Mapper {
 	 * @throws DoesNotExistException: if the item does not exist
 	 * @return the item
 	 */
-	public function find($gid, $addedAt, $destinationLocation){
-		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `gid` = ? AND `added_at` = ? AND `destination_location` = ?';
-		$params = array($gid, $addedAt, $destinationLocation);
+	public function find($gid, $addedAt, $destinationLocation, $status){
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `gid` = ? AND `added_at` = ? AND `destination_location` = ? AND `status` = ?';
+		$params = array($gid, $addedAt, $destinationLocation, $status);
 
 		$result = array();
 		
@@ -62,9 +62,9 @@ class QueuedGroupMapper extends Mapper {
 
 	}
 
-	public function exists($gid, $addedAt, $destinationLocation){
+	public function exists($gid, $addedAt, $destinationLocation, $status){
 		try{
-			$this->find($gid, $addedAt, $destinationLocation);
+			$this->find($gid, $addedAt, $destinationLocation, $status);
 		}
 		catch (DoesNotExistException $e){
 			return false;
@@ -98,7 +98,7 @@ class QueuedGroupMapper extends Mapper {
 	 * @return the item with the filled in id
 	 */
 	public function save($queuedGroup){
-		if ($this->exists($queuedGroup->getGid(), $queuedGroup->getAddedAt(), $queuedGroup->getDestinationLocation())) {
+		if ($this->exists($queuedGroup->getGid(), $queuedGroup->getAddedAt(), $queuedGroup->getDestinationLocation(), $queuedGroup->getStatus())) {
 			return false;  //Already exists, do nothing
 		}
 

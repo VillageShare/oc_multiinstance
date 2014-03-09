@@ -44,9 +44,9 @@ class ReceivedGroupMapper extends Mapper {
 	 * @throws DoesNotExistException: if the item does not exist
 	 * @return the item
 	 */
-	public function find($gid, $addedAt, $destinationLocation){
-		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `gid` = ? AND `added_at` = ? AND `destination_location` = ?';
-		$params = array($gid, $addedAt, $destinationLocation);
+	public function find($gid, $addedAt, $destinationLocation, $status){
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `gid` = ? AND `added_at` = ? AND `destination_location` = ? `status` = ?';
+		$params = array($gid, $addedAt, $destinationLocation, $status);
 
 		$result = array();
 		
@@ -62,9 +62,9 @@ class ReceivedGroupMapper extends Mapper {
 
 	}
 
-	public function exists($gid, $addedAt, $destinationLocation){
+	public function exists($gid, $addedAt, $destinationLocation, $status){
 		try{
-			$this->find($gid, $addedAt, $destinationLocation);
+			$this->find($gid, $addedAt, $destinationLocation, $status);
 		}
 		catch (DoesNotExistException $e){
 			return false;
