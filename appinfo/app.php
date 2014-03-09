@@ -60,6 +60,7 @@ $rsyncPort = 10001;
 \OCP\Util::connectHook('OC_User', 'post_createUser', 'OCA\MultiInstance\Lib\Hooks', 'createUser');
 \OCP\Util::connectHook('OC_User', 'post_setPassword', 'OCA\MultiInstance\Lib\Hooks', 'updateUser');
 \OCP\Util::connectHook('OC_User', 'post_deactivate', 'OCA\MultiInstance\Lib\Hooks', 'deactivateUser');
+\OCP\Util::connectHook('OC_User', 'post_reactivate', 'OCA\MultiInstance\Lib\Hooks', 'reactivateUser');
 \OCP\Util::connectHook('OCP\Share', 'post_shared', 'OCA\MultiInstance\Lib\Hooks', 'queueShareAdd');
 \OCP\Util::connectHook('FriendshipMapper', 'post_request', 'OCA\MultiInstance\Lib\Hooks', 'updateFriendship');
 \OCP\Util::connectHook('FriendshipMapper', 'post_accept', 'OCA\MultiInstance\Lib\Hooks', 'updateFriendship');

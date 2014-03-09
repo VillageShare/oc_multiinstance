@@ -141,7 +141,7 @@ class Hooks{
 		
 		if ($centralServerName == $location) {
 			foreach(MILocations::getLocations() as $loc) {
-                        	if (!$c['QueuedDeactivatedUser']->exists($uid, $loc, QueuedDeactivatedUser::DEACTIVATE)) {
+                        	if (!$c['QueuedDeactivatedUserMapper']->exists($uid, $loc, QueuedDeactivatedUser::DEACTIVATE)) {
                                		$queuedDeactivatedUser = new QueuedDeactivatedUser($uid, $date, $loc, QueuedDeactivatedUser::DEACTIVATE);
 					$c['QueuedDeactivatedUserMapper']->save($queuedDeactivatedUser);
                        		}
@@ -151,7 +151,7 @@ class Hooks{
                        		$c['DeactivatedUserMapper']->save($deactivatedUser);
 			}
                 } else {
-		 	if (!$c['QueuedDeactivatedUser']->exists($uid, $centralServerName, QueuedDeactivatedUser::DEACTIVATE)) {
+		 	if (!$c['QueuedDeactivatedUserMapper']->exists($uid, $centralServerName, QueuedDeactivatedUser::DEACTIVATE)) {
 				 $queuedDeactivatedUser = new QueuedDeactivatedUser($uid, $date, $centralServerName, QueuedDeactivatedUser::DEACTIVATE);
                                  $c['QueuedDeactivatedUserMapper']->save($queuedDeactivatedUser);
 			}
@@ -161,6 +161,35 @@ class Hooks{
 			}
 		} 
 	}
+
+	static public function reactivateUser($parameters) {
+                $c = new DIContainer();
+                $centralServerName = $c['API']->getAppValue('centralServer');
+                $date = $c['API']->getTime();
+                $uid = $parameters['uid'];
+                $location = $c['API']->getAppValue('location');
+
+		if (!$c['DeactivatedUserMapper']->exists($uid)) {
+			shell_exec("echo \"User does not exist\" >> /home/owncloud/public_html/apps/multiinstance/reactivate.log");
+			return;	
+		} else {
+			$c['DeactivatedUserMapper']->delete($uid);
+		}
+
+                if ($centralServerName == $location) {
+                        foreach(MILocations::getLocations() as $loc) {
+                                if (!$c['QueuedDeactivatedUserMapper']->exists($uid, $loc, QueuedDeactivatedUser::REACTIVATE)) {
+                                        $queuedDeactivatedUser = new QueuedDeactivatedUser($uid, $date, $loc, QueuedDeactivatedUser::REACTIVATE);
+                                        $c['QueuedDeactivatedUserMapper']->save($queuedDeactivatedUser);
+                                }
+                        }
+                } else {
+                        if (!$c['QueuedDeactivatedUserMapper']->exists($uid, $centralServerName, QueuedDeactivatedUser::REACTIVATE)) {
+                                 $queuedDeactivatedUser = new QueuedDeactivatedUser($uid, $date, $centralServerName, QueuedDeactivatedUser::REACTIVATE);
+                                 $c['QueuedDeactivatedUserMapper']->save($queuedDeactivatedUser);
+                        }
+                }
+        }
 
 	static public function updateFriendship($parameters, $mockAPI=null) { 
 		if ($mockAPI) {

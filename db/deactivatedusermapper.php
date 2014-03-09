@@ -54,8 +54,10 @@ class DeactivatedUserMapper extends Mapper {
 		$row = $result->fetchRow();
 
 		if ($row === false) {
+			shell_exec("echo \"DeactivatedUser uid = {$uid} DoesNotExistException\" >> /home/owncloud/public_html/apps/multiinstance/reactivate.log");
 			throw new DoesNotExistException("DeactivatedUser with uid {$uid} does not exist!");
 		} elseif($result->fetchRow() !== false) {
+			shell_exec("echo \"DeactivatedUser MultipleObjectsReturnedException\" >> /home/owncloud/public_html/apps/multiinstance/reactivate.log");
 			throw new MultipleObjectsReturnedException("QueuedUser with uid {$uid}  returned more than one result.");
 		}
 		return new DeactivatedUser($row);
@@ -120,10 +122,10 @@ class DeactivatedUserMapper extends Mapper {
 	 * Deletes an item
 	 * @param string $uid: the uid of the QueuedUser
 	 */
-	public function delete(Entity $queuedUser){
+	public function delete($uid){
 		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `uid` = ?';
 		$params = array(
-			$queuedUser->getUid(),
+			$uid
 		);
 		
 		return $this->execute($sql, $params);
