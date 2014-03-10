@@ -100,11 +100,54 @@ class Hooks{
 	}
 
 	static public function addToGroup($parameters) {
-		// TODO
+		$c = new DIContainer();
+                $centralServerName = $c['API']->getAppValue('centralServer');
+                $thisLocation = $c['API']->getAppValue('location');
+                $date = $c['API']->getTime();
+		$gid = $parameters['gid'];
+                $uid = $parameters['uid'];
+
+		if ($centralServerName == $thisLocation) {
+			foreach(MILocations::getLocations() as $loc) {
+                                if (!$c['QueuedGroupUserMapper']->exists($gid, $uid, $date, $loc->getLocation(), QueuedGroupUser::CREATED)) {
+                                        $queuedGroupUser = new QueuedGroupUser($gid, $uid, $date, $loc->getLocation(), QueuedGroupUser::CREATED);
+                                        $c['QueuedGroupUserMapper']->save($queuedGroupUser);
+                                }
+                        }
+		} else {
+			 if (!$c['QueuedGroupUserMapper']->exists($gid, $date, $centralServerName, QueuedGroupUser::CREATED)) {
+                                $queuedGroupUser = new QueuedGroupUser($gid, $uid, $date, $centralServerName, QueuedGroupUser::CREATED);
+                                $c['QueuedGroupUserMapper']->save($queuedGroupUser);
+                        }
+		}	
+		$groupUpdate = new GroupUpdate($gid, $date, $centralServerName);
+                $c['GroupUpdateMapper']->insert($groupUpdate);
 	}
 
 	static public function removeFromGroup($parameters) {
-		// TODO
+		$c = new DIContainer();
+                $centralServerName = $c['API']->getAppValue('centralServer');
+                $thisLocation = $c['API']->getAppValue('location');
+                $date = $c['API']->getTime();
+                $gid = $parameters['gid'];
+                $uid = $parameters['uid'];
+
+		if ($centralServerName == $thisLocation) {
+                        foreach(MILocations::getLocations() as $loc) {
+                                if (!$c['QueuedGroupUserMapper']->exists($gid, $uid, $date, $loc->getLocation(), QueuedGroupUser::DELETED)) {
+                                        $queuedGroupUser = new QueuedGroupUser($gid, $uid, $date, $loc->getLocation(), QueuedGroupUser::DELETED);
+                                        $c['QueuedGroupUserMapper']->save($queuedGroupUser);
+                                }
+                        }
+                } else {
+                         if (!$c['QueuedGroupUserMapper']->exists($gid, $uid, $date, $centralServerName, QueuedGroupUser::DELETED)) {
+                                $queuedGroupUser = new QueuedGroupUser($gid, $uid, $date, $centralServerName, QueuedGroupUser::DELETED);
+                                $c['QueuedGroupUserMapper']->save($queuedGroupUser);
+                        }
+                }
+
+		$groupUpdate = new GroupUpdate($gid, $date, $centralServerName);
+                $c['GroupUpdateMapper']->insert($groupUpdate);
 	}
 
 	//TODO: try catch with rollback

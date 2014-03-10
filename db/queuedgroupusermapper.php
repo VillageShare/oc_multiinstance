@@ -44,9 +44,9 @@ class QueuedGroupUserMapper extends Mapper {
 	 * @throws DoesNotExistException: if the item does not exist
 	 * @return the item
 	 */
-	public function find($gid, $uid, $addedAt, $destinationLocation){
-		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `uid` = ? AND `gid` = ? AND `added_at` = ? AND `destination_location` = ?';
-		$params = array($uid, $gid, $addedAt, $destinationLocation);
+	public function find($gid, $uid, $addedAt, $destinationLocation, $status){
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `uid` = ? AND `gid` = ? AND `added_at` = ? AND `destination_location` = ? AND `status` = ?';
+		$params = array($uid, $gid, $addedAt, $destinationLocation, $status);
 
 		$result = array();
 		
@@ -62,9 +62,9 @@ class QueuedGroupUserMapper extends Mapper {
 
 	}
 
-	public function exists($gid, $uid, $addedAt, $destinationLocation){
+	public function exists($gid, $uid, $addedAt, $destinationLocation, $status){
 		try{
-			$this->find($gid, $uid,  $addedAt, $destinationLocation);
+			$this->find($gid, $uid,  $addedAt, $destinationLocation, $status);
 		}
 		catch (DoesNotExistException $e){
 			return false;

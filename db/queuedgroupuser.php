@@ -26,17 +26,22 @@ use OCA\AppFramework\Db\Entity;
 
 class QueuedGroupUser extends Entity{
 	
+	const CREATED = 0;
+	const DELETED = 1;
+
 	public $gid;
 	public $uid;
 	public $addedAt;
 	public $destinationLocation;
+	public $status;
 
-	public function __construct($gid, $uid=null, $addedAt=null, $destinationLocation=null){
+	public function __construct($gid, $uid=null, $addedAt=null, $destinationLocation=null, $status=null){
 		if ($uid) {
 			$this->setGid($gid);
 			$this->setUid($uid);
 			$this->setAddedAt($addedAt);
 			$this->setDestinationLocation($destinationLocation);
+			$this->setStatus($status);
 		}
 		else {
 			$this->fromRow($gid);
