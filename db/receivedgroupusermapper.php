@@ -98,18 +98,19 @@ class ReceivedGroupUserMapper extends Mapper {
 	 * @return the item with the filled in id
 	 */
 	public function save($receivedGroupUser){
-		if ($this->exists($receivedGroupUser->getGid(), $receivedGroupUser->getUid(), $receivedGroupUser->getAddedAt(), $receivedGroupUser->getDestinationLocation())) {
+		if ($this->exists($receivedGroupUser->getGid(), $receivedGroupUser->getUid(), $receivedGroupUser->getAddedAt(), $receivedGroupUser->getDestinationLocation(), $receivedGroupUser->getStatus())) {
 			return false;  //Already exists, do nothing
 		}
 
-		$sql = 'INSERT INTO `'. $this->getTableName() . '` (`gid`, `uid`, `added_at`, `destination_location`)'.
-				' VALUES  (?, ?, ?, ?)';
+		$sql = 'INSERT INTO `'. $this->getTableName() . '` (`gid`, `uid`, `added_at`, `destination_location`, `status`)'.
+				' VALUES  (?, ?, ?, ?, ?)';
 
 		$params = array(
 			$receivedGroupUser->getGid(),
 			$receivedGroupUser->getUid(),
 			$receivedGroupUser->getAddedAt(),
-			$receivedGroupUser->getDestinationLocation()
+			$receivedGroupUser->getDestinationLocation(),
+			$receivedGroupUser->getStatus()
 		);
 
 		return $this->execute($sql, $params);

@@ -44,9 +44,9 @@ class QueuedGroupAdminMapper extends Mapper {
 	 * @throws DoesNotExistException: if the item does not exist
 	 * @return the item
 	 */
-	public function find($gid, $uid, $addedAt, $destinationLocation){
-		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `uid` = ? AND `gid` = ? AND `added_at` = ? AND `destination_location` = ?';
-		$params = array($uid, $gid, $addedAt, $destinationLocation);
+	public function find($gid, $uid, $addedAt, $destinationLocation, $status){
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `uid` = ? AND `gid` = ? AND `added_at` = ? AND `destination_location` = ? AND `status` = ?';
+		$params = array($uid, $gid, $addedAt, $destinationLocation, $status);
 
 		$result = array();
 		
@@ -62,9 +62,9 @@ class QueuedGroupAdminMapper extends Mapper {
 
 	}
 
-	public function exists($gid, $uid, $addedAt, $destinationLocation){
+	public function exists($gid, $uid, $addedAt, $destinationLocation, $status){
 		try{
-			$this->find($gid, $uid,  $addedAt, $destinationLocation);
+			$this->find($gid, $uid,  $addedAt, $destinationLocation, $status);
 		}
 		catch (DoesNotExistException $e){
 			return false;
@@ -98,18 +98,19 @@ class QueuedGroupAdminMapper extends Mapper {
 	 * @return the item with the filled in id
 	 */
 	public function save($queuedGroupAdmin){
-		if ($this->exists($queuedGroupAdmin->getGid(), $queuedGroupAdmin->getUid(), $queuedGroupAdmin->getAddedAt(), $queuedGroupAdmin->getDestinationLocation())) {
+		if ($this->exists($queuedGroupAdmin->getGid(), $queuedGroupAdmin->getUid(), $queuedGroupAdmin->getAddedAt(), $queuedGroupAdmin->getDestinationLocation(), $queuedGroup->getStatus())) {
 			return false;  //Already exists, do nothing
 		}
 
-		$sql = 'INSERT INTO `'. $this->getTableName() . '` (`gid`, `uid`, `added_at`, `destination_location`)'.
-				' VALUES  (?, ?, ?, ?)';
+		$sql = 'INSERT INTO `'. $this->getTableName() . '` (`gid`, `uid`, `added_at`, `destination_location`, `status`)'.
+				' VALUES  (?, ?, ?, ?, ?)';
 
 		$params = array(
 			$queuedGroupAdmin->getGid(),
 			$queuedGroupAdmin->getUid(),
 			$queuedGroupAdmin->getAddedAt(),
-			$queuedGroupAdmin->getDestinationLocation()
+			$queuedGroupAdmin->getDestinationLocation(),
+			$queuedGroupAdmin->getStatus()
 		);
 
 		return $this->execute($sql, $params);

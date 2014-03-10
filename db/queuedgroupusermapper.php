@@ -98,18 +98,19 @@ class QueuedGroupUserMapper extends Mapper {
 	 * @return the item with the filled in id
 	 */
 	public function save($queuedGroupUser){
-		if ($this->exists($queuedGroupUser->getGid(), $queuedGroupUser->getUid(), $queuedGroupUser->getAddedAt(), $queuedGroupUser->getDestinationLocation())) {
+		if ($this->exists($queuedGroupUser->getGid(), $queuedGroupUser->getUid(), $queuedGroupUser->getAddedAt(), $queuedGroupUser->getDestinationLocation(), $queuedGroupUser->getStatus())) {
 			return false;  //Already exists, do nothing
 		}
 
-		$sql = 'INSERT INTO `'. $this->getTableName() . '` (`gid`, `uid`, `added_at`, `destination_location`)'.
-				' VALUES  (?, ?, ?, ?)';
+		$sql = 'INSERT INTO `'. $this->getTableName() . '` (`gid`, `uid`, `added_at`, `destination_location`, `status`)'.
+				' VALUES  (?, ?, ?, ?, ?)';
 
 		$params = array(
 			$queuedGroupUser->getGid(),
 			$queuedGroupUser->getUid(),
 			$queuedGroupUser->getAddedAt(),
-			$queuedGroupUser->getDestinationLocation()
+			$queuedGroupUser->getDestinationLocation(),
+			$queuedGroupUser->getStatus()
 		);
 
 		return $this->execute($sql, $params);

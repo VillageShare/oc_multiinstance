@@ -150,6 +150,57 @@ class Hooks{
                 $c['GroupUpdateMapper']->insert($groupUpdate);
 	}
 
+	// Group Admin
+	static public function addAdminToGroup($parameters) {
+                $c = new DIContainer();
+                $centralServerName = $c['API']->getAppValue('centralServer');
+                $thisLocation = $c['API']->getAppValue('location');
+                $date = $c['API']->getTime();
+                $gid = $parameters['gid'];
+                $uid = $parameters['uid'];
+
+                if ($centralServerName == $thisLocation) {
+                        foreach(MILocations::getLocations() as $loc) {
+                                if (!$c['QueuedGroupAdminMapper']->exists($gid, $uid, $date, $loc->getLocation(), QueuedGroupAdmin::CREATED)) {
+                                        $queuedGroupAdmin = new QueuedGroupAdmin($gid, $uid, $date, $loc->getLocation(), QueuedGroupAdmin::CREATED);
+                                        $c['QueuedGroupAdminMapper']->save($queuedGroupAdmin);
+                                }
+                        }
+                } else {
+                         if (!$c['QueuedGroupAdminMapper']->exists($gid, $date, $centralServerName, QueuedGroupAdmin::CREATED)) {
+                                $queuedGroupAdmin = new QueuedGroupAdmin($gid, $uid, $date, $centralServerName, QueuedGroupAdmin::CREATED);
+                                $c['QueuedGroupAdminMapper']->save($queuedGroupAdmin);
+                        }
+                }
+                $groupUpdate = new GroupUpdate($gid, $date, $centralServerName);
+                $c['GroupUpdateMapper']->insert($groupUpdate);
+        }
+
+	static public function removeAdminFromGroup($parameters) {
+                $c = new DIContainer();
+                $centralServerName = $c['API']->getAppValue('centralServer');
+                $thisLocation = $c['API']->getAppValue('location');
+                $date = $c['API']->getTime();
+                $gid = $parameters['gid'];
+                $uid = $parameters['uid'];
+
+                if ($centralServerName == $thisLocation) {
+                        foreach(MILocations::getLocations() as $loc) {
+                                if (!$c['QueuedGroupAdminMapper']->exists($gid, $uid, $date, $loc->getLocation(), QueuedGroupAdmin::DELETED)) {
+                                        $queuedGroupAdmin = new QueuedGroupAdmin($gid, $uid, $date, $loc->getLocation(), QueuedGroupAdmin::DELETED);
+                                        $c['QueuedGroupAdminMapper']->save($queuedGroupAdmin);
+                                }
+                        }
+                } else {
+                         if (!$c['QueuedGroupAdminMapper']->exists($gid, $date, $centralServerName, QueuedGroupAdmin::DELETED)) {
+                                $queuedGroupAdmin = new QueuedGroupAdmin($gid, $uid, $date, $centralServerName, QueuedGroupAdmin::DELETED);
+                                $c['QueuedGroupAdminMapper']->save($queuedGroupAdmin);
+                        }
+                }
+                $groupUpdate = new GroupUpdate($gid, $date, $centralServerName);
+                $c['GroupUpdateMapper']->insert($groupUpdate);
+        }
+
 	//TODO: try catch with rollback
 	static public function createUser($parameters) {
 		$c = new DIContainer();

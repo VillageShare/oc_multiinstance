@@ -44,9 +44,9 @@ class ReceivedGroupAdminMapper extends Mapper {
 	 * @throws DoesNotExistException: if the item does not exist
 	 * @return the item
 	 */
-	public function find($gid, $uid, $addedAt, $destinationLocation){
-		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `uid` = ? AND `gid` = ? AND `added_at` = ? AND `destination_location` = ?';
-		$params = array($uid, $gid, $addedAt, $destinationLocation);
+	public function find($gid, $uid, $addedAt, $destinationLocation, $status){
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `uid` = ? AND `gid` = ? AND `added_at` = ? AND `destination_location` = ? AND `status` = ?';
+		$params = array($uid, $gid, $addedAt, $destinationLocation, $status);
 
 		$result = array();
 		
@@ -62,9 +62,9 @@ class ReceivedGroupAdminMapper extends Mapper {
 
 	}
 
-	public function exists($gid, $uid, $addedAt, $destinationLocation){
+	public function exists($gid, $uid, $addedAt, $destinationLocation, $status){
 		try{
-			$this->find($gid, $uid,  $addedAt, $destinationLocation);
+			$this->find($gid, $uid,  $addedAt, $destinationLocation, $status);
 		}
 		catch (DoesNotExistException $e){
 			return false;
@@ -98,18 +98,19 @@ class ReceivedGroupAdminMapper extends Mapper {
 	 * @return the item with the filled in id
 	 */
 	public function save($receivedGroupAdmin){
-		if ($this->exists($receivedGroupAdmin->getGid(), $receivedGroupAdmin->getUid(), $receivedGroupAdmin->getAddedAt(), $receivedGroupAdmin->getDestinationLocation())) {
+		if ($this->exists($receivedGroupAdmin->getGid(), $receivedGroupAdmin->getUid(), $receivedGroupAdmin->getAddedAt(), $receivedGroupAdmin->getDestinationLocation(), $receivedGroupAdmin->getStatus())) {
 			return false;  //Already exists, do nothing
 		}
 
-		$sql = 'INSERT INTO `'. $this->getTableName() . '` (`gid`, `uid`, `added_at`, `destination_location`)'.
-				' VALUES  (?, ?, ?, ?)';
+		$sql = 'INSERT INTO `'. $this->getTableName() . '` (`gid`, `uid`, `added_at`, `destination_location`, $status)'.
+				' VALUES  (?, ?, ?, ?, ?)';
 
 		$params = array(
 			$receivedGroupAdmin->getGid(),
 			$receivedGroupAdmin->getUid(),
 			$receivedGroupAdmin->getAddedAt(),
-			$receivedGroupAdmin->getDestinationLocation()
+			$receivedGroupAdmin->getDestinationLocation(),
+			$receivedGroupAdmin->getStatus()
 		);
 
 		return $this->execute($sql, $params);
