@@ -2,8 +2,8 @@
 /**
 * ownCloud - App Template Example
 *
-* @author Bernhard Posselt
-* @copyright 2012 Bernhard Posselt nukeawhale@gmail.com
+* @author Morgan
+* @copyright 2014 Morgan Vigil morgan.a.vigil@@gmail.com
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU AFFERO GENERAL PUBLIC LICENSE
@@ -44,8 +44,9 @@ class TestConstants extends Entity{
 	const SHARE = 6;
 	const GROUP = 7;
 	const GROUPADMIN = 8;
-	const GROUPUSER = 9;
-	
+	const GROUPUSER = 9;	
+	const DEACTIVATEUSER = 10;
+		
 	$db_prefix = "oc_multiinstance";
 
 	public function getTables($table) {
@@ -58,10 +59,10 @@ class TestConstants extends Entity{
 				$tables = array($db_prefix."_queued_users", $db_prefix."_queued_friendships");
 				break;
 			case FILECACHE:
-				$tables = array($db_prefix."_queued_users", $db_prefix."_queued_filecache");
+				$tables = array($db_prefix."_queued_users", $db_prefix."_queued_filecache", $db_prefix."_queued_permissions");
 				break;
 			case SHARE:
-				$tables = array($db_prefix."_queued_users", $db_prefix."_queued_groups", $db_prefix."_queued_groupuser", $db_prefix."_queued_filecache", $db_prefix."_queued_share");
+				$tables = array($db_prefix."_queued_users", $db_prefix."_queued_groups", $db_prefix."_queued_groupuser", $db_prefix."_queued_filecache",  $db_prefix."_queued_permissions", $db_prefix."_queued_share");
 				break;
 			case GROUP:
 				$tables = array($db_prefix."_queued_groups");
@@ -72,6 +73,8 @@ class TestConstants extends Entity{
 			case GROUPUSER:
 				$tables = array($db_prefix."_queued_users", $db_prefix."_queued_groups", $db_prefix."_queued_groupuser");
                                 break;
+			case DEACTIVATEUSER:
+				$tables = array($db_prefix."_queued_deactivatedusers");
 		}
 		return $tables;
 	}
