@@ -21,10 +21,13 @@
 ###
 cd /home/owncloud/public_html/apps/multiinstance
 
+TYPE=0
+PARAM=$1
+
 if ps -ef | grep -v grep | grep eventDrivenTransaction.php ; then
 	echo "eventDrivenTransaction.php is not starting because it is already running." >> /home/owncloud/public_html/apps/multiinstance/test/error.txt 
         exit 0
 else
-	php5 /home/owncloud/public_html/apps/multiinstance/test/eventDrivenTransaction.php >> /home/owncloud/public_html/apps/multiinstance/test/error.txt &
+	php5 /home/owncloud/public_html/apps/multiinstance/test/eventDrivenTransaction.php $TYPE $PARAM >> /home/owncloud/public_html/apps/multiinstance/test/error.txt &
         exit 0
 fi

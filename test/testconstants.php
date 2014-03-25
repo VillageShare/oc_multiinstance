@@ -47,34 +47,36 @@ class TestConstants extends Entity{
 	const GROUPUSER = 9;	
 	const DEACTIVATEUSER = 10;
 		
-	$db_prefix = "oc_multiinstance";
-
+	$db_prefix = "multiinstance";
+	
+	// TODO: arrange table arrays as (multiinstance_queued* => multiinstance_received*)
 	public function getTables($table) {
 		$tables = array();
 		switch($table) {
 			case USER:
-				$tables = array($db_prefix."_queued_users");
+				$tables = array($db_prefix."_queued_users" => $db_prefix."_received_users");
 				break;
 			case FRIENDSHIP:
-				$tables = array($db_prefix."_queued_users", $db_prefix."_queued_friendships");
+				$tables = array($db_prefix."_queued_users" => $db_prefix."_received_users", $db_prefix."_queued_friendships" => $db_prefix."_received_friendships");
 				break;
 			case FILECACHE:
-				$tables = array($db_prefix."_queued_users", $db_prefix."_queued_filecache", $db_prefix."_queued_permissions");
+				$tables = array($db_prefix."_queued_users" => $db_prefix."_received_users", $db_prefix."_queued_filecache" =? $db_prefix."_received_filecache", $db_prefix."_queued_permissions" => $db_prefix."_received_permissions");
 				break;
 			case SHARE:
-				$tables = array($db_prefix."_queued_users", $db_prefix."_queued_groups", $db_prefix."_queued_groupuser", $db_prefix."_queued_filecache",  $db_prefix."_queued_permissions", $db_prefix."_queued_share");
+				$tables = array($db_prefix."_queued_users" => $db_prefix."_received_users", $db_prefix."_queued_groups" => $db_prefix."_received_groups", $db_prefix."_queued_groupuser" = > $db_prefix."_received_groupuser", $db_prefix."_queued_filecache" => $db_prefix."_received_filecache",  $db_prefix."_queued_permissions" => $db_prefix."_received_permissions", $db_prefix."_queued_share" = > $db_prefix."_received_share");
+ 
 				break;
 			case GROUP:
-				$tables = array($db_prefix."_queued_groups");
+				$tables = array($db_prefix."_queued_groups" => $db_prefix."_received_groups");
 				break;
 			case GROUPADMIN:
-				$tables = array($db_prefix."_queued_users", $db_prefix."_queued_groups", $db_prefix."_queued_groupadmin");
+				$tables = array($db_prefix."_queued_users" => $db_prefix."_received_users", $db_prefix."_queued_groups" => $db_prefix."_received_groups", $db_prefix."_queued_groupadmin" => $db_prefix."_received_groupadmin");
 				break;
 			case GROUPUSER:
-				$tables = array($db_prefix."_queued_users", $db_prefix."_queued_groups", $db_prefix."_queued_groupuser");
+				$tables = array($db_prefix."_queued_users" => $db_prefix."_received_users", $db_prefix."_queued_groups"=> $db_prefix."_received_groups", $db_prefix."_queued_groupuser" =>  $db_prefix."_received_groupuser");
                                 break;
 			case DEACTIVATEUSER:
-				$tables = array($db_prefix."_queued_deactivatedusers");
+				$tables = array($db_prefix."_queued_deactivatedusers" => $db_prefix."_received_deactivatedusers");
 		}
 		return $tables;
 	}

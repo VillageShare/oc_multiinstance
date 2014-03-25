@@ -35,8 +35,9 @@ use OCA\MultiInstance\Lib\MILocation;
  * rsync with UCSB server
  */
 
-
+$transactionType = $argv[1];
+$params = $argv[2];
 
 $dicontainer = new DIContainer();
 
-$dicontainer['EventHelper']->run();
+$dicontainer['CronHelper']->run($transactionType, $params);
