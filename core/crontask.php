@@ -29,7 +29,7 @@ use OCA\MultiInstance\Db\QueuedResponse;
 use OCA\MultiInstance\Db\QueuedUser;
 use OCA\MultiInstance\Db\QueuedFileCache;
 use OCA\MultiInstance\Db\QueuedShare;
-
+use OCA\MultiInstance\Test\TestConstants;
 use OCA\MultiInstance\Lib\MILocation;
 
 class CronTask {
@@ -99,10 +99,12 @@ class CronTask {
 	 * Other code containing rsync commands will sync these files.  Deleted by
 	 * other code on a time interval
 	 */
-	public function dumpQueued() {
+	public function dumpQueued($transactionType=null, $param=null) {
 		date_default_timezone_set($this->api->getAppValue('timezone'));
                 $hour = date('H');
-
+		if ($transactionType == TestConstants::EVENT_DRIVEN) {
+			self::$tables = TestConstants::getTables($param);
+		}
 		foreach (self::$tables as $queuedTable => $receivedTable) {
 			$qTable = $this->dbtableprefix  . $queuedTable;
 			$rTable = $this->dbtableprefix . $receivedTable;
@@ -180,7 +182,7 @@ class CronTask {
 		$this->queuedResponseMapper->deleteAllBeforeMicrotime($cutOffTime);
 	}
 
-	public function linkFiles() {
+	public function linkFiles($transactionType=null, $param=null) {
 		$queuedFiles = $this->queuedFilecacheMapper->findAll();
 	
 		foreach ($queuedFiles as $queuedFile) {
@@ -192,7 +194,7 @@ class CronTask {
 		}
 	}
 
-	public function unlinkFiles() {
+	public function unlinkFiles($transactionType=null, $param=null) {
 		MILocation::removeLinks($this->api);
 	}
 

@@ -23,7 +23,7 @@
 
 namespace OCA\MultiInstance\Core;
 
-
+use OCA\MultiInstance\Test\TestConstants;
 use OCA\MultiInstance\Lib\MILocation;
 
 class CronHelper {
@@ -83,7 +83,7 @@ class CronHelper {
 
 
 
-	public function sync() {
+	public function sync($transactionType=null, $param=null) {
 		$thisLocation = $this->api->getAppValue('location');
 		$centralServerName = $this->api->getAppValue('centralServer');
 		$server = $this->api->getAppValue('centralServerIP');
@@ -198,30 +198,38 @@ class CronHelper {
 		}
 	}
 
-	public function run() {
-		$this->cronTask->insertReceived();
+	public function run($transactionType=null, $param=null) {
 
-		//Process
-		$this->updateReceived->updateUsersWithReceivedUsers();
-		$this->updateReceived->updateDeactivatedUsersWithReceivedDeactivatedUsers();
-		$this->updateReceived->updateFriendshipsWithReceivedFriendships();
-		$this->updateReceived->updateUserFacebookIdsWithReceivedUserFacebookIds();
-		$this->updateReceived->updateFilecacheFromReceivedFilecaches();
-		$this->updateReceived->updatePermissionsFromReceivedPermissions();
-		$this->updateReceived->updateSharesWithReceivedShares();
-		$this->cronTask->readAcksAndResponses(); //This method checks to whether or not it should read responses (only non-central servers should process responses)
+                if (is_null($transactionType)) {
 
-		$this->requestsAndResponses();
+                        $this->cronTask->insertReceived();
 
-		//Dump
-		$this->cronTask->dumpResponses();
-		$this->cronTask->dumpQueued();
-		$this->cronTask->linkFiles();
+                        //Process
+                        $this->updateReceived->updateUsersWithReceivedUsers();
+                        $this->updateReceived->updateFriendshipsWithReceivedFriendships();
+                        $this->updateReceived->updateUserFacebookIdsWithReceivedUserFacebookIds();
+                        $this->updateReceived->updateFilecacheFromReceivedFilecaches();
+                        $this->updateReceived->updatePermissionsFromReceivedPermissions();
+                        $this->updateReceived->updateSharesWithReceivedShares();
+                        $this->cronTask->readAcksAndResponses(); //This method checks to whether or not it should read responses (only non-central servers should process responses)
 
-		//Sync
-		$this->sync();
+                        $this->requestsAndResponses();
+                }
 
-		$this->cronTask->unlinkFiles();
+                if ($transactionType == TestConstants::EVENT_DRIVEN || $transactionType == TestConstants::CRON_DRIVEN) {
+                        $this->cronTask->dumpQueued($transactionType, $param);
+                        $this->cronTask->linkFiles($transactionType, $param);
+                } else {
+                        //Dump
+                        $this->cronTask->dumpResponses();
+                        $this->cronTask->dumpQueued();
+                        $this->cronTask->linkFiles();
+                }
+                //Sync
+                $this->sync($transactionType, $param);
 
-	}
+                $this->cronTask->unlinkFiles($transactionType, $param);
+
+        }
+
 }
