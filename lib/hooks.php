@@ -115,7 +115,7 @@ class Hooks{
                                 }
                         }
 		} else {
-			 if (!$c['QueuedGroupUserMapper']->exists($gid, $date, $centralServerName, QueuedGroupUser::CREATED)) {
+			 if (!$c['QueuedGroupUserMapper']->exists($gid, $uid, $date, $centralServerName, QueuedGroupUser::CREATED)) {
                                 $queuedGroupUser = new QueuedGroupUser($gid, $uid, $date, $centralServerName, QueuedGroupUser::CREATED);
                                 $c['QueuedGroupUserMapper']->save($queuedGroupUser);
                         }

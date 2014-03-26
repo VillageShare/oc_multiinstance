@@ -83,7 +83,7 @@ class UpdateReceived {
 	/**
 	 * @param API $api: an api wrapper instance
 	 */
-	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $queuedUserMapper, $locationMapper, $receivedFilecacheMapper, $filecacheUpdateMapper, $queuedFilecacheMapper, $receivedPermissionMapper, $permissionUpdateMapper, $receivedShareMapper, $shareUpdateMapper, $queuedShareMapper, $queuedDeactivatedUserMapper, $receivedDeactivatedUserMapper, $deactivatedUserMapper){
+	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $queuedUserMapper, $locationMapper, $receivedFilecacheMapper, $filecacheUpdateMapper, $queuedFilecacheMapper, $receivedPermissionMapper, $permissionUpdateMapper, $receivedShareMapper, $shareUpdateMapper, $queuedShareMapper, $queuedDeactivatedUserMapper, $receivedDeactivatedUserMapper, $deactivatedUserMapper, $queuedGroupMapper, $groupUpdateMapper, $receivedGroupMapper, $queuedGroupAdminMapper, $receivedGroupAdminMapper, $queuedGroupUserMapper, $receivedGroupUserMapper){
 		$this->api = $api;
 		$this->receivedUserMapper = $receivedUserMapper;
 		$this->userUpdateMapper = $userUpdateMapper;
@@ -102,13 +102,13 @@ class UpdateReceived {
 		$this->shareUpdateMapper = $shareUpdateMapper;
                 $this->receivedShareMapper = $receivedShareMapper;
 		$this->queuedShareMapper = $queuedShareMapper;
-		/*$this->queuedGroupMapper = $queuedGroupMapper;
+		$this->queuedGroupMapper = $queuedGroupMapper;
 		$this->receivedGroupMapper = $receivedGroupMapper;
 		$this->queuedGroupAdminMapper = $queuedGroupAdminMapper;
                 $this->receivedGroupAdminMapper = $receivedGroupAdminMapper;
 		$this->queuedGroupUserMapper = $queuedGroupUserMapper;
                 $this->receivedGroupUserMapper = $receivedGroupUserMapper;
-		$this->groupUpdateMapper = $groupUpdateMapper;*/
+		$this->groupUpdateMapper = $groupUpdateMapper;
 		$this->receivedDeactivatedUserMapper = $receivedDeactivatedUserMapper;
 		$this->queuedDeactivatedUserMapper = $queuedDeactivatedUserMapper;
 		$this->deactivatedUserMapper = $deactivatedUserMapper;
@@ -192,6 +192,50 @@ class UpdateReceived {
 			$this->api->commit();
 		}
 	}
+
+	/* Groups */
+	public function updateGroupsWithReceivedGroups($mockLocationMapper=null) {
+                $receivedGroups = $this->receivedGroupMapper->findAll();
+
+                foreach ($receivedGroups as $receivedGroups) {
+                        $this->api->beginTransaction();
+                        $origin = $receivedGroup->getOrigin(); //TODO
+                        $centralServer = $this->api->getAppValue('centralServer');
+                        $thisLocation = $this->api->getAppValue('location');
+                        $status = $receivedGroup->getStatus();
+                        $allLocations = MILocation::getLocations();
+
+                        if (($receivedGroup->getDestinationLocation() == $centralServer) && ($thisLocation == $centralServer)) {
+                                //Queue to all other locations except the origin
+                                foreach ($allLocations as $location) {
+                                        if ($location->getLocation() !== $thisLocation && $location->getLocation() !== $origin) {
+                                                // Create queuedDU to send to location
+                                                $queuedGroup = new QueuedGroup($receivedGroup->getGid(), $receivedGroup->getAddedAt(), $location->getLocation(), $receivedDU->getStatus());
+                                                $this->queuedGroupMapper->save($queuedGroup);
+                                        }
+                                }
+                        }
+
+                        if ($status == QueuedGroup::DELETED) {
+                                if(!$this->groupUpdateMapper->exists($receivedGroup->getGid())) {
+                                        // If it does not exist, create it
+                                        $groupUpdate = new GroupUpdate($receivedDU->getUid(), $receivedDU->getAddedAt());
+                                        $this->groupUpdateMapper->save($groupUpdate);
+                                }
+				// TODO make an API call to OC_Group
+                        } else if ($status == QueuedGroup::CREATED) {
+                                // Remove entry from DeactivatedUsers table
+                                if($this->groupUpdateMapper->exists($receivedGroup->getGid())) {
+                                        // If it does not exist, create it
+                                        $groupUpdate = new GroupUpdate($receivedGrouo->getGid(), $receivedGroup->getAddedAt());
+                                        $this->groupUpdateMapper->delete($groupUpdate);
+                                }
+				// TODO make an API call to OC_Group
+                        }
+                        $this->receivedGroupMapper->delete($receivedGroup);
+                        $this->api->commit();
+                }
+        }
 
 	public function updateFriendshipsWithReceivedFriendships($mockLocationMapper=null) {
 		$receivedFriendships = $this->receivedFriendshipMapper->findAll();

@@ -76,5 +76,5 @@ $rsyncPort = 10001;
 \OCP\Util::connectHook('OC_User', 'post_deleteGroup', 'OCA\MultiInstance\Lib\Hooks', 'deleteGroup');
 \OCP\Util::connectHook('OC_User', 'post_addToGroup', 'OCA\MultiInstance\Lib\Hooks', 'addToGroup');
 \OCP\Util::connectHook('OC_User', 'post_removeFromGroup', 'OCA\MultiInstance\Lib\Hooks', 'removeFromGroup');
-\OCP\Util::connectHook('OC_User', 'post_addAdminToGroup', 'OCA\MultiInstance\Lib\Hooks', 'addAdminToGroup');
-\OCP\Util::connectHook('OC_User', 'post_removeAdminFromGroup', 'OCA\MultiInstance\Lib\Hooks', 'removeAdminFromGroup');
+\OCP\Util::connectHook('OC_SubAdmin', 'post_createSubAdmin', 'OCA\MultiInstance\Lib\Hooks', 'addAdminToGroup');
+\OCP\Util::connectHook('OC_SubAdmin', 'post_removeSubAdmin', 'OCA\MultiInstance\Lib\Hooks', 'removeAdminFromGroup');

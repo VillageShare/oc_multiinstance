@@ -246,7 +246,7 @@ class DIContainer extends BaseContainer {
 			
 		});
 		$this['UpdateReceived'] = $this->share(function($c){
-			return new UpdateReceived($c['API'], $c['ReceivedUserMapper'], $c['UserUpdateMapper'],$c['ReceivedFriendshipMapper'], $c['UserFacebookIdMapper'], $c['ReceivedUserFacebookIdMapper'], $c['FriendshipMapper'], $c['QueuedFriendshipMapper'], $c['QueuedUserMapper'], $c['LocationMapper'], $c['ReceivedFileCacheMapper'], $c['FilecacheUpdateMapper'], $c['QueuedFileCacheMapper'], $c['ReceivedPermissionMapper'], $c['PermissionUpdateMapper'], $c['ReceivedShareMapper'], $c['ShareUpdateMapper'], $c['QueuedShareMapper'], $c['QueuedDeactivatedUserMapper'], $c['ReceivedDeactivatedUserMapper'], $c['DeactivatedUserMapper']);
+			return new UpdateReceived($c['API'], $c['ReceivedUserMapper'], $c['UserUpdateMapper'],$c['ReceivedFriendshipMapper'], $c['UserFacebookIdMapper'], $c['ReceivedUserFacebookIdMapper'], $c['FriendshipMapper'], $c['QueuedFriendshipMapper'], $c['QueuedUserMapper'], $c['LocationMapper'], $c['ReceivedFileCacheMapper'], $c['FilecacheUpdateMapper'], $c['QueuedFileCacheMapper'], $c['ReceivedPermissionMapper'], $c['PermissionUpdateMapper'], $c['ReceivedShareMapper'], $c['ShareUpdateMapper'], $c['QueuedShareMapper'], $c['QueuedDeactivatedUserMapper'], $c['ReceivedDeactivatedUserMapper'], $c['DeactivatedUserMapper'], $c['QueuedGroupMapper'], $c['GroupUpdateMapper'], $c['ReceivedGroupMapper'], $c['QueuedGroupAdminMapper'], $c['ReceivedGroupAdminMapper'], $c['QueuedGroupUserMapper'], $c['ReceivedGroupUserMapper']);
 			
 		});
 		$this['RequestResponse'] = $this->share(function($c){
