@@ -253,6 +253,13 @@ class DIContainer extends BaseContainer {
 			return new RequestResponse($c['API'], $c['UserUpdateMapper'], $c['ReceivedResponseMapper'], $c['ReceivedRequestMapper'], $c['QueuedResponseMapper'], $c['QueuedRequestMapper'], $c['QueuedUserMapper'], $c['FriendshipMapper']);
 			
 		});
+
+		/**
+		 * Lib
+		 */
+		$this['Hooks'] = $this->share(function($c){
+			return new Hooks($c['API']);
+		});
 	}
 }
 

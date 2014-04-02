@@ -47,6 +47,15 @@ use OC\Files\Cache\Cache;
  */
 class Hooks{
 
+	private $api;
+
+	/**
+         * @param API $api: an api wrapper instance
+         */
+        public function __construct($api) {
+		$this->api = $api;
+	}
+
 	static public function createGroup($parameters) {
 		shell_exec("echo \"In createGroup() hook\" >> /home/public_html/apps/multiinstance/debug.log");
 		$c = new DIContainer();
@@ -659,6 +668,12 @@ class Hooks{
 			$qm->save($queuedUserFacebookId);
 		}
 		
+	}
+
+	static public function uploadFile($filename, $location) {
+		$data = array('size' => 100, 'mtime' => 100, 'mimetype' => 'unix/file');
+		$cache = new \OC\Files\Cache\Cache("home::test1@".$location);
+		$cache->put("files/".$filename, $data);
 	}
 
 }
