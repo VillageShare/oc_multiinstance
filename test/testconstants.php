@@ -30,8 +30,8 @@ class TestConstants extends Entity{
 	 * Constants for transaction type
 	 *
 	 */
-	const EVENT_DRIVEN = 0;
-	const TIME_DRIVEN = 1;
+        const EVENT_DRIVEN = 0;
+	const CRON_DRIVEN = 1;
 
 	/**
 	 * Constants for param type
@@ -47,36 +47,38 @@ class TestConstants extends Entity{
 	const GROUPUSER = 9;	
 	const DEACTIVATEUSER = 10;
 		
-	$db_prefix = "multiinstance";
+	const PREFIX = "multiinstance";
 	
 	// TODO: arrange table arrays as (multiinstance_queued* => multiinstance_received*)
-	public function getTables($table) {
+	public static function getTables($table) {
+
 		$tables = array();
 		switch($table) {
-			case USER:
-				$tables = array($db_prefix."_queued_users" => $db_prefix."_received_users");
+			case self::USER:
+				$tables = array(self::PREFIX."_queued_users" => self::PREFIX."_received_users");
 				break;
-			case FRIENDSHIP:
-				$tables = array($db_prefix."_queued_users" => $db_prefix."_received_users", $db_prefix."_queued_friendships" => $db_prefix."_received_friendships");
+			case self::FRIENDSHIP:
+				$tables = array(self::PREFIX."_queued_users" => self::PREFIX."_received_users", self::PREFIX."_queued_friendships" => self::PREFIX."_received_friendships");
 				break;
-			case FILECACHE:
-				$tables = array($db_prefix."_queued_users" => $db_prefix."_received_users", $db_prefix."_queued_filecache" =? $db_prefix."_received_filecache", $db_prefix."_queued_permissions" => $db_prefix."_received_permissions");
+			case self::FILECACHE:
+				$tables = array(self::PREFIX."_queued_users" => self::PREFIX."_received_users", self::PREFIX."_queued_filecache" => self::PREFIX."_received_filecache", self::PREFIX."_queued_permissions" => self::PREFIX."_received_permissions");
 				break;
-			case SHARE:
-				$tables = array($db_prefix."_queued_users" => $db_prefix."_received_users", $db_prefix."_queued_groups" => $db_prefix."_received_groups", $db_prefix."_queued_groupuser" = > $db_prefix."_received_groupuser", $db_prefix."_queued_filecache" => $db_prefix."_received_filecache",  $db_prefix."_queued_permissions" => $db_prefix."_received_permissions", $db_prefix."_queued_share" = > $db_prefix."_received_share");
+			case self::SHARE:
+				$tables = array(self::PREFIX."_queued_users" => self::PREFIX."_received_users", self::PREFIX."_queued_groups" => self::PREFIX."_received_groups", self::PREFIX."_queued_groupuser" => self::PREFIX."_received_groupuser", self::PREFIX."_queued_filecache" => self::PREFIX."_received_filecache",  self::PREFIX."_queued_permissions" => self::PREFIX."_received_permissions", self::PREFIX."_queued_share" => self::PREFIX."_received_share");
  
 				break;
-			case GROUP:
-				$tables = array($db_prefix."_queued_groups" => $db_prefix."_received_groups");
+			case self::GROUP:
+				$tables = array(self::PREFIX."_queued_groups" => self::PREFIX."_received_groups");
 				break;
-			case GROUPADMIN:
-				$tables = array($db_prefix."_queued_users" => $db_prefix."_received_users", $db_prefix."_queued_groups" => $db_prefix."_received_groups", $db_prefix."_queued_groupadmin" => $db_prefix."_received_groupadmin");
+			case self::GROUPADMIN:
+				$tables = array(self::PREFIX."_queued_users" => self::PREFIX."_received_users", self::PREFIX."_queued_groups" => self::PREFIX."_received_groups", self::PREFIX."_queued_groupadmin" => self::PREFIX."_received_groupadmin");
 				break;
-			case GROUPUSER:
-				$tables = array($db_prefix."_queued_users" => $db_prefix."_received_users", $db_prefix."_queued_groups"=> $db_prefix."_received_groups", $db_prefix."_queued_groupuser" =>  $db_prefix."_received_groupuser");
+			case self::GROUPUSER:
+				$tables = array(self::PREFIX."_queued_users" => self::PREFIX."_received_users", self::PREFIX."_queued_groups" => self::PREFIX."_received_groups", self::PREFIX."_queued_groupuser" =>  self::PREFIX."_received_groupuser");
                                 break;
-			case DEACTIVATEUSER:
-				$tables = array($db_prefix."_queued_deactivatedusers" => $db_prefix."_received_deactivatedusers");
+			case self::DEACTIVATEUSER:
+				$tables = array(self::PREFIX."_queued_deactivatedusers" => self::PREFIX."_received_deactivatedusers");
+				break;
 		}
 		return $tables;
 	}

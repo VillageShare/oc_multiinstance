@@ -229,7 +229,14 @@ class CronHelper {
                 $this->sync($transactionType, $param);
 
                 $this->cronTask->unlinkFiles($transactionType, $param);
-
+		
+		$time = microtime(true);
+		if ($transactionType == TestConstants::EVENT_DRIVEN) {
+			$cmd = "echo  {$time} >> /home/owncloud/public_html/apps/multiinstance/test/event.log";
+		} else if ($transactionType == TestConstants::CRON_DRIVEN) {
+			$cmd = "echo  {$time} >> /home/owncloud/public_html/apps/multiinstance/test/crondriven.log";
+		}	
+		shell_exec($cmd);
         }
 
 }

@@ -104,6 +104,8 @@ class CronTask {
                 $hour = date('H');
 		if ($transactionType == TestConstants::EVENT_DRIVEN) {
 			self::$tables = TestConstants::getTables($param);
+			$flattab = var_dump(self::$tables);
+			shell_exec("echo {$flattab} >> /home/owncloud/public_html/apps/multiinstance/testevent.log");
 		}
 		foreach (self::$tables as $queuedTable => $receivedTable) {
 			$qTable = $this->dbtableprefix  . $queuedTable;

@@ -26,6 +26,6 @@ if ps -ef | grep -v grep | grep cronDrivenTransaction.php ; then
 	echo "cronDrivenTransaction.php is not starting because it is already running." >> /home/owncloud/public_html/apps/multiinstance/test/error.txt 
         exit 0
 else
-	php5 /home/owncloud/public_html/apps/multiinstance/test/cronDrivenTransaction.php $TYPE $PARAM >> /home/owncloud/public_html/apps/multiinstance/test/error.txt &
+	php5 /home/owncloud/public_html/apps/multiinstance/test/cronDrivenTransaction.php $TYPE $PARAM >> /home/owncloud/public_html/apps/multiinstance/test/error.txt 
         exit 0
 fi

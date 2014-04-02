@@ -440,13 +440,13 @@ class Hooks{
 		$centralServerName = $api->getAppValue('centralServer');
 		$thisLocation = $api->getAppValue('location');
 
-		$matches = array();
-
 		if ($centralServerName !== $thisLocation) {
+			shell_exec("echo \"storage = {$parameters['storage']}\" >> /home/owncloud/public_html/apps/multiinstance/hooks.log");
 			$newStorage = MILocation::getStoragePathFromId($parameters['storage']); #MILocation::removePathFromStorage($parameters['fullStorage']);
+			shell_exec("echo \"newStorage = {$newStorage}\" >> /home/owncloud/public_html/apps/multiinstance/hooks.log");
 			if ($newStorage) {
 				$istrash = preg_match($newStorage, 'files_trashbin', $matches);
-				if ($istrash !== 0) {
+				if ($istrash == 1) {
 					$api->log("Unable to send file with path {$parameters['path']} and storage {$parameters['storage']} to central server because we do not support files in files_trashbin");
 					return;
 				}
