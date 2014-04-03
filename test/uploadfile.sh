@@ -17,6 +17,8 @@ fi
 for i in `seq 1 $ITER`; do
 	# Clean
 	./cleanForTests.sh
+	sudo rm /home/owncloud/public_html/owncloud/data/test1@$LOCATION/files/*
+	mysql -uroot -powncloud owncloud < test/cleanfiles.mysql
 
 	# Move into users data directory
 	cd /home/owncloud/public_html/owncloud/data/test1@$LOCATION/files/

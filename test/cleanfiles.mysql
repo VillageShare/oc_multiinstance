@@ -1,0 +1,2 @@
+DELETE FROM oc_multiinstance_queued_filecache;
+DELETE FROM oc_filecache;
