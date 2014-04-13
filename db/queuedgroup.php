@@ -32,13 +32,15 @@ class QueuedGroup extends Entity{
 	public $gid;
 	public $addedAt;
 	public $destinationLocation;
+	public $originLocation;
 	public $status;
 
-	public function __construct($gid, $addedAt=null, $destinationLocation=null, $status=null){
+	public function __construct($gid, $addedAt=null, $destinationLocation=null, $originoLocation=null,  $status=null){
 		if ($addedAt) {
 			$this->setGid($gid);
 			$this->setAddedAt($addedAt);
 			$this->setDestinationLocation($destinationLocation);
+			$this->setOriginLocation($originLocation);
 			$this->setStatus($status);
 		}
 		else {

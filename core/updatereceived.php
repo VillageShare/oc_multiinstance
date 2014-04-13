@@ -199,7 +199,7 @@ class UpdateReceived {
 
                 foreach ($receivedGroups as $receivedGroups) {
                         $this->api->beginTransaction();
-                        $origin = $receivedGroup->getOrigin(); //TODO
+                        $origin = $receivedGroup->getOriginLocation(); //TODO
                         $centralServer = $this->api->getAppValue('centralServer');
                         $thisLocation = $this->api->getAppValue('location');
                         $status = $receivedGroup->getStatus();
@@ -210,7 +210,7 @@ class UpdateReceived {
                                 foreach ($allLocations as $location) {
                                         if ($location->getLocation() !== $thisLocation && $location->getLocation() !== $origin) {
                                                 // Create queuedDU to send to location
-                                                $queuedGroup = new QueuedGroup($receivedGroup->getGid(), $receivedGroup->getAddedAt(), $location->getLocation(), $receivedDU->getStatus());
+                                                $queuedGroup = new QueuedGroup($receivedGroup->getGid(), $receivedGroup->getAddedAt(), $location->getLocation(), $origin, $receivedDU->getStatus());
                                                 $this->queuedGroupMapper->save($queuedGroup);
                                         }
                                 }
@@ -233,6 +233,50 @@ class UpdateReceived {
 				// TODO make an API call to OC_Group
                         }
                         $this->receivedGroupMapper->delete($receivedGroup);
+                        $this->api->commit();
+                }
+        }
+
+	// GroupUsers
+	 public function updateGroupUsersWithReceivedGroups($mockLocationMapper=null) {
+                $receivedGroups = $this->receivedGroupUserMapper->findAll();
+
+                foreach ($receivedGroups as $receivedGroups) {
+                        $this->api->beginTransaction();
+                        $origin = $receivedGroup->getOriginLocation(); //TODO
+                        $centralServer = $this->api->getAppValue('centralServer');
+                        $thisLocation = $this->api->getAppValue('location');
+                        $status = $receivedGroup->getStatus();
+                        $allLocations = MILocation::getLocations();
+
+                        if (($receivedGroup->getDestinationLocation() == $centralServer) && ($thisLocation == $centralServer)) {
+                                //Queue to all other locations except the origin
+                                foreach ($allLocations as $location) {
+                                        if ($location->getLocation() !== $thisLocation && $location->getLocation() !== $origin) {
+                                                // Create queuedDU to send to location
+                                                $queuedGroup = new QueuedGroupUser($receivedGroup->getGid(), $receivedGroup->getAddedAt(), $location->getLocation(), $origin, $receivedDU->getStatus());
+                                                $this->queuedGroupUserMapper->save($queuedGroup);
+                                        }
+                                }
+                        }
+
+                        if ($status == QueuedGroup::DELETED) {
+                                if(!$this->groupUpdateGroupMapper->exists($receivedGroup->getGid())) {
+                                        // If it does not exist, create it
+                                        $groupUpdate = new GroupUpdate($receivedDU->getUid(), $receivedDU->getAddedAt());
+                                        $this->groupUpdateMapper->save($groupUpdate);
+                                }
+                                // TODO make an API call to OC_Group
+                        } else if ($status == QueuedGroup::CREATED) {
+                                // Remove entry from DeactivatedUsers table
+                                if($this->groupUpdateMapper->exists($receivedGroup->getGid())) {
+                                        // If it does not exist, create it
+                                        $groupUpdate = new GroupUpdate($receivedGrouo->getGid(), $receivedGroup->getAddedAt());
+                                        $this->groupUpdateMapper->delete($groupUpdate);
+                                }
+                                // TODO make an API call to OC_Group
+                        }
+                        $this->receivedGroupUserMapper->delete($receivedGroup);
                         $this->api->commit();
                 }
         }

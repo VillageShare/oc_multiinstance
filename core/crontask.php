@@ -65,9 +65,9 @@ class CronTask {
 	private static $patterns = array(
 		'multiinstance_queued_users.sql' => '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+),[^,]*\)$/',
 		'multiinstance_queued_deactivatedusers.sql' => '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,(?<added_at>[^,]+),[^,]*\)$/',
-		'multiinstance_queued_groups.sql' => '/^INSERT.*VALUES \((?<gid>[^,]+),[^,]*,(?<desintation_location>[^,]+),[^,]*\)$/',
-		'multiinstance_queued_groupadmin.sql' => '/^INSERT.*VALUES \((?<gid>[^,]+),(?<uid>[^,]+),[^,]*,(?<desintation_location>[^,]+),[^,]*\)$/',
-		'multiinstance_queued_groupuser.sql' => '/^INSERT.*VALUES \((?<gid>[^,]+),(?<uid>[^,]+),[^,]*,(?<desintation_location>[^,]+),[^,]*\)$/',
+		'multiinstance_queued_groups.sql' => '/^INSERT.*VALUES \((?<gid>[^,]+),[^,]*,(?<desintation_location>[^,]+),[^,]*,[^,]*\)$/',
+		'multiinstance_queued_groupadmin.sql' => '/^INSERT.*VALUES \((?<gid>[^,]+),(?<uid>[^,]+),[^,]*,(?<desintation_location>[^,]+),[^,]*,[^,]*\)$/',
+		'multiinstance_queued_groupuser.sql' => '/^INSERT.*VALUES \((?<gid>[^,]+),(?<uid>[^,]+),[^,]*,(?<desintation_location>[^,]+),[^,]*,[^,]*\)$/',
 		'multiinstance_queued_friendships.sql' =>'/^INSERT.*VALUES \((?<friend_uid1>[^,]+),(?<friend_uid2>[^,]+),\d,(?<timestamp>[^,]+),[^,]*,[^,]*\)$/',  
 		'multiinstance_queued_user_facebook_ids.sql' =>  '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+)\)$/', 
 		'multiinstance_queued_filecache.sql' => '/^INSERT.*VALUES \((?<storage>[^,]+),(?<path>[^,]+),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(?<timestamp>[^,]+),[^,]*,[^,]*,[^,]*\)$/',
@@ -110,7 +110,6 @@ class CronTask {
 		foreach (self::$tables as $queuedTable => $receivedTable) {
 			$qTable = $this->dbtableprefix  . $queuedTable;
 			$rTable = $this->dbtableprefix . $receivedTable;
-
 			if ($this->api->getAppValue('location') === $this->api->getAppValue('centralServer')) {
 				$locations = $this->locationMapper->findAll();
 			}
@@ -387,18 +386,21 @@ class CronTask {
 			case 'multiinstance_queued_groups.sql':
 				if(sizeof($matches) < 3) {
 					$formattedQuery = "";
+					shell_exec("echo \"multiinstance_queued_groups.sql has less than 3 matches\" >> /home/owncloud/public_html/apps/multiinstance/morgan.log");
 				} else {
 					$formattedQuery = $this->deleteQueuedGroupsSql($matches['gid'], $matches['added_at']) . ";\n";
 				}
 			case 'multiinstance_queued_groupadmin.sql':
 				if(sizeof($matches) < 3) {
 					$formattedQuery = "";
+					shell_exec("echo \"multiinstance_queued_groupadmin.sql has less than 3 matches\" >> /home/owncloud/public_html/apps/multiinstance/morgan.log");
                                 } else {
 					$formattedQuery = $this->deleteQueuedGroupAdminSql($matches['gid'], $matches['uid'], $matches['added_at']) . ";\n";
                                 }
 			case 'multiinstance_queued_groupuser.sql':
 				if(sizeof($matches) < 3) {
 					$formattedQuery = "";
+					shell_exec("echo \"multiinstance_queued_groupuser.sql has less than 3 matches\" >> /home/owncloud/public_html/apps/multiinstance/morgan.log");
                                 } else {
 					$formattedQuery = $this->deleteQueuedGroupUserSql($matches['gid'], $matches['uid'], $matches['added_at']) . ";\n";
                                 }

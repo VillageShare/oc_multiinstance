@@ -29,12 +29,14 @@ class ReceivedGroup extends Entity{
 	public $gid;
 	public $addedAt;
 	public $destinationLocation;
+	public $originLocation;
 
-	public function __construct($gid, $addedAt=null, $destinationLocation=null){
+	public function __construct($gid, $addedAt=null, $destinationLocation=null, $originLocation=null){
 		if ($addedAt) {
 			$this->setGid($gid);
 			$this->setAddedAt($addedAt);
 			$this->setDestinationLocation($destinationLocation);
+			$this->setOriginLocation($originLocation);
 		}
 		else {
 			$this->fromRow($gid);
