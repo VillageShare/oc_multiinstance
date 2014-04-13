@@ -65,9 +65,9 @@ class CronTask {
 	private static $patterns = array(
 		'multiinstance_queued_users.sql' => '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+),[^,]*\)$/',
 		'multiinstance_queued_deactivatedusers.sql' => '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,(?<added_at>[^,]+),[^,]*\)$/',
-		'multiinstance_queued_groups.sql' => '/^INSERT.*VALUES \((?<gid>[^,]+),[^,]*,(?<desintation_location>[^,]+),[^,]*)$/',
-		'multiinstance_queued_groupadmin.sql' => '/^INSERT.*VALUES \((?<gid>[^,]+),(?<uid>[^,]+),[^,]*,(?<desintation_location>[^,]+),[^,]*)$/',
-		'multiinstance_queued_groupuser.sql' => '/^INSERT.*VALUES \((?<gid>[^,]+),(?<uid>[^,]+),[^,]*,(?<desintation_location>[^,]+),[^,]*)$/',
+		'multiinstance_queued_groups.sql' => '/^INSERT.*VALUES \((?<gid>[^,]+),[^,]*,(?<desintation_location>[^,]+),[^,]*\)$/',
+		'multiinstance_queued_groupadmin.sql' => '/^INSERT.*VALUES \((?<gid>[^,]+),(?<uid>[^,]+),[^,]*,(?<desintation_location>[^,]+),[^,]*\)$/',
+		'multiinstance_queued_groupuser.sql' => '/^INSERT.*VALUES \((?<gid>[^,]+),(?<uid>[^,]+),[^,]*,(?<desintation_location>[^,]+),[^,]*\)$/',
 		'multiinstance_queued_friendships.sql' =>'/^INSERT.*VALUES \((?<friend_uid1>[^,]+),(?<friend_uid2>[^,]+),\d,(?<timestamp>[^,]+),[^,]*,[^,]*\)$/',  
 		'multiinstance_queued_user_facebook_ids.sql' =>  '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+)\)$/', 
 		'multiinstance_queued_filecache.sql' => '/^INSERT.*VALUES \((?<storage>[^,]+),(?<path>[^,]+),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(?<timestamp>[^,]+),[^,]*,[^,]*,[^,]*\)$/',
