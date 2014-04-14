@@ -206,6 +206,8 @@ class CronHelper {
 
                         //Process
                         $this->updateReceived->updateUsersWithReceivedUsers();
+			$this->updateReceived->updateGroupsWithReceivedGroups();
+			$this->updateReceived->updateGroupUsersWithReceivedGroups();
                         $this->updateReceived->updateFriendshipsWithReceivedFriendships();
                         $this->updateReceived->updateUserFacebookIdsWithReceivedUserFacebookIds();
                         $this->updateReceived->updateFilecacheFromReceivedFilecaches();
@@ -217,6 +219,7 @@ class CronHelper {
                 }
 
                 if ($transactionType == TestConstants::EVENT_DRIVEN || $transactionType == TestConstants::CRON_DRIVEN) {
+			$this->cronTask->insertReceived();
                         $this->cronTask->dumpQueued($transactionType, $param);
                         $this->cronTask->linkFiles($transactionType, $param);
                 } else {

@@ -46,9 +46,9 @@ class GroupUpdateMapper extends Mapper {
 	 * @throws DoesNotExistException: if the item does not exist
 	 * @return the item
 	 */
-	public function find($uid){
-		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE uid = ?';
-		$params = array($uid);
+	public function find($gid){
+		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE gid = ?';
+		$params = array($gid);
 
 		$result = array();
 		
@@ -56,9 +56,9 @@ class GroupUpdateMapper extends Mapper {
 		$row = $result->fetchRow();
 
 		if ($row === false) {
-			throw new DoesNotExistException('UserUpdate with uid ' . $uid . ' does not exist!');
+			throw new DoesNotExistException('UserUpdate with gid ' . $gid . ' does not exist!');
 		} elseif($result->fetchRow() !== false) {
-			throw new MultipleObjectsReturnedException('UserUpdate with uid ' . $uid . ' returned more than one result.');
+			throw new MultipleObjectsReturnedException('UserUpdate with gid ' . $gid . ' returned more than one result.');
 		}
 		return new UserUpdate($row);
 

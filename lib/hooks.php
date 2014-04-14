@@ -63,9 +63,12 @@ class Hooks{
                 $thisLocation = $c['API']->getAppValue('location');
                 $date = $c['API']->getTime();
                 $gid = $parameters['gid'];
-
+		$no_emit = $parameters['no_emit'];
+		if ($no_emit) {
+			return;
+		}
                 if ($centralServerName == $thisLocation) {
-                        foreach(MILocations::getLocations() as $loc) {
+                        foreach(MILocation::getLocations() as $loc) {
                                 if (!$c['QueuedGroupMapper']->exists($gid, $date, $loc->getLocation(), QueuedGroup::CREATED)) {
 					$queuedGroup = new QueuedGroup($gid, $date, $loc->getLocation(), QueuedGroup::CREATED);
                                         $c['QueuedGroupMapper']->save($queuedGroup);
@@ -89,7 +92,10 @@ class Hooks{
                 $thisLocation = $c['API']->getAppValue('location');
                 $date = $c['API']->getTime();
                 $gid = $parameters['gid'];
-
+		$no_emit = $parameters['no_emit'];
+                if ($no_emit) {
+                        return;
+                }
 		if ($centralServerName == $thisLocation) {
                         foreach(MILocations::getLocations() as $loc) {
                                 if (!$c['QueuedGroupMapper']->exists($gid, $date, $loc->getLocation(), QueuedGroup::DELETED)) {
@@ -115,7 +121,10 @@ class Hooks{
                 $date = $c['API']->getTime();
 		$gid = $parameters['gid'];
                 $uid = $parameters['uid'];
-
+		$no_emit = $parameters['no_emit'];
+                if ($no_emit) {
+                        return;
+                }
 		if ($centralServerName == $thisLocation) {
 			foreach(MILocations::getLocations() as $loc) {
                                 if (!$c['QueuedGroupUserMapper']->exists($gid, $uid, $date, $loc->getLocation(), QueuedGroupUser::CREATED)) {
@@ -140,7 +149,10 @@ class Hooks{
                 $date = $c['API']->getTime();
                 $gid = $parameters['gid'];
                 $uid = $parameters['uid'];
-
+		$no_emit = $parameters['no_emit'];
+                if ($no_emit) {
+                        return;
+                }
 		if ($centralServerName == $thisLocation) {
                         foreach(MILocations::getLocations() as $loc) {
                                 if (!$c['QueuedGroupUserMapper']->exists($gid, $uid, $date, $loc->getLocation(), QueuedGroupUser::DELETED)) {

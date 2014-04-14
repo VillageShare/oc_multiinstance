@@ -65,9 +65,9 @@ class CronTask {
 	private static $patterns = array(
 		'multiinstance_queued_users.sql' => '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+),[^,]*\)$/',
 		'multiinstance_queued_deactivatedusers.sql' => '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,(?<added_at>[^,]+),[^,]*\)$/',
-		'multiinstance_queued_groups.sql' => '/^INSERT.*VALUES \((?<gid>[^,]+),[^,]*,(?<desintation_location>[^,]+),[^,]*,[^,]*\)$/',
-		'multiinstance_queued_groupadmin.sql' => '/^INSERT.*VALUES \((?<gid>[^,]+),(?<uid>[^,]+),[^,]*,(?<desintation_location>[^,]+),[^,]*,[^,]*\)$/',
-		'multiinstance_queued_groupuser.sql' => '/^INSERT.*VALUES \((?<gid>[^,]+),(?<uid>[^,]+),[^,]*,(?<desintation_location>[^,]+),[^,]*,[^,]*\)$/',
+		'multiinstance_queued_groups.sql' => '/^INSERT.*VALUES \((?<gid>[^,]+),(?<added_at>[^,]+),(?<desintation_location>[^,]+),[^,]*,[^,]*\)$/',
+		'multiinstance_queued_groupadmin.sql' => '/^INSERT.*VALUES \((?<gid>[^,]+),(?<uid>[^,]+),(?<added_at>[^,]+),(?<desintation_location>[^,]+),[^,]*,[^,]*\)$/',
+		'multiinstance_queued_groupuser.sql' => '/^INSERT.*VALUES \((?<gid>[^,]+),(?<uid>[^,]+),(?<added_at>[^,]+),(?<desintation_location>[^,]+),[^,]*,[^,]*\)$/',
 		'multiinstance_queued_friendships.sql' =>'/^INSERT.*VALUES \((?<friend_uid1>[^,]+),(?<friend_uid2>[^,]+),\d,(?<timestamp>[^,]+),[^,]*,[^,]*\)$/',  
 		'multiinstance_queued_user_facebook_ids.sql' =>  '/^INSERT.*VALUES \((?<uid>[^,]+),[^,]*,[^,]*,(?<timestamp>[^,]+)\)$/', 
 		'multiinstance_queued_filecache.sql' => '/^INSERT.*VALUES \((?<storage>[^,]+),(?<path>[^,]+),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(?<timestamp>[^,]+),[^,]*,[^,]*,[^,]*\)$/',
@@ -390,6 +390,7 @@ class CronTask {
 				} else {
 					$formattedQuery = $this->deleteQueuedGroupsSql($matches['gid'], $matches['added_at']) . ";\n";
 				}
+				break;
 			case 'multiinstance_queued_groupadmin.sql':
 				if(sizeof($matches) < 3) {
 					$formattedQuery = "";
@@ -397,6 +398,7 @@ class CronTask {
                                 } else {
 					$formattedQuery = $this->deleteQueuedGroupAdminSql($matches['gid'], $matches['uid'], $matches['added_at']) . ";\n";
                                 }
+				break;
 			case 'multiinstance_queued_groupuser.sql':
 				if(sizeof($matches) < 3) {
 					$formattedQuery = "";
@@ -404,6 +406,7 @@ class CronTask {
                                 } else {
 					$formattedQuery = $this->deleteQueuedGroupUserSql($matches['gid'], $matches['uid'], $matches['added_at']) . ";\n";
                                 }
+				break;
 			default:
 				throw new \Exception("No delete query function for {$filename}");
 
@@ -434,7 +437,7 @@ class CronTask {
 		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_deactivatedusers\` WHERE \`uid\` = {$uid} AND \`added_at\` = {$addedAt}";
 	}
 
-	protected function deleteQueuedGroupsSql($uid, $addedAt) {
+	protected function deleteQueuedGroupsSql($gid, $addedAt) {
                 return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_groups\` WHERE \`gid\` = {$gid} AND \`added_at\` = {$addedAt}";
         }
 
@@ -442,7 +445,7 @@ class CronTask {
 		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_groupadmin\` WHERE \`gid\` = {$gid} AND \`uid\` = {$uid} AND \`added_at\` = {$addedAt}";
         }
 
-	protected function deleteQueuedGroupUserSql($uid, $addedAt) {            
+	protected function deleteQueuedGroupUserSql($gid, $uid, $addedAt) {            
                 return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_groupuser\` WHERE \`gid\` = {$gid} AND \`uid\` = {$uid} AND \`added_at\` = {$addedAt}";
         }
 

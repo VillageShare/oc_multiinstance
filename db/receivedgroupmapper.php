@@ -80,15 +80,16 @@ class ReceivedGroupMapper extends Mapper {
 	 * @return array containing all items
 	 */
 	public function findAll(){
-		$result = $this->findAllQuery($this->getTableName());
+		$sql = "SELECT * FROM {$this->getTableName()}";
+                $result = $this->execute($sql);
 
-		$entityList = array();
-		while($row = $result->fetchRow()){
-			$entity = new ReceivedGroup($row);
-			array_push($entityList, $entity);
-		}
+                $entityList = array();
+                while($row = $result->fetchRow()){
+                        $entity = new ReceivedGroup($row);
+                        array_push($entityList, $entity);
+                }
 
-		return $entityList;
+                return $entityList;
 	}
 
 
@@ -121,15 +122,14 @@ class ReceivedGroupMapper extends Mapper {
 	 * @param string $gid: the gid of the ReceivedGroup
 	 */
 	public function delete(Entity $receivedGroup){
-		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `gid` = ?  AND `added_at` = ? AND `destination_location`';
-		$params = array(
-			$receivedGroup->getGid(),
-			$receivedGroup->getAddedAt(),
-			$receivedGroup->getDestinationLocation()
-		);
-		
-		return $this->execute($sql, $params);
-	}
+                $sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `gid` = ?  AND `added_at` = ? AND `destination_location` =?';
+                $params = array(
+                        $receivedGroup->getGid(),
+                        $receivedGroup->getAddedAt(),
+                        $receivedGroup->getDestinationLocation()
+                );
 
+                return $this->execute($sql, $params);
+        }
 
 }

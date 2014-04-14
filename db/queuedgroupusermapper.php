@@ -102,14 +102,15 @@ class QueuedGroupUserMapper extends Mapper {
 			return false;  //Already exists, do nothing
 		}
 
-		$sql = 'INSERT INTO `'. $this->getTableName() . '` (`gid`, `uid`, `added_at`, `destination_location`, `status`)'.
-				' VALUES  (?, ?, ?, ?, ?)';
+		$sql = 'INSERT INTO `'. $this->getTableName() . '` (`gid`, `uid`, `added_at`, `destination_location`, `origin_location`, `status`)'.
+				' VALUES  (?, ?, ?, ?, ?, ?)';
 
 		$params = array(
 			$queuedGroupUser->getGid(),
 			$queuedGroupUser->getUid(),
 			$queuedGroupUser->getAddedAt(),
 			$queuedGroupUser->getDestinationLocation(),
+			$queuedGroupUser->getOriginLocation(),
 			$queuedGroupUser->getStatus()
 		);
 
