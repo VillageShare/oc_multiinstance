@@ -4,7 +4,25 @@
 	 <create>true</create>
 	 <overwrite>false</overwrite>
 	 <charset>utf8</charset>
-
+	<table>
+                <name>*dbprefix*multiinstance_sync_files</name>
+                <declaration>
+                        <field>
+                                <name>uid</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>64</length>
+                        </field>
+                        <field>
+                                <name>path</name>
+                                <type>text</type>
+                                <default></default>
+                                <notnull>true</notnull>
+                                <length>512</length>
+                        </field>
+                </declaration>
+        </table>
 	<table>
                 <name>*dbprefix*multiinstance_group_request</name>
                 <declaration>
