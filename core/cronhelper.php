@@ -200,7 +200,7 @@ class CronHelper {
 
 	public function run($transactionType=null, $param=null) {
 
-                if (is_null($transactionType)) {
+                #if (is_null($transactionType)) {
 
                         $this->cronTask->insertReceived();
 
@@ -216,18 +216,19 @@ class CronHelper {
                         $this->cronTask->readAcksAndResponses(); //This method checks to whether or not it should read responses (only non-central servers should process responses)
 
                         $this->requestsAndResponses();
-                }
+                #}
 
-                if ($transactionType == TestConstants::EVENT_DRIVEN || $transactionType == TestConstants::CRON_DRIVEN) {
-			$this->cronTask->insertReceived();
-                        $this->cronTask->dumpQueued($transactionType, $param);
-                        $this->cronTask->linkFiles($transactionType, $param);
-                } else {
-                        //Dump
+                #if ($transactionType == TestConstants::EVENT_DRIVEN || $transactionType == TestConstants::CRON_DRIVEN) {
+		#	$this->cronTask->insertReceived();
+		#	$this->cronTask->dumpResponses();
+                #        $this->cronTask->dumpQueued($transactionType, $param);
+                #        $this->cronTask->linkFiles($transactionType, $param);
+                #} else {
+                #        //Dump
                         $this->cronTask->dumpResponses();
                         $this->cronTask->dumpQueued();
                         $this->cronTask->linkFiles();
-                }
+                #}
                 //Sync
                 $this->sync($transactionType, $param);
 

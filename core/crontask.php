@@ -100,13 +100,19 @@ class CronTask {
 	 * other code on a time interval
 	 */
 	public function dumpQueued($transactionType=null, $param=null) {
+
+		//$dirs = $this->api->glob($this->sendPathPrefix . "*", true );
+                //foreach ($dirs as $dir){
+                //        shell_exec("rm $dir/*.sql");
+                //}
+
 		date_default_timezone_set($this->api->getAppValue('timezone'));
                 $hour = date('H');
-		if ($transactionType == TestConstants::EVENT_DRIVEN) {
-			self::$tables = TestConstants::getTables($param);
-			$flattab = var_dump(self::$tables);
-			shell_exec("echo {$flattab} >> /home/owncloud/public_html/apps/multiinstance/testevent.log");
-		}
+		#if ($transactionType == TestConstants::EVENT_DRIVEN) {
+		#	self::$tables = TestConstants::getTables($param);
+		#	$flattab = var_dump(self::$tables);
+		#	shell_exec("echo {$flattab} >> /home/owncloud/public_html/apps/multiinstance/testevent.log");
+		#}
 		foreach (self::$tables as $queuedTable => $receivedTable) {
 			$qTable = $this->dbtableprefix  . $queuedTable;
 			$rTable = $this->dbtableprefix . $receivedTable;
@@ -119,6 +125,7 @@ class CronTask {
 				$locations = array($location);
 			}
 			foreach ($locations as $location) {
+				$this->api->log("location: {$location}");
 				if (strpos($location->getLocation(), ";") !== false) {
 					$this->api->log("Location {$location->getLocation()} has a semicolon in it.  This is not allowed.");
 					continue;
@@ -128,7 +135,7 @@ class CronTask {
 				}
 				$file = "{$this->sendPathPrefix}{$location->getLocation()}/{$queuedTable}.sql";
 			 	$cmd = "mysqldump --add-locks --insert  --skip-comments --skip-extended-insert --no-create-info --no-create-db -u{$this->dbuser} -p{$this->dbpassword} {$this->dbname} {$qTable} --where=\"destination_location='{$location->getLocation()}'\" > {$file}";
-
+				$this->api->log("execute {$cmd}");
 				/*if (($queuedTable === 'multiinstance_queued_filecache') && ($hour !== $this->api->getAppValue('backuphour'))) {
 					$cmd = "mysqldump --add-locks --insert  --skip-comments --skip-extended-insert --no-create-info --no-create-db -u{$this->dbuser} -p{$this->dbpassword} {$this->dbname} {$qTable} --where=\"destination_location='{$location->getLocation()}' AND size<{$this->api->getAppValue('filesizecutoff')}\" > {$file}";
 				}*/
@@ -261,13 +268,18 @@ class CronTask {
 
 			foreach ($files as $file) {
 				$filename = $this->api->baseName($file);
+				shell_exec("echo \"File: {$filename}\" >> /home/owncloud/public_html/apps/multiinstance/ack.log");
 				$time = floatval(substr($filename,1)); //remove 'a' and get microTime
+				shell_exec("echo \"Time: {$time}\" >> /home/owncloud/public_html/apps/multiinstance/ack.log");
 				if ($time == 0) {
 					continue;
 				}
 				if ($lastReadTime < $time && $time <= $lastUpdatedTime) {
+					$this->api->log("Transfer is acknowledged for {$time} and mysql is being executed.\" >> /home/owncloud/public_html/apps/multiinstance/ack.log");
 					$cmd = "mysql -u{$this->dbuser} -p{$this->dbpassword} {$this->dbname} < {$file}";
 					$this->api->exec($cmd);
+				} else{
+					$this->api->log("Transfer is NOT acknowledged for {$time} and mysql is NOT being executed.\" >> /home/owncloud/public_html/apps/multiinstance/ack.log");
 				}
 			}
 			if ($this->api->filePutContents($lastReadFilename, $lastUpdatedStringTime) === false) {
