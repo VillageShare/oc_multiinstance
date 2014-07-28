@@ -115,6 +115,7 @@ class Hooks{
 	}
 
 	static public function addToGroup($parameters) {
+		shell_exec("echo \"Add to group\" >> /home/owncloud/public_html/apps/multiinstance/group.log");
 		$c = new DIContainer();
                 $centralServerName = $c['API']->getAppValue('centralServer');
                 $thisLocation = $c['API']->getAppValue('location');
@@ -123,18 +124,23 @@ class Hooks{
                 $uid = $parameters['uid'];
 		$no_emit = $parameters['no_emit'];
                 if ($no_emit) {
+			shell_exec("echo \"Not emitted\" >> /home/owncloud/public_html/apps/multiinstance/group.log");
                         return;
                 }
+		shell_exec("echo \"Add to \" >> /home/owncloud/public_html/apps/multiinstance/group.log");
 		if ($centralServerName == $thisLocation) {
+			shell_exec("echo \"Central server is this server\" >> /home/owncloud/public_html/apps/multiinstance/group.log");
 			foreach(MILocations::getLocations() as $loc) {
                                 if (!$c['QueuedGroupUserMapper']->exists($gid, $uid, $date, $loc->getLocation(), QueuedGroupUser::CREATED)) {
-                                        $queuedGroupUser = new QueuedGroupUser($gid, $uid, $date, $loc->getLocation(), QueuedGroupUser::CREATED);
+                                        $queuedGroupUser = new QueuedGroupUser($gid, $uid, $date, $loc->getLocation(), $centralServerName, QueuedGroupUser::CREATED);
                                         $c['QueuedGroupUserMapper']->save($queuedGroupUser);
                                 }
                         }
 		} else {
+			shell_exec("echo \"Not a central server\" >> /home/owncloud/public_html/apps/multiinstance/group.log");
 			 if (!$c['QueuedGroupUserMapper']->exists($gid, $uid, $date, $centralServerName, QueuedGroupUser::CREATED)) {
-                                $queuedGroupUser = new QueuedGroupUser($gid, $uid, $date, $centralServerName, QueuedGroupUser::CREATED);
+				shell_exec("echo \"Create a new group user\" >> /home/owncloud/public_html/apps/multiinstance/group.log");
+                                $queuedGroupUser = new QueuedGroupUser($gid, $uid, $date, $centralServerName, $thisLocation, QueuedGroupUser::CREATED);
                                 $c['QueuedGroupUserMapper']->save($queuedGroupUser);
                         }
 		}	
