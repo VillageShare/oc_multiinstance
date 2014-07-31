@@ -179,6 +179,7 @@ class Hooks{
 
 	// Group Admin
 	static public function addAdminToGroup($parameters) {
+		shell_exec("echo \"Add admin to group\" >> /home/owncloud/public_html/apps/multiinstance/group.log");
                 $c = new DIContainer();
                 $centralServerName = $c['API']->getAppValue('centralServer');
                 $thisLocation = $c['API']->getAppValue('location');
@@ -187,6 +188,7 @@ class Hooks{
                 $uid = $parameters['uid'];
 
                 if ($centralServerName == $thisLocation) {
+			shell_exec("echo \"At central server\" >> /home/owncloud/public_html/apps/multiinstance/group.log");
                         foreach(MILocations::getLocations() as $loc) {
                                 if (!$c['QueuedGroupAdminMapper']->exists($gid, $uid, $date, $loc->getLocation(), QueuedGroupAdmin::CREATED)) {
                                         $queuedGroupAdmin = new QueuedGroupAdmin($gid, $uid, $date, $loc->getLocation(), QueuedGroupAdmin::CREATED);
@@ -194,7 +196,9 @@ class Hooks{
                                 }
                         }
                 } else {
-                         if (!$c['QueuedGroupAdminMapper']->exists($gid, $date, $centralServerName, QueuedGroupAdmin::CREATED)) {
+			shell_exec("echo \"At non-central server\" >> /home/owncloud/public_html/apps/multiinstance/group.log");
+                         if (!$c['QueuedGroupAdminMapper']->exists($gid, $uid, $date, $centralServerName, QueuedGroupAdmin::CREATED)) {
+				shell_exec("echo \"Group admin does not exist\" >> /home/owncloud/public_html/apps/multiinstance/group.log");
                                 $queuedGroupAdmin = new QueuedGroupAdmin($gid, $uid, $date, $centralServerName, QueuedGroupAdmin::CREATED);
                                 $c['QueuedGroupAdminMapper']->save($queuedGroupAdmin);
                         }

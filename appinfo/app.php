@@ -32,10 +32,10 @@ namespace OCA\MultiInstance;
 //location name should be in Linux file format (no spaces, etc), as it will be used as a folder name
 \OCP\Config::setAppValue('multiinstance', 'location', 'School1');
 //IP address
-\OCP\Config::setAppValue('multiinstance', 'ip', '128.111.52.151');
+\OCP\Config::setAppValue('multiinstance', 'ip', '128.111.52.160');
 
 //ip or domain name of UCSB server (or whatever the central server is)
-\OCP\Config::setAppValue('multiinstance', 'centralServerIP', '128.111.52.186');
+\OCP\Config::setAppValue('multiinstance', 'centralServerIP', '128.111.52.166');
 \OCP\Config::setAppValue('multiinstance', 'centralServer', 'CSIR');
 
 
@@ -76,5 +76,5 @@ $rsyncPort = 10001;
 \OCP\Util::connectHook('OC_User', 'post_deleteGroup', 'OCA\MultiInstance\Lib\Hooks', 'deleteGroup');
 \OCP\Util::connectHook('OC_User', 'post_addToGroup', 'OCA\MultiInstance\Lib\Hooks', 'addToGroup');
 \OCP\Util::connectHook('OC_User', 'post_removeFromGroup', 'OCA\MultiInstance\Lib\Hooks', 'removeFromGroup');
-\OCP\Util::connectHook('OC_SubAdmin', 'post_createSubAdmin', 'OCA\MultiInstance\Lib\Hooks', 'addAdminToGroup');
+\OCP\Util::connectHook('OC_User', 'post_createSubAdmin', 'OCA\MultiInstance\Lib\Hooks', 'addAdminToGroup');
 \OCP\Util::connectHook('OC_SubAdmin', 'post_removeSubAdmin', 'OCA\MultiInstance\Lib\Hooks', 'removeAdminFromGroup');

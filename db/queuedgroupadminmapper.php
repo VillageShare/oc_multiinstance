@@ -98,7 +98,7 @@ class QueuedGroupAdminMapper extends Mapper {
 	 * @return the item with the filled in id
 	 */
 	public function save($queuedGroupAdmin){
-		if ($this->exists($queuedGroupAdmin->getGid(), $queuedGroupAdmin->getUid(), $queuedGroupAdmin->getAddedAt(), $queuedGroupAdmin->getDestinationLocation(), $queuedGroup->getStatus())) {
+		if ($this->exists($queuedGroupAdmin->getGid(), $queuedGroupAdmin->getUid(), $queuedGroupAdmin->getAddedAt(), $queuedGroupAdmin->getDestinationLocation(), $queuedGroupAdmin->getStatus())) {
 			return false;  //Already exists, do nothing
 		}
 
