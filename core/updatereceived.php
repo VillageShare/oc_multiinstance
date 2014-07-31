@@ -300,6 +300,53 @@ class UpdateReceived {
                 }
         }
 
+	// GroupAdmin
+         public function updateGroupAdminsWithReceivedGroups($mockLocationMapper=null) {
+                $receivedGroups = $this->receivedGroupAdminMapper->findAll();
+
+                foreach ($receivedGroups as $receivedGroup) {
+                        $this->api->beginTransaction();
+                        $origin = $receivedGroup->getOriginLocation(); //TODO
+                        $centralServer = $this->api->getAppValue('centralServer');
+                        $thisLocation = $this->api->getAppValue('location');
+                        $status = $receivedGroup->getStatus();
+                        $allLocations = MILocation::getLocations();
+
+                        if (($receivedGroup->getDestinationLocation() == $centralServer) && ($thisLocation == $centralServer)) {
+                                //Queue to all other locations except the origin
+                                foreach ($allLocations as $location) {
+                                        if ($location->getLocation() !== $thisLocation && $location->getLocation() !== $origin) {
+                                                // Create queuedDU to send to location
+                                                $queuedGroup = new QueuedGroupAdmin($receivedGroup->getUid(), $receivedGroup->getGid(), $receivedGroup->getAddedAt(), $location->getLocation(), $origin, $receivedGroup->getStatus());
+                                                $this->queuedGroupAdminMapper->save($queuedGroup);
+                                        }
+                                }
+                        }
+
+                        if ($status == QueuedGroup::DELETED) {
+                                if(!$this->groupUpdateAdminMapper->exists($receivedGroup->getUid(), $receivedGroup->getGid())) {
+                                        // If it does not exist, create it
+                                        $groupUpdate = new GroupUpdate($receivedGroup->getGid(), $receivedGroup->getAddedAt());
+                                        $this->groupUpdateMapper->save($groupUpdate);
+                                }
+                                OC_Group::removeFromGroup($receivedGroup->getUid(), $receivedGroup->getGid(), true);
+                        } else if ($status == QueuedGroup::CREATED) {
+                                shell_exec("echo \"updateGroupAdmin: is created\" >> /home/owncloud/public_html/apps/multiinstance/group.log");
+                                // Remove entry from DeactivatedUsers table
+                                #if(!$this->groupUpdateMapper->exists($receivedGroup->getGid())) {
+                                        // If it does not exist, create it
+                                #        $groupUpdate = new GroupUpdate($receivedGroup->getGid(), $receivedGroup->getAddedAt());
+                                #        $this->groupUpdateMapper->delete($groupUpdate);
+                                #}
+                                //OC_Group::addToGroup($receivedGroup->getUid(), $receivedGroup->getGid(), true);
+                                $this->groupAdminMapper->save($receivedGroup);
+                                shell_exec("echo \"updateAdminUser: OC_Group::addToGroup\" >> /home/owncloud/public_html/apps/multiinstance/group.log");
+                        }
+                        $this->receivedGroupAdminMapper->delete($receivedGroup);
+                        $this->api->commit();
+                }
+        }
+
 	public function updateFriendshipsWithReceivedFriendships($mockLocationMapper=null) {
 		$receivedFriendships = $this->receivedFriendshipMapper->findAll();
 		

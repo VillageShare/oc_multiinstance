@@ -208,6 +208,7 @@ class CronHelper {
                         $this->updateReceived->updateUsersWithReceivedUsers();
 			$this->updateReceived->updateGroupsWithReceivedGroups();
 			$this->updateReceived->updateGroupUsersWithReceivedGroups();
+			$this->updateReceived->updateGroupAdminsWithReceivedGroups();
                         $this->updateReceived->updateFriendshipsWithReceivedFriendships();
                         $this->updateReceived->updateUserFacebookIdsWithReceivedUserFacebookIds();
                         $this->updateReceived->updateFilecacheFromReceivedFilecaches();

@@ -33,14 +33,16 @@ class ReceivedGroupAdmin extends Entity{
 	public $uid;
 	public $addedAt;
 	public $destinationLocation;
+	public $originLocation;
 	public $status;
 
-	public function __construct($gid, $uid=null, $addedAt=null, $destinationLocation=null, $status=null){
+	public function __construct($gid, $uid=null, $addedAt=null, $destinationLocation=null, $originLocation=null, $status=null){
 		if ($uid) {
 			$this->setGid($gid);
 			$this->setUid($uid);
 			$this->setAddedAt($addedAt);
 			$this->setDestinationLocation($destinationLocation);
+			$this->setOriginLocation($originLocation);
 			$this->setStatus($status);
 		}
 		else {

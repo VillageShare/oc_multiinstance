@@ -453,7 +453,7 @@ class CronTask {
                 return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_groups\` WHERE \`gid\` = {$gid} AND \`added_at\` = {$addedAt}";
         }
 
-	protected function deleteQueuedGroupAdminSql($uid, $addedAt) {                
+	protected function deleteQueuedGroupAdminSql($gid, $uid, $addedAt) {                
 		return "DELETE IGNORE FROM \`{$this->dbtableprefix}multiinstance_queued_groupadmin\` WHERE \`gid\` = {$gid} AND \`uid\` = {$uid} AND \`added_at\` = {$addedAt}";
         }
 
