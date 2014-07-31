@@ -77,6 +77,8 @@ class UpdateReceived {
 	private $receivedGroupAdminMapper;
 	private $queuedGroupUserMapper;
         private $receivedGroupUserMapper;
+	private $groupUserMapper;
+	private $groupAdminMapper;
 	private $groupUpdateMapper;
 	private $receivedDeactivatedUserMapper;
 	private $queuedDeactivatedUserMapper;
@@ -84,7 +86,7 @@ class UpdateReceived {
 	/**
 	 * @param API $api: an api wrapper instance
 	 */
-	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $queuedUserMapper, $locationMapper, $receivedFilecacheMapper, $filecacheUpdateMapper, $queuedFilecacheMapper, $receivedPermissionMapper, $permissionUpdateMapper, $receivedShareMapper, $shareUpdateMapper, $queuedShareMapper, $queuedDeactivatedUserMapper, $receivedDeactivatedUserMapper, $deactivatedUserMapper, $queuedGroupMapper, $groupUpdateMapper, $receivedGroupMapper, $queuedGroupAdminMapper, $receivedGroupAdminMapper, $queuedGroupUserMapper, $receivedGroupUserMapper){
+	public function __construct($api, $receivedUserMapper, $userUpdateMapper, $receivedFriendshipMapper, $userFacebookIdMapper, $receivedUserFacebookIdMapper, $friendshipMapper, $queuedFriendshipMapper, $queuedUserMapper, $locationMapper, $receivedFilecacheMapper, $filecacheUpdateMapper, $queuedFilecacheMapper, $receivedPermissionMapper, $permissionUpdateMapper, $receivedShareMapper, $shareUpdateMapper, $queuedShareMapper, $queuedDeactivatedUserMapper, $receivedDeactivatedUserMapper, $deactivatedUserMapper, $queuedGroupMapper, $groupUpdateMapper, $receivedGroupMapper, $queuedGroupAdminMapper, $receivedGroupAdminMapper, $queuedGroupUserMapper, $receivedGroupUserMapper, $groupUserMapper, $groupAdminMapper){
 		$this->api = $api;
 		$this->receivedUserMapper = $receivedUserMapper;
 		$this->userUpdateMapper = $userUpdateMapper;
@@ -109,6 +111,8 @@ class UpdateReceived {
                 $this->receivedGroupAdminMapper = $receivedGroupAdminMapper;
 		$this->queuedGroupUserMapper = $queuedGroupUserMapper;
                 $this->receivedGroupUserMapper = $receivedGroupUserMapper;
+		$this->groupUserMapper = $groupUserMapper;
+		$this->groupAdminMapper = $groupAdminMapper;
 		$this->groupUpdateMapper = $groupUpdateMapper;
 		$this->receivedDeactivatedUserMapper = $receivedDeactivatedUserMapper;
 		$this->queuedDeactivatedUserMapper = $queuedDeactivatedUserMapper;
@@ -280,13 +284,16 @@ class UpdateReceived {
                                 }
                                 OC_Group::removeFromGroup($receivedGroup->getUid(), $receivedGroup->getGid(), true);
                         } else if ($status == QueuedGroup::CREATED) {
+				shell_exec("echo \"updateGroupUser: is created\" >> /home/owncloud/public_html/apps/multiinstance/group.log");
                                 // Remove entry from DeactivatedUsers table
-                                if(!$this->groupUpdateMapper->exists($receivedGroup->getGid())) {
+                                #if(!$this->groupUpdateMapper->exists($receivedGroup->getGid())) {
                                         // If it does not exist, create it
-                                        $groupUpdate = new GroupUpdate($receivedGroup->getGid(), $receivedGroup->getAddedAt());
-                                        $this->groupUpdateMapper->delete($groupUpdate);
-                                }
-                                OC_Group::addToGroup($receivedGroup->getUid(), $receivedGroup->getGid(), true);
+                                #        $groupUpdate = new GroupUpdate($receivedGroup->getGid(), $receivedGroup->getAddedAt());
+                                #        $this->groupUpdateMapper->delete($groupUpdate);
+                                #}
+                                //OC_Group::addToGroup($receivedGroup->getUid(), $receivedGroup->getGid(), true);
+				$this->groupUserMapper->save($receivedGroup);
+				shell_exec("echo \"updateGroupUser: OC_Group::addToGroup\" >> /home/owncloud/public_html/apps/multiinstance/group.log");
                         }
                         $this->receivedGroupUserMapper->delete($receivedGroup);
                         $this->api->commit();

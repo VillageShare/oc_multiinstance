@@ -50,6 +50,8 @@ use OCA\MultiInstance\Db\ReceivedGroupAdminMapper;
 use OCA\MultiInstance\Db\QueuedGroupUserMapper;
 use OCA\MultiInstance\Db\ReceivedGroupUserMapper;
 use OCA\MultiInstance\Db\GroupUpdateMapper;
+use OCA\MultiInstance\Db\GroupUserMapper;
+use OCA\MultiInstance\Db\GroupAdminMapper;
 
 use OCA\MultiInstance\Db\QueuedRequestMapper;
 use OCA\MultiInstance\Db\ReceivedRequestMapper;
@@ -150,6 +152,14 @@ class DIContainer extends BaseContainer {
                         return new ReceivedGroupUserMapper($c['API']);
                 });
 
+		$this['GroupUserMapper'] = $this->share(function($c){
+			return new GroupUserMapper($c['API']);
+		});
+
+		$this['GroupAdminMapper'] = $this->share(function($c){
+			return new GroupAdminMapper($c['API']);
+		});
+		
 		$this['GroupUpdateMapper'] = $this->share(function($c){
                         return new GroupUpdateMapper($c['API']);
                 });
@@ -246,7 +256,7 @@ class DIContainer extends BaseContainer {
 			
 		});
 		$this['UpdateReceived'] = $this->share(function($c){
-			return new UpdateReceived($c['API'], $c['ReceivedUserMapper'], $c['UserUpdateMapper'],$c['ReceivedFriendshipMapper'], $c['UserFacebookIdMapper'], $c['ReceivedUserFacebookIdMapper'], $c['FriendshipMapper'], $c['QueuedFriendshipMapper'], $c['QueuedUserMapper'], $c['LocationMapper'], $c['ReceivedFileCacheMapper'], $c['FilecacheUpdateMapper'], $c['QueuedFileCacheMapper'], $c['ReceivedPermissionMapper'], $c['PermissionUpdateMapper'], $c['ReceivedShareMapper'], $c['ShareUpdateMapper'], $c['QueuedShareMapper'], $c['QueuedDeactivatedUserMapper'], $c['ReceivedDeactivatedUserMapper'], $c['DeactivatedUserMapper'], $c['QueuedGroupMapper'], $c['GroupUpdateMapper'], $c['ReceivedGroupMapper'], $c['QueuedGroupAdminMapper'], $c['ReceivedGroupAdminMapper'], $c['QueuedGroupUserMapper'], $c['ReceivedGroupUserMapper']);
+			return new UpdateReceived($c['API'], $c['ReceivedUserMapper'], $c['UserUpdateMapper'],$c['ReceivedFriendshipMapper'], $c['UserFacebookIdMapper'], $c['ReceivedUserFacebookIdMapper'], $c['FriendshipMapper'], $c['QueuedFriendshipMapper'], $c['QueuedUserMapper'], $c['LocationMapper'], $c['ReceivedFileCacheMapper'], $c['FilecacheUpdateMapper'], $c['QueuedFileCacheMapper'], $c['ReceivedPermissionMapper'], $c['PermissionUpdateMapper'], $c['ReceivedShareMapper'], $c['ShareUpdateMapper'], $c['QueuedShareMapper'], $c['QueuedDeactivatedUserMapper'], $c['ReceivedDeactivatedUserMapper'], $c['DeactivatedUserMapper'], $c['QueuedGroupMapper'], $c['GroupUpdateMapper'], $c['ReceivedGroupMapper'], $c['QueuedGroupAdminMapper'], $c['ReceivedGroupAdminMapper'], $c['QueuedGroupUserMapper'], $c['ReceivedGroupUserMapper'], $c['GroupUserMapper'], $c['GroupAdminMapper']);
 			
 		});
 		$this['RequestResponse'] = $this->share(function($c){
