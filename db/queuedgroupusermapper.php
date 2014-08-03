@@ -99,6 +99,7 @@ class QueuedGroupUserMapper extends Mapper {
 	 */
 	public function save($queuedGroupUser){
 		if ($this->exists($queuedGroupUser->getGid(), $queuedGroupUser->getUid(), $queuedGroupUser->getAddedAt(), $queuedGroupUser->getDestinationLocation(), $queuedGroupUser->getStatus())) {
+			shell_exec("echo \"Already exists\" >> /home/owncloud/public_html/apps/multiinstance/group.log");
 			return false;  //Already exists, do nothing
 		}
 
