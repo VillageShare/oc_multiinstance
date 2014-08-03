@@ -124,7 +124,7 @@ class ReceivedGroupAdminMapper extends Mapper {
 	 * @param string $gid: the gid of the ReceivedGroup
 	 */
 	public function delete(Entity $receivedGroupAdmin){
-		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `gid` = ? AND `uid` = ? AND `added_at` = ? AND `destination_location`';
+		$sql = 'DELETE FROM `' . $this->getTableName() . '` WHERE `gid` = ? AND `uid` = ? AND `added_at` = ? AND `destination_location`= ?';
 		$params = array(
 			$receivedGroupAdmin->getGid(),
 			$receivedGroupAdmin->getUid(),

@@ -45,7 +45,7 @@ class GroupAdminMapper extends Mapper {
 	 * @throws DoesNotExistException: if the item does not exist
 	 * @return the item
 	 */
-	public function find($gid, $uid, $addedAt, $destinationLocation, $status){
+	public function find($uid, $gid){
 		$sql = 'SELECT * FROM `' . $this->getTableName() . '` WHERE `uid` = ? AND `gid` = ?';
 		$params = array($uid, $gid);
 
@@ -55,9 +55,9 @@ class GroupAdminMapper extends Mapper {
 		$row = $result->fetchRow();
 
 		if ($row === false) {
-			throw new DoesNotExistException("ReceivedGroup with gid {$gid} and addedAt = {$addedAt} and destinationLocation {$destinationLocation} does not exist!");
+			throw new DoesNotExistException("ReceivedGroup with gid {$gid} and uid {$uid} does not exist!");
 		} elseif($result->fetchRow() !== false) {
-			throw new MultipleObjectsReturnedException("ReceivedGroup with gid {$gid} and addedAt = {$addedAt} and destinationLocation {$destinationLocation} returned more than one result.");
+			throw new MultipleObjectsReturnedException("ReceivedGroup with gid {$gid} and uid {$uid}  returned more than one result.");
 		}
 		//return new ReceivedGroupUser($row);
 
