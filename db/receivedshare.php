@@ -49,6 +49,8 @@ class ReceivedShare extends Entity {
         const ACCEPTED = 2;
         const DELETE = 3;
 
+	const FRIEND = 8;
+	const GROUP = 9;
         //also need parent information
         public function __construct($shareType, $shareWith=null, $uidOwner=null, $itemType=null, $fileSourceStorage=null, $fileSourcePath=null, $fileTarget=null, $permissions=null, $stime=null, $token=null, $destinationLocation=null, $sendingLocation=null, $queueType=null){
                 $this->addType('queueType', 'int');
