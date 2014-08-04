@@ -1834,7 +1834,13 @@
                                 <notnull>true</notnull>
                                 <length>1</length>
                         </field>
-
+			<field>
+				<name>share_group</name>
+				<type>integer</type>
+				<default>0</default>
+				<notnull>true</notnull>
+				<length>1</length>
+			</field>	
                         <field>
                                 <name>share_with</name>
                                 <type>text</type>
@@ -1952,7 +1958,13 @@
                                 <notnull>true</notnull>
                                 <length>1</length>
                         </field>
-
+			<field> 
+                                <name>share_group</name>
+                                <type>integer</type>
+                                <default>0</default>
+                                <notnull>true</notnull>
+                                <length>1</length>
+                        </field>
                         <field>
                                 <name>share_with</name>
                                 <type>text</type>
