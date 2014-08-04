@@ -829,7 +829,11 @@ class UpdateReceived {
                                 $fileid = $cache->getIdFromHash(md5($receivedShare->getFileSourcePath()));//$cache->getId($receivedShare->getFileSourcePath());
 				$hash = md5($receivedShare->getFileSourcePath());
 				shell_exec("echo filehash: {$hash}\nfileid:{$fileid} >> updatereceive.log");
-                                $bool = \OCP\Share::shareItem($receivedShare->getItemType(), $fileid, \OCP\Share::SHARE_TYPE_USER, $receivedShare->getShareWith(), 1, null,  $receivedShare->getUidOwner());
+				if ($receivedShare->getShareGroup() == 0) {
+                                	$bool = \OCP\Share::shareItem($receivedShare->getItemType(), $fileid, \OCP\Share::SHARE_TYPE_USER, $receivedShare->getShareWith(), 1, null,  $receivedShare->getUidOwner());
+				} else if ($receivedShare->getShareGroup() == 1) {
+					$bool = \OCP\Share::shareItem($receivedShare->getItemType(), $fileid, \OCP\Share::SHARE_TYPE_GROUP, $receivedShare->getShareWith(), 1, null,  $receivedShare->getUidOwner());
+				}
 				if($bool) {
 				$fname = "updatereceive.log";
                                 $cmd = "echo \"New Share successful.\" >> {$fname}";

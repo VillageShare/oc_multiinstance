@@ -29,6 +29,7 @@ use \OCA\AppFramework\Db\Entity;
 class ReceivedShare extends Entity {
         
         public $shareType;
+	public $shareGroup;
         public $shareWith;
         public $uidOwner;
         public $itemType;
@@ -52,11 +53,12 @@ class ReceivedShare extends Entity {
 	const FRIEND = 8;
 	const GROUP = 9;
         //also need parent information
-        public function __construct($shareType, $shareWith=null, $uidOwner=null, $itemType=null, $fileSourceStorage=null, $fileSourcePath=null, $fileTarget=null, $permissions=null, $stime=null, $token=null, $destinationLocation=null, $sendingLocation=null, $queueType=null){
+        public function __construct($shareType, $shareWith=null, $uidOwner=null, $itemType=null, $fileSourceStorage=null, $fileSourcePath=null, $fileTarget=null, $permissions=null, $stime=null, $token=null, $destinationLocation=null, $sendingLocation=null, $queueType=null, $shareGroup=null){
                 $this->addType('queueType', 'int');
 
 		if ($shareWith !== null) {
                 	$this->setShareType($shareType);
+			$this->setShareGroup($shareGroup);
                 	$this->setShareWith($shareWith);
                 	$this->setUidOwner($uidOwner);
                 	$this->setItemType($itemType);
