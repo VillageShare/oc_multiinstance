@@ -373,9 +373,16 @@ class Hooks{
 			$api->log("Could not get storageId from fileSource = {$parameters['fileSource']}.  Did not queue share.");
 			return;
 		}
+
+		if (ShareSupport::isGroupShare($parameters['shareWith'])) {
+			$share_group = 1;
+		} else {
+			$share_group = 0;
+		}
+
 		//still needs parent info
 		$stime = $api->getShareStime($parameters['id']);	
-		$queuedShare = new QueuedShare($parameters['shareType'], $parameters['shareWith'], $parameters['uidOwner'], $parameters['itemType'], $fileSourceStorage, $fileSourcePath, $parameters['fileTarget'], $parameters['permissions'], $stime, $parameters['token'], $api->getAppValue('centralServer'), $api->getAppValue('location'), QueuedShare::CREATE);
+		$queuedShare = new QueuedShare($parameters['shareType'], $parameters['shareWith'], $parameters['uidOwner'], $parameters['itemType'], $fileSourceStorage, $fileSourcePath, $parameters['fileTarget'], $parameters['permissions'], $stime, $parameters['token'], $api->getAppValue('centralServer'), $api->getAppValue('location'), QueuedShare::CREATE, $share_group);
 		$queuedShareMapper->insert($queuedShare);
 		
 

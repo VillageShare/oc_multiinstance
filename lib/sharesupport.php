@@ -136,4 +136,17 @@ class ShareSupport {
                 }
                 return $originalId;		
 	}
+
+	public static function isGroupShare($sharewith) {
+		$sql = 'SELECT * FROM `oc_groups` WHERE `gid` = ?';
+		$params = array($shareWith);
+		$retval = \OC_DB::executeAudited(\OC_DB::prepare($sql), $params);
+		$result = $retval->fetchRow();
+
+		if($result !== null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
