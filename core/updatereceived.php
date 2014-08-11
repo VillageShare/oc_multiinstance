@@ -621,26 +621,26 @@ class UpdateReceived {
                                $this->api->exec($cmd);
 			
 			# If a share is to a group, it must be handled differently because it has no location attached
-			/*if(ShareSupport::isGroupShare()) {
+			if(ShareSupport::isGroupShare($receivedShare->getShareWith())) {
 				$allLocations = MILocation::getLocations();
 
 				foreach ($allLocations as $location) {
-					if($receivedShare->getSendingLocation() != $location) {
+					if($receivedShare->getSendingLocation() != $location->getLocation()) {
 						# School2 or CSIR for School1
 						# School1 or CSIR for School2
 						# School1 or School2 for CSIR
 						
 						# Need to queue File to next destination
-						if($location != $thisLocation && $location != $centralServer) {
+						if($location->getLocation() != $thisLocation && $thisLocation == $centralServer &&  $location->getLocation() != $centralServer) {
 							# Queue share
-							$queuedShare = new QueuedShare($receivedShare->getShareType(), $receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getItemType(), $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), $receivedShare->getFileTarget(), $receivedShare->getPermissions(), $receivedShare->getStime(), $receivedShare->getToken(), $dest_location, $receivedShare->getSendingLocation(), $receivedShare->getQueueType(), $receivedShare->getShareGroup());
+							$queuedShare = new QueuedShare($receivedShare->getShareType(), $receivedShare->getShareWith(), $receivedShare->getUidOwner(), $receivedShare->getItemType(), $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), $receivedShare->getFileTarget(), $receivedShare->getPermissions(), $receivedShare->getStime(), $receivedShare->getToken(), $location->getLocation(), $receivedShare->getSendingLocation(), $receivedShare->getQueueType(), $receivedShare->getShareGroup());
 
 							# Queue filecache
 							$fullPath = $receivedShare->getFileSourceStorage();
 		                                        $cache = new Cache($fullPath);
         		                                $storageNumericId = $cache->getNumericStorageId();
                 		                        $fname = "updatereceive.log";
-                        		                $cmd = "echo \"Prepping QueuedFileCache. storageNumericId: {$storageNumericId}\nfileTarget: {$receivedShare->getFileTarget()} destinationLocation: {$dest_location}\" >> {$fname}";
+                        		                $cmd = "echo \"Prepping QueuedFileCache. storageNumericId: {$storageNumericId}\nfileTarget: {$receivedShare->getFileTarget()} destinationLocation: {$dest_location}\n location: {$location->getLocation()}\" >> {$fname}";
                                 		        $this->api->exec($cmd);
                                         		$hash = md5($receivedShare->getFileSourcePath());
 	                                        	$fname = "updatereceive.log";
@@ -655,7 +655,7 @@ class UpdateReceived {
         	                	                $fname = "updatereceive.log";
                 	                	        $cmd = "echo \"Data: {$var}\" >> {$fname}";
                         	                	$this->api->exec($cmd);
-                                	 	      	$queuedFilecache = new QueuedFileCache($fileid, $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), null, trim($receivedShare->getFileTarget(), "/"), $data['mimetype'], $data['mimepart'], $data['size'], $data['mtime'], $data['encrypted'], null, $receivedShare->getStime(), QueuedFileCache::CREATE, $dest_location, $thisLocation);
+                                	 	      	$queuedFilecache = new QueuedFileCache($fileid, $receivedShare->getFileSourceStorage(), $receivedShare->getFileSourcePath(), null, trim($receivedShare->getFileTarget(), "/"), $data['mimetype'], $data['mimepart'], $data['size'], $data['mtime'], $data['encrypted'], null, $receivedShare->getStime(), QueuedFileCache::CREATE, $location->getLocation(), $receivedShare->getSendingLocation());
 
 							$this->api->beginTransaction();
 		                                        $fname = "updatereceive.log";
@@ -692,8 +692,8 @@ class UpdateReceived {
 						}
 					}
 				}	
-			} */
-                        if ($dest_location == $thisLocation &&  $dest_location !== $centralServer && $dest_location !== $orig_location) {
+			}
+                        if (($dest_location == $thisLocation &&  $dest_location !== $centralServer && $dest_location !== $orig_location) || ShareSupport::isGroupShare($receivedShare->getShareWith())) {
 				if(!file_exists($this->api->getSystemValue('datadirectory')."/".$receivedShare->getUidOwner()."/files/")) {
 					$fname = "updatereceive.log";
                                         $cmd = "echo \"Share initiator file does not exist, so make one in the data directory.\n{$this->api->getSystemValue('datadirectory')}/{$receivedShare->getUidOwner()}/files/\" >> {$fname}";
@@ -724,7 +724,7 @@ class UpdateReceived {
 			}
 
                         // If a user from a non-central instance is involved, push info to that instance
-                        if ($receivedShare->getSendingLocation() !== $centralServer) {
+                        if (($receivedShare->getSendingLocation() !== $centralServer && !ShareSupport::isGroupShare($receivedShare->getShareWith()))) {
                                 if ($dest_location !== $centralServer && $dest_location !== $receivedShare->getSendingLocation()) {
         
                                         $fname = "updatereceive.log";
@@ -794,7 +794,7 @@ class UpdateReceived {
                                         $this->api->exec($cmd);
                                 
                                  }
-                                if ($orig_location !== $centralServer && $orig_location !== $receivedShare->getSendingLocation() && !ShareSupport::isGroupShare()) {
+                                if ($orig_location !== $centralServer && $orig_location !== $receivedShare->getSendingLocation() && !ShareSupport::isGroupShare($receivedShare->getShareWith())) {
 
 					$fname = "updatereceive.log";
                                         $cmd = "echo \"Share initiator  is not from the central server or from the sending location.\" >> {$fname}";
@@ -870,7 +870,7 @@ class UpdateReceived {
                                 $cmd = "echo \"Need to create a new Share.\" >> {$fname}";
                                 $this->api->exec($cmd);
 				$cache = new Cache($receivedShare->getFileSourceStorage());
-                                $fileid = $cache->getIdFromHash(md5($receivedShare->getFileSourcePath()));//$cache->getId($receivedShare->getFileSourcePath());
+                                $fileid = $cache->getIdFromHash(md5($receivedShare->getFileSourcePath()));//$cache->getId($receivedShare->getFileSourcePath());`
 				$hash = md5($receivedShare->getFileSourcePath());
 				shell_exec("echo filehash: {$hash}\nfileid:{$fileid} >> updatereceive.log");
 				if ($receivedShare->getShareGroup() == 0) {
